@@ -30,16 +30,6 @@ namespace pwiz.ProteowizardWrapper
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="msDataFile">MSData object</param>
-		public MSDataFileReader(MSData msDataFile) : base(msDataFile)
-        {
-			// Call the base class constructor
-			;
-        }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
 		/// <param name="path">Data file path</param>
 		public MSDataFileReader(string path) : base(path)
         {

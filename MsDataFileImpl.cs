@@ -36,7 +36,7 @@ namespace pwiz.ProteowizardWrapper
 
 		protected DetailLevel _detailMsLevel = DetailLevel.InstantMetadata;
 
-		protected static double[] ToArray(IList<double> list)
+        private static double[] ToArray(IList<double> list)
         {
             double[] result = new double[list.Count];
             for (int i = 0; i < result.Length; i++)
@@ -44,7 +44,7 @@ namespace pwiz.ProteowizardWrapper
             return result;
         }
 
-		protected static float[] ToFloatArray(IList<double> list)
+        private static float[] ToFloatArray(IList<double> list)
         {
             float[] result = new float[list.Count];
             for (int i = 0; i < result.Length; i++)
@@ -67,30 +67,17 @@ namespace pwiz.ProteowizardWrapper
             return listAllImpl.ToArray();
         }
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="msDataFile">MSData object</param>
-		protected MsDataFileImpl(MSData msDataFile)
+        private MsDataFileImpl(MSData msDataFile)
         {
             _msDataFile = msDataFile;
         }
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="path">Data file path</param>
-		public MsDataFileImpl(string path)
+        public MsDataFileImpl(string path)
         {
             _msDataFile = new MSDataFile(path);
         }
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="path">Data file path</param>
-		/// <param name="sampleIndex">Sample Index to select within the data file</param>
-		public MsDataFileImpl(string path, int sampleIndex)
+        public MsDataFileImpl(string path, int sampleIndex)
         {
             _msDataFile = new MSData();
             ReaderList.FullReaderList.read(path, _msDataFile, sampleIndex);            
@@ -121,43 +108,22 @@ namespace pwiz.ProteowizardWrapper
                 string detector = "";
                 foreach (InstrumentConfiguration ic in _msDataFile.instrumentConfigurationList)
                 {
-                    SortedDictionary<int, string> ionSources = new SortedDictionary<int, string>();
-                    SortedDictionary<int, string> analyzers = new SortedDictionary<int, string>();
-                    SortedDictionary<int, string> detectors = new SortedDictionary<int, string>();
-                    foreach (Component c in ic.componentList)
-                    {
-                        CVParam term;
-                        switch (c.type)
-                        {
-                            case ComponentType.ComponentType_Source:
-                                term = c.cvParamChild(CVID.MS_ionization_type);
-                                if (!term.empty())
-                                    ionSources.Add(c.order, term.name);
-                                break;
-                            case ComponentType.ComponentType_Analyzer:
-                                term = c.cvParamChild(CVID.MS_mass_analyzer_type);
-                                if (!term.empty())
-                                    analyzers.Add(c.order, term.name);
-                                break;
-                            case ComponentType.ComponentType_Detector:
-                                term = c.cvParamChild(CVID.MS_detector_type);
-                                if (!term.empty())
-                                    detectors.Add(c.order, term.name);
-                                break;
-                        }
-                    }
+                    string instrumentIonSource;
+                    string instrumentAnalyzer;
+                    string instrumentDetector;
+                    GetInstrumentConfig(ic, out instrumentIonSource, out instrumentAnalyzer, out instrumentDetector);
 
                     if (ionSource.Length > 0)
                         ionSource += ", ";
-                    ionSource += String.Join("/", new List<string>(ionSources.Values).ToArray());
+                    ionSource += instrumentIonSource;
 
                     if (analyzer.Length > 0)
                         analyzer += ", ";
-                    analyzer += String.Join("/", new List<string>(analyzers.Values).ToArray());
+                    analyzer += instrumentAnalyzer;
 
                     if (detector.Length > 0)
                         detector += ", ";
-                    detector += String.Join("/", new List<string>(detectors.Values).ToArray());
+                    detector += instrumentDetector;
                 }
 
                 HashSet<string> contentTypeSet = new HashSet<string>();
@@ -178,6 +144,69 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        private static void GetInstrumentConfig(InstrumentConfiguration ic, out string ionSource, out string analyzer, out string detector)
+        {
+            SortedDictionary<int, string> ionSources = new SortedDictionary<int, string>();
+            SortedDictionary<int, string> analyzers = new SortedDictionary<int, string>();
+            SortedDictionary<int, string> detectors = new SortedDictionary<int, string>();
+
+            foreach (Component c in ic.componentList)
+            {
+                CVParam term;
+                switch (c.type)
+                {
+                    case ComponentType.ComponentType_Source:
+                        term = c.cvParamChild(CVID.MS_ionization_type);
+                        if (!term.empty())
+                            ionSources.Add(c.order, term.name);
+                        else
+                        {
+                            // If we did not find the ion source in a CVParam it may be in a UserParam
+                            UserParam uParam = c.userParam("msIonisation");
+                            if (HasInfo(uParam))
+                            {
+                                ionSources.Add(c.order, uParam.value);
+                            }
+                        }
+                        break;
+                    case ComponentType.ComponentType_Analyzer:
+                        term = c.cvParamChild(CVID.MS_mass_analyzer_type);
+                        if (!term.empty())
+                            analyzers.Add(c.order, term.name);
+                        else
+                        {
+                            // If we did not find the analyzer in a CVParam it may be in a UserParam
+                            UserParam uParam = c.userParam("msMassAnalyzer");
+                            if (HasInfo(uParam))
+                            {
+                                analyzers.Add(c.order, uParam.value);
+                            }
+                        }
+                        break;
+                    case ComponentType.ComponentType_Detector:
+                        term = c.cvParamChild(CVID.MS_detector_type);
+                        if (!term.empty())
+                            detectors.Add(c.order, term.name);
+                        else
+                        {
+                            // If we did not find the detector in a CVParam it may be in a UserParam
+                            UserParam uParam = c.userParam("msDetector");
+                            if (HasInfo(uParam))
+                            {
+                                detectors.Add(c.order, uParam.value);
+                            }
+                        }
+                        break;
+                }
+            }
+
+            ionSource = String.Join("/", new List<string>(ionSources.Values).ToArray());
+
+            analyzer = String.Join("/", new List<string>(analyzers.Values).ToArray());
+
+            detector = String.Join("/", new List<string>(detectors.Values).ToArray());
+        }
+
         public bool IsProcessedBy(string softwareName)
         {
             foreach (var softwareApp in _msDataFile.softwareList)
@@ -188,9 +217,52 @@ namespace pwiz.ProteowizardWrapper
             return false;
         }
 
+        public IEnumerable<MsInstrumentConfigInfo> GetInstrumentConfigInfoList()
+        {
+            IList<MsInstrumentConfigInfo> configList = new List<MsInstrumentConfigInfo>();
+
+            foreach (InstrumentConfiguration ic in _msDataFile.instrumentConfigurationList)
+            {
+                string instrumentModel = null;
+                string ionization;
+                string analyzer;
+                string detector;
+                
+                CVParam param = ic.cvParamChild(CVID.MS_instrument_model);
+                if (!param.empty() && param.cvid != CVID.MS_instrument_model)
+                {
+                    instrumentModel = param.name;
+                }
+                if(instrumentModel == null)
+                {
+                    // If we did not find the instrument model in a CVParam it may be in a UserParam
+                    UserParam uParam = ic.userParam("msModel");
+                    if (HasInfo(uParam))
+                    {
+                        instrumentModel = uParam.value;
+                    }
+                }
+
+                // get the ionization type, analyzer and detector
+                GetInstrumentConfig(ic, out ionization, out analyzer, out detector);
+
+                if (instrumentModel != null || ionization != null || analyzer != null || detector != null)
+                {
+                    configList.Add(new MsInstrumentConfigInfo(instrumentModel, ionization, analyzer, detector));
+                }
+            }
+            return configList;
+        }
+
+        private static bool HasInfo(UserParam uParam)
+        {
+            return !uParam.empty() && !String.IsNullOrEmpty(uParam.value) &&
+                   !String.Equals("unknown", uParam.value.ToString().ToLowerInvariant());
+        }
+
         public bool IsABFile
         {
-            get { return IsProcessedBy("Analyst"); }
+            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_ABI_WIFF_file)); }
         }
 
         public bool IsMzWiffXml
@@ -200,17 +272,17 @@ namespace pwiz.ProteowizardWrapper
 
         public bool IsAgilentFile
         {
-            get { return IsProcessedBy("MassHunter"); }
+            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Agilent_MassHunter_file)); }
         }
 
         public bool IsThermoFile
         {
-            get { return IsProcessedBy("Xcalibur"); }
+            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Thermo_RAW_file)); }
         }
 
         public bool IsWatersFile
         {
-            get { return IsProcessedBy("MassLynx"); }
+            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Waters_raw_file)); }
         }
 
         protected ChromatogramList ChromatogramList
@@ -255,7 +327,6 @@ namespace pwiz.ProteowizardWrapper
                 intensityArray = ToFloatArray(chrom.binaryDataArrays[1].data);
             }            
         }
-
 
         /// <summary>
         /// Gets the retention times from the first chromatogram in the data file.
@@ -351,9 +422,9 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-		protected static MsDataSpectrum GetSpectrum(Spectrum spectrum)
+        private static MsDataSpectrum GetSpectrum(Spectrum spectrum)
         {
-            if (spectrum != null)
+            if (spectrum != null && spectrum.binaryDataArrays.Count > 1)
             {
                 try
                 {
@@ -399,7 +470,7 @@ namespace pwiz.ProteowizardWrapper
             return msDataSpectrum;
         }
 
-		protected static void InsertZeros(MsDataSpectrum msDataSpectrum)
+        private static void InsertZeros(MsDataSpectrum msDataSpectrum)
         {
             double[] mzs = msDataSpectrum.Mzs;
             double[] intensities = msDataSpectrum.Intensities;
@@ -488,7 +559,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-		protected static bool IsCentroided(Spectrum spectrum)
+        private static bool IsCentroided(Spectrum spectrum)
         {
             return spectrum.hasCVParam(CVID.MS_centroid_spectrum);
         }
@@ -501,7 +572,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-		protected static bool IsSrmSpectrum(Spectrum spectrum)
+        private static bool IsSrmSpectrum(Spectrum spectrum)
         {
             return spectrum.hasCVParam(CVID.MS_SRM_spectrum);
         }
@@ -523,7 +594,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-		protected static int? GetMsLevel(Spectrum spectrum)
+        private static int? GetMsLevel(Spectrum spectrum)
         {
             CVParam param = spectrum.cvParam(CVID.MS_ms_level);
             if (param.empty())
@@ -539,7 +610,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-		protected static double? GetStartTime(Spectrum spectrum)
+        private static double? GetStartTime(Spectrum spectrum)
         {
             var scan = spectrum.scanList.scans[0];
             CVParam param = scan.cvParam(CVID.MS_scan_start_time);
@@ -548,7 +619,7 @@ namespace pwiz.ProteowizardWrapper
             return param.timeInSeconds() / 60;
         }
 
-		protected static MsPrecursor[] GetPrecursors(Spectrum spectrum)
+        private static MsPrecursor[] GetPrecursors(Spectrum spectrum)
         {
             return spectrum.precursors.Select(p =>
                 new MsPrecursor
@@ -560,14 +631,14 @@ namespace pwiz.ProteowizardWrapper
                     }).ToArray();
         }
 
-		protected static double? GetPrecursorMz(Precursor precursor)
+        private static double? GetPrecursorMz(Precursor precursor)
         {
             // CONSIDER: Only the first selected ion m/z is considered for the precursor m/z
             var selectedIon = precursor.selectedIons.FirstOrDefault();
             return (selectedIon != null ? selectedIon.cvParam(CVID.MS_selected_ion_m_z).value : null);
         }
 
-		protected static double? GetIsolationWindowValue(Precursor precursor, CVID cvid)
+        private static double? GetIsolationWindowValue(Precursor precursor, CVID cvid)
         {
             var term = precursor.isolationWindow.cvParam(cvid);
             if (!term.empty())
@@ -648,5 +719,68 @@ namespace pwiz.ProteowizardWrapper
         public bool Centroided { get; set; }
         public double[] Mzs { get; set; }
         public double[] Intensities { get; set; }
+    }
+
+    public sealed class MsInstrumentConfigInfo
+    {
+        public string Model { get; private set; }
+        public string Ionization { get; private set; }
+        public string Analyzer { get; private set; }
+        public string Detector { get; private set; }
+
+        public MsInstrumentConfigInfo(string model, string ionization,
+                                      string analyzer, string detector)
+        {
+            Model = model != null ? model.Trim() : null;
+            Ionization = ionization != null ? ionization.Replace('\n',' ').Trim() : null;
+            Analyzer = analyzer != null ? analyzer.Replace('\n', ' ').Trim() : null;
+            Detector = detector != null ? detector.Replace('\n', ' ').Trim() : null;
+        }
+
+        public bool IsEmpty
+        {
+            get
+            {
+                return (string.IsNullOrEmpty(Model)) &&
+                       (string.IsNullOrEmpty(Ionization)) &&
+                       (string.IsNullOrEmpty(Analyzer)) &&
+                       (string.IsNullOrEmpty(Detector));
+            }
+        }
+
+        #region object overrides
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(MsInstrumentConfigInfo)) return false;
+            return Equals((MsInstrumentConfigInfo)obj);
+        }
+
+        public bool Equals(MsInstrumentConfigInfo other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other.Model, Model) &&
+                Equals(other.Ionization, Ionization) &&
+                Equals(other.Analyzer, Analyzer) &&
+                Equals(other.Detector, Detector);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int result = 0;
+                result = (result * 397) ^ (Model != null ? Model.GetHashCode() : 0);
+                result = (result * 397) ^ (Ionization != null ? Ionization.GetHashCode() : 0);
+                result = (result * 397) ^ (Analyzer != null ? Analyzer.GetHashCode() : 0); 
+                result = (result * 397) ^ (Detector != null ? Detector.GetHashCode() : 0);
+                return result;
+            }
+        }
+
+        #endregion
     }
 }
