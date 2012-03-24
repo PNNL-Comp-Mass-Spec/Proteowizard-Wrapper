@@ -24,7 +24,7 @@ using pwiz.CLI.msdata;
 
 namespace pwiz.ProteowizardWrapper
 {
-	class MSDataFileReader : MsDataFileImpl
+	public class MSDataFileReader : MsDataFileImpl
 	{
 
 		/// <summary>
