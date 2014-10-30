@@ -1,0 +1,11 @@
+Proteowizard Wrapper
+
+Version 1.0.5415; October 29, 2014
+	- Updated CVID enum values in MsDataFileImpl to match the October 2014 release of Proteowizard
+	- Added 64-bit version
+
+Version 1.0.4475; April 2, 2012
+	- Updated to ProteoWizard DLLs from March 23, 2012
+
+Version 1.0.4465; March 23, 2012
+	- Initial PNNL release (code is from the University of Washington)

@@ -29,12 +29,12 @@ namespace pwiz.ProteowizardWrapper
     public class MsDataFileImpl : IDisposable
     {
         // Cached disposable objects
-		protected MSData _msDataFile;
-		protected SpectrumList _spectrumList;
-		protected SpectrumList _spectrumListCentroided;
-		protected ChromatogramList _chromatogramList;
+        protected MSData _msDataFile;
+        protected SpectrumList _spectrumList;
+        protected SpectrumList _spectrumListCentroided;
+        protected ChromatogramList _chromatogramList;
 
-		protected DetailLevel _detailMsLevel = DetailLevel.InstantMetadata;
+        protected DetailLevel _detailMsLevel = DetailLevel.InstantMetadata;
 
         private static double[] ToArray(IList<double> list)
         {
@@ -48,7 +48,7 @@ namespace pwiz.ProteowizardWrapper
         {
             float[] result = new float[list.Count];
             for (int i = 0; i < result.Length; i++)
-                result[i] = (float) list[i];
+                result[i] = (float)list[i];
             return result;
         }
 
@@ -80,7 +80,7 @@ namespace pwiz.ProteowizardWrapper
         public MsDataFileImpl(string path, int sampleIndex)
         {
             _msDataFile = new MSData();
-            ReaderList.FullReaderList.read(path, _msDataFile, sampleIndex);            
+            ReaderList.FullReaderList.read(path, _msDataFile, sampleIndex);
         }
 
         public string RunId { get { return _msDataFile.run.id; } }
@@ -227,13 +227,13 @@ namespace pwiz.ProteowizardWrapper
                 string ionization;
                 string analyzer;
                 string detector;
-                
+
                 CVParam param = ic.cvParamChild(CVID.MS_instrument_model);
                 if (!param.empty() && param.cvid != CVID.MS_instrument_model)
                 {
                     instrumentModel = param.name;
                 }
-                if(instrumentModel == null)
+                if (instrumentModel == null)
                 {
                     // If we did not find the instrument model in a CVParam it may be in a UserParam
                     UserParam uParam = ic.userParam("msModel");
@@ -262,7 +262,8 @@ namespace pwiz.ProteowizardWrapper
 
         public bool IsABFile
         {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_ABI_WIFF_file)); }
+            get
+            { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_ABI_WIFF_format)); }
         }
 
         public bool IsMzWiffXml
@@ -272,17 +273,20 @@ namespace pwiz.ProteowizardWrapper
 
         public bool IsAgilentFile
         {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Agilent_MassHunter_file)); }
+            get
+            { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Agilent_MassHunter_format)); }
         }
 
         public bool IsThermoFile
         {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Thermo_RAW_file)); }
+            get
+            { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Thermo_RAW_format)); }
         }
 
         public bool IsWatersFile
         {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Waters_raw_file)); }
+            get
+            { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Waters_raw_format)); }
         }
 
         protected ChromatogramList ChromatogramList
@@ -294,7 +298,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-		protected SpectrumList SpectrumList
+        protected SpectrumList SpectrumList
         {
             get
             {
@@ -313,7 +317,7 @@ namespace pwiz.ProteowizardWrapper
             using (var cid = ChromatogramList.chromatogramIdentity(index))
             {
                 indexId = cid.index;
-                return cid.id;                
+                return cid.id;
             }
         }
 
@@ -325,7 +329,7 @@ namespace pwiz.ProteowizardWrapper
                 id = chrom.id;
                 timeArray = ToFloatArray(chrom.binaryDataArrays[0].data);
                 intensityArray = ToFloatArray(chrom.binaryDataArrays[1].data);
-            }            
+            }
         }
 
         /// <summary>
@@ -391,7 +395,7 @@ namespace pwiz.ProteowizardWrapper
                 using (var spectrum = SpectrumList.spectrum(i))
                 {
                     times[i] = spectrum.scanList.scans[0].cvParam(CVID.MS_scan_start_time).timeInSeconds();
-                    msLevels[i] = (byte) (int) spectrum.cvParam(CVID.MS_ms_level).value;
+                    msLevels[i] = (byte)(int)spectrum.cvParam(CVID.MS_ms_level).value;
                 }
             }
         }
@@ -480,7 +484,7 @@ namespace pwiz.ProteowizardWrapper
             {
                 minDelta = Math.Min(minDelta, mzs[i + 1] - mzs[i]);
             }
-            double maxGap = minDelta*2;
+            double maxGap = minDelta * 2;
             var newMzs = new List<double>(len);
             var newIntensities = new List<double>(len);
             for (int i = 0; i < len - 1; i++)
@@ -599,7 +603,7 @@ namespace pwiz.ProteowizardWrapper
             CVParam param = spectrum.cvParam(CVID.MS_ms_level);
             if (param.empty())
                 return null;
-            return (int) param.value;
+            return (int)param.value;
         }
 
         public double? GetStartTime(int scanIndex)
@@ -732,7 +736,7 @@ namespace pwiz.ProteowizardWrapper
                                       string analyzer, string detector)
         {
             Model = model != null ? model.Trim() : null;
-            Ionization = ionization != null ? ionization.Replace('\n',' ').Trim() : null;
+            Ionization = ionization != null ? ionization.Replace('\n', ' ').Trim() : null;
             Analyzer = analyzer != null ? analyzer.Replace('\n', ' ').Trim() : null;
             Detector = detector != null ? detector.Replace('\n', ' ').Trim() : null;
         }
@@ -775,7 +779,7 @@ namespace pwiz.ProteowizardWrapper
                 int result = 0;
                 result = (result * 397) ^ (Model != null ? Model.GetHashCode() : 0);
                 result = (result * 397) ^ (Ionization != null ? Ionization.GetHashCode() : 0);
-                result = (result * 397) ^ (Analyzer != null ? Analyzer.GetHashCode() : 0); 
+                result = (result * 397) ^ (Analyzer != null ? Analyzer.GetHashCode() : 0);
                 result = (result * 397) ^ (Detector != null ? Detector.GetHashCode() : 0);
                 return result;
             }
