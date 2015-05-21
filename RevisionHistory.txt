@@ -1,5 +1,9 @@
 Proteowizard Wrapper
 
+Version 1.0.5619; May 21, 2015
+	- Updated to March 2015 release of ProteoWizard
+	- Now compiling as AnyCPU instead of x86
+
 Version 1.0.5415; October 29, 2014
 	- Updated CVID enum values in MsDataFileImpl to match the October 2014 release of Proteowizard
 	- Added 64-bit version
