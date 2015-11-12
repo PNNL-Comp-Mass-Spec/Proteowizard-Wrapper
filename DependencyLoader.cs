@@ -207,6 +207,7 @@ namespace pwiz.ProteowizardWrapper
         static DependencyLoader()
         {
             PwizPath = FindPwizPath();
+            SetPwizPathFiles();
         }
 
         #endregion
