@@ -74,11 +74,13 @@ namespace pwiz.ProteowizardWrapper
 
         public MsDataFileImpl(string path)
         {
+            DependencyLoader.AddAssemblyResolver();
             _msDataFile = new MSDataFile(path);
         }
 
         public MsDataFileImpl(string path, int sampleIndex)
         {
+            DependencyLoader.AddAssemblyResolver();
             _msDataFile = new MSData();
             ReaderList.FullReaderList.read(path, _msDataFile, sampleIndex);
         }

@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Centroider.cs" />
+    <Compile Include="DependencyLoader.cs" />
     <Compile Include="MsDataFileImpl.cs" />
     <Compile Include="MSDataFileReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
