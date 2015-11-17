@@ -221,8 +221,8 @@ namespace pwiz.ProteowizardWrapper
             {
                 var bits = Environment.Is64BitProcess ? "64" : "32";
                 var message = "Cannot load ProteoWizard dlls. Please ensure that " + bits
-                    + "-bit ProteoWizard is installed to its default install directory ("
-                    + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]).";
+                    + "-bit ProteoWizard is installed to its default install directory (\""
+                    + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\").";
 
                 System.Console.WriteLine(message);
                 throw new System.TypeLoadException(message);
