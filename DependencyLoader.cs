@@ -20,7 +20,8 @@ namespace pwiz.ProteowizardWrapper
         /// Add the Assembly Resolver to the system assembly resolver chain
         /// </summary>
         /// <remarks>This should be called early in the program, so that the ProteoWizard Assembly Resolver will 
-        /// already be in the resolver chain before any other use of ProteoWizardWrapper</remarks>
+        /// already be in the resolver chain before any other use of ProteoWizardWrapper.
+        /// Also, DependencyLoader.ValidateLoader() should be used to make sure a meaningful error message is thrown if ProteoWizard is not available.</remarks>
         public static void AddAssemblyResolver()
         {
             if (!_resolverAdded)
@@ -78,6 +79,7 @@ namespace pwiz.ProteowizardWrapper
             //This handler is called only when the common language runtime tries to bind to the assembly and fails.
             if (string.IsNullOrWhiteSpace(PwizPath))
             {
+                ValidateLoader();
                 return null;
             }
 
@@ -195,6 +197,10 @@ namespace pwiz.ProteowizardWrapper
 
         private static void SetPwizPathFiles()
         {
+            if (string.IsNullOrWhiteSpace(PwizPath))
+            {
+                return;
+            }
             var allFiles = Directory.GetFiles(PwizPath, "*.dll", SearchOption.AllDirectories);
             PwizPathFiles = new List<string>(allFiles.Length);
             foreach (var file in allFiles)
@@ -202,6 +208,25 @@ namespace pwiz.ProteowizardWrapper
                 PwizPathFiles.Add(Path.GetFileNameWithoutExtension(file).ToLower());
             }
             PwizPathFiles.Sort();
+        }
+
+        /// <summary>
+        /// Checks to make sure the path to ProteoWizard files is set. If not, throws an exception.
+        /// </summary>
+        /// <remarks>This function should generally only be called inside of a conditional statement to prevent the 
+        /// exception from being thrown when the ProteoWizard dlls will not be needed.</remarks>
+        public static void ValidateLoader()
+        {
+            if (string.IsNullOrWhiteSpace(PwizPath))
+            {
+                var bits = Environment.Is64BitProcess ? "64" : "32";
+                var message = "Cannot load ProteoWizard dlls. Please ensure that " + bits
+                    + "-bit ProteoWizard is installed to its default install directory ("
+                    + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]).";
+
+                System.Console.WriteLine(message);
+                throw new System.TypeLoadException(message);
+            }
         }
 
         static DependencyLoader()
