@@ -79,7 +79,7 @@ namespace pwiz.ProteowizardWrapper
             //This handler is called only when the common language runtime tries to bind to the assembly and fails.
             if (string.IsNullOrWhiteSpace(PwizPath))
             {
-                ValidateLoader();
+                ValidateLoaderByPath();
                 return null;
             }
 
@@ -217,16 +217,39 @@ namespace pwiz.ProteowizardWrapper
         /// exception from being thrown when the ProteoWizard dlls will not be needed.</remarks>
         public static void ValidateLoader()
         {
-            if (string.IsNullOrWhiteSpace(PwizPath))
+            try
+            {
+                Assembly.Load("pwiz_bindings_cli, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+            }
+            catch
             {
                 var bits = Environment.Is64BitProcess ? "64" : "32";
-                var message = "Cannot load ProteoWizard dlls. Please ensure that " + bits
-                    + "-bit ProteoWizard is installed to its default install directory (\""
-                    + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\").";
+                var message = CannotFindExceptionMessage();
 
                 System.Console.WriteLine(message);
                 throw new System.TypeLoadException(message);
             }
+        }
+
+        private static void ValidateLoaderByPath()
+        {
+            if (string.IsNullOrWhiteSpace(PwizPath))
+            {
+                var message = CannotFindExceptionMessage();
+
+                System.Console.WriteLine(message);
+                throw new System.TypeLoadException(message);
+            }
+        }
+
+        private static string CannotFindExceptionMessage()
+        {
+            var bits = Environment.Is64BitProcess ? "64" : "32";
+            var message = "Cannot load ProteoWizard dlls. Please ensure that " + bits
+                + "-bit ProteoWizard is installed to its default install directory (\""
+                + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\").";
+
+            return message;
         }
 
         static DependencyLoader()
