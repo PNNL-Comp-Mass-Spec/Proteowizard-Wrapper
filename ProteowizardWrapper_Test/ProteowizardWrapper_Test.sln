@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProteowizardWrapper_Test_x86", "ProteowizardWrapper_Test_x86.csproj", "{C36B895A-6477-4F3B-8587-0B18FDA8E575}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProteowizardWrapper_Test", "ProteowizardWrapper_Test.csproj", "{C36B895A-6477-4F3B-8587-0B18FDA8E575}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

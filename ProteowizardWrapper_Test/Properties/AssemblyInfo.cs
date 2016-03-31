@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ProteowizardWrapper_Test_x86")]
+[assembly: AssemblyTitle("ProteowizardWrapper_Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("PNNL")]
-[assembly: AssemblyProduct("ProteowizardWrapper_Test_x86")]
+[assembly: AssemblyProduct("ProteowizardWrapper_Test")]
 [assembly: AssemblyCopyright("Copyright © PNNL 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
