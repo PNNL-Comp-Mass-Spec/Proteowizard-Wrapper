@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ProteowizardWrapper_Test_x86;
 
 namespace ProteowizardWrapper_Test
 {
@@ -9,25 +10,13 @@ namespace ProteowizardWrapper_Test
     {
         static void Main(string[] args)
         {
-            try
-            {
-                var dataFilePath = @"F:\MSData\VOrbitrap\MPMP_SKBR3_Peptidome_02_05Dec13_Pippin_13-07-06.raw";
-                dataFilePath = @"\\proto-6\12T_FTICR_B\2014_4\2014_09_30_Stegen_ALK-3_ACN_Core05-org-1_000001\2014_09_30_Stegen_ALK-3_ACN_Core05-org-1_000001.d";
+            var pwizPath = pwiz.ProteowizardWrapper.DependencyLoader.FindPwizPath();
 
-                var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFilePath);
+            Console.WriteLine("DLLs will load from " + pwizPath);
 
-                var isAbFile = oWrapper.IsABFile;
-                var isThermo = oWrapper.IsThermoFile;
-
-                var oSpectrum = oWrapper.GetSpectrum(0);
-
-                Console.WriteLine(isThermo);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver();
+            TestRaw.TestReadRaw();
+            Console.WriteLine("Done");
         }
     }
 }
