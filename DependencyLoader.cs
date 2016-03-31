@@ -49,9 +49,10 @@ namespace pwiz.ProteowizardWrapper
             Console.WriteLine("Looking for: " + args.Name);
             //Console.WriteLine("Wanted by: " + args.RequestingAssembly);
 #endif
-            // TODO: Add names from other primary assemblies in the ProteoWizard directory
+            
             if (!args.Name.ToLower().StartsWith("pwiz_bindings_cli"))
             {
+                // Check names from other primary assemblies in the ProteoWizard directory
                 var found = false;
                 var assm = args.Name.ToLower();
                 var firstLetter = assm[0];
@@ -173,6 +174,12 @@ namespace pwiz.ProteowizardWrapper
             {
                 // Check for a x86 ProteoWizard environment variable
                 pwizPath = Environment.GetEnvironmentVariable("ProteoWizard_x86");
+
+                if(string.IsNullOrEmpty(pwizPath) && !Environment.Is64BitOperatingSystem)
+                {
+                    pwizPath = Environment.GetEnvironmentVariable("ProteoWizard");
+                }
+
                 dmsProgPwiz = @"C:\DMS_Programs\ProteoWizard_x86";
             }
             else
