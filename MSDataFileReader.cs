@@ -34,7 +34,6 @@ namespace pwiz.ProteowizardWrapper
 		public MSDataFileReader(string path) : base(path)
         {
 			// Call the base class constructor
-			;
         }
 
 		/// <summary>
@@ -45,27 +44,26 @@ namespace pwiz.ProteowizardWrapper
 		public MSDataFileReader(string path, int sampleIndex) : base (path, sampleIndex)
         {
 			// Call the base class constructor
-			;       
         }
 
 		public CVParamList GetChromatogramCVParams(int chromIndex)
 		{
-			return ChromatogramList.chromatogram(chromIndex).cvParams;
+            return _chromatogramList.chromatogram(chromIndex).cvParams;
 		}
 
 		public Chromatogram GetChromatogramObject(int chromIndex)
 		{
-			return ChromatogramList.chromatogram(chromIndex, true);
+            return _chromatogramList.chromatogram(chromIndex, true);
 		}
 
 		public CVParamList GetSpectrumCVParams(int scanIndex)
 		{
-			return SpectrumList.spectrum(scanIndex).cvParams;
+            return _spectrumList.spectrum(scanIndex).cvParams;
 		}
 
 		public Spectrum GetSpectrumObject(int scanIndex)
 		{
-			return SpectrumList.spectrum(scanIndex, true);
+            return _spectrumList.spectrum(scanIndex, true);
 		}
 
 
