@@ -556,6 +556,24 @@ namespace pwiz.ProteowizardWrapper
         /// Some data files do not have any chromatograms in them, so GetScanTimes
         /// cannot be used.
         /// </summary>
+        /// <param name="times">Output: scan times (in minutes)</param>
+        /// <param name="msLevels">Output: MS Levels (1 for MS1, 2 for MS/MS, etc.)</param>
+        /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
+        public void GetScanTimesAndMsLevels(out double[] times, out byte[] msLevels)
+        {
+            var cancellationToken = new CancellationToken();
+            GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels);
+        }
+
+        /// <summary>
+        /// Walks the spectrum list, and fills in the retention time and MS level of each scan.
+        /// Some data files do not have any chromatograms in them, so GetScanTimes
+        /// cannot be used.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="times">Output: scan times (in minutes)</param>
+        /// <param name="msLevels">Output: MS Levels (1 for MS1, 2 for MS/MS, etc.)</param>
+        /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
         public void GetScanTimesAndMsLevels(CancellationToken cancellationToken, out double[] times, out byte[] msLevels)
         {
             times = new double[SpectrumCount];
