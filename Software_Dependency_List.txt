@@ -1,0 +1,27 @@
+
+DeconTools (x86) uses the AnyCpu version of this wrapper
+https://github.com/PNNL-Comp-Mass-Spec/DeconTools
+- DeconTools does not use pwiz_bindings_cli.dll and thus that file 
+  (plus the other ProteoWizard DLLs) should not be in the same folder as DeconConsole.exe
+
+
+MSFileInfoScanner (AnyCPU) uses the AnyCPU version of this wrapper
+https://github.com/PNNL-Comp-Mass-Spec/MS-File-Info-Scanner
+- MSFileInfoScanner also uses pwiz_bindings_cli.dll to read information from instrument data files
+  Consequently, all of the 64-bit ProteoWizard DLLs are copied to same folder as MSFileInfoScanner.dll
+
+
+InformedProteomics.Backend does not use ProteoWizardWrapper
+https://github.com/PNNL-Comp-Mass-Spec/Informed-Proteomics/
+
+PbfGen uses InformedProteomics.Backend and thus PbfGen does not require ProteoWizardWrapper
+
+LCMS-Spectator uses PbfGen, but should not require ProteoWizardWrapper
+https://github.com/PNNL-Comp-Mass-Spec/LCMS-Spectator
+
+
+Other software to check:
+- SimpleMSViewer
+- Sipper
+	https://github.com/PNNL-Comp-Mass-Spec/Sipper
+- LipidTools
