@@ -21,7 +21,7 @@ and to add logic for finding any missing Proteowizard DLLs by searching standard
 If a required Proteowizard DLL is not found, the following logic is used to locate it:
 
 When the running process is x86:
-1) Look in the current working directory
+1) Look for pwiz_bindings_cli.dll in the current working directory
 2) Look for a "ProteoWizard_x86" environment variable that points to an existing directory
 3) Look for directory "C:\DMS_Programs\ProteoWizard_x86"
 4) Look for a directory with a name like
@@ -29,7 +29,7 @@ When the running process is x86:
    "C:\Program Files\ProteoWizard\ProteoWizard 3.0.9490"       on 32-bit Windows
 
 When the running process is x64 (this includes AnyCPU running on 64-bit Windows)
-1) Look in the current working directory
+1) Look for pwiz_bindings_cli.dll in the current working directory
 2) Look for a "ProteoWizard" environment variable that points to an existing directory
 3) Look for directory "C:\DMS_Programs\ProteoWizard"
 4) Look for a directory with a name like "C:\Program Files\ProteoWizard\ProteoWizard 3.0.9490"
@@ -37,6 +37,8 @@ When the running process is x64 (this includes AnyCPU running on 64-bit Windows)
 Technical note: an AnyCPU program can be compiled with setting "prefer 32-bit" enabled.
 In that case, when the AnyCPU program runs on 64-bit windows it will run as an x86 process.
 
+Caution: If pwiz_bindings_cli.dll is present in the same folder as ProteowizardWrapper.dll,
+ProteoWizard's DLLs will be presumed to be present in that folder.
 
 == ProteoWizard Info ==
 
