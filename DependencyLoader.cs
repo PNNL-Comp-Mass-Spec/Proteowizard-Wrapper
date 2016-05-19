@@ -146,6 +146,8 @@ namespace pwiz.ProteowizardWrapper
 
         #region Static stateful variable and populating functions
 
+        public const string TargetDllName = "pwiz_bindings_cli.dll";
+
         /// <summary>
         /// The path to the most recent 64-bit ProteoWizard install
         /// If this is not null/empty, we can usually make a safe assumption that the ProteoWizard dlls are available.
@@ -189,12 +191,12 @@ namespace pwiz.ProteowizardWrapper
                 dmsProgPwiz = @"C:\DMS_Programs\ProteoWizard";
             }
 
-            if (string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(dmsProgPwiz))
+            if (string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(dmsProgPwiz) && new DirectoryInfo(dmsProgPwiz).GetFiles(TargetDllName).Length > 0)
             {
                 return dmsProgPwiz;
             }
 
-            if (!string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(pwizPath))
+            if (!string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(pwizPath) && new DirectoryInfo(pwizPath).GetFiles(TargetDllName).Length > 0)
             {
                 return pwizPath;
             }
@@ -212,7 +214,7 @@ namespace pwiz.ProteowizardWrapper
             var pwizFolder = new DirectoryInfo(progPwiz);
             if (pwizFolder.Exists)
             {
-                if (pwizFolder.GetFiles("pwiz_bindings_cli.dll").Length > 0)
+                if (pwizFolder.GetFiles(TargetDllName).Length > 0)
                 {
                     return progPwiz;
                 }
@@ -237,9 +239,18 @@ namespace pwiz.ProteowizardWrapper
 
             var folderNames = subFolders.Select(subFolder => subFolder.FullName).ToList();
 
-            // Return the newest folder
-            var newestPwizFolder = folderNames.Max();
-            return newestPwizFolder;
+            folderNames.Sort();
+            folderNames.Reverse(); // reverse the sort order - this should give us the highest installed version of ProteoWizard first
+
+            foreach (var folder in folderNames)
+            {
+                if (new DirectoryInfo(folder).GetFiles(TargetDllName).Length > 0)
+                {
+                    return folder;
+                }
+            }
+            // If the above failed, return the highest version installed
+            return folderNames[0];
         }
 
         private static void SetPwizPathFiles()
@@ -295,7 +306,8 @@ namespace pwiz.ProteowizardWrapper
             var bits = Environment.Is64BitProcess ? "64" : "32";
             var message = "Cannot load ProteoWizard dlls. Please ensure that " + bits
                 + "-bit ProteoWizard is installed to its default install directory (\""
-                + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\").";
+                + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\")."
+                + "\nCurrently trying to load ProteoWizard dlls from path \"" + PwizPath + "\".";
 
             return message;
         }
