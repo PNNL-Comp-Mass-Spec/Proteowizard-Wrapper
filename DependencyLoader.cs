@@ -146,6 +146,9 @@ namespace pwiz.ProteowizardWrapper
 
         #region Static stateful variable and populating functions
 
+        /// <summary>
+        /// Name of the DLL we are checking for
+        /// </summary>
         public const string TargetDllName = "pwiz_bindings_cli.dll";
 
         /// <summary>

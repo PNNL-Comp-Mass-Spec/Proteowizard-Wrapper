@@ -46,21 +46,41 @@ namespace pwiz.ProteowizardWrapper
 			// Call the base class constructor
         }
 
+        /// <summary>
+        /// Get the list of CVParams for the specified chromatogram
+        /// </summary>
+        /// <param name="chromIndex"></param>
+        /// <returns></returns>
 		public CVParamList GetChromatogramCVParams(int chromIndex)
 		{
             return _chromatogramList.chromatogram(chromIndex).cvParams;
 		}
 
+        /// <summary>
+        /// Get the ProteoWizard native chromatogram object for the specified spectrum
+        /// </summary>
+        /// <param name="chromIndex"></param>
+        /// <returns></returns>
 		public Chromatogram GetChromatogramObject(int chromIndex)
 		{
             return _chromatogramList.chromatogram(chromIndex, true);
 		}
 
+        /// <summary>
+        /// Get the list of CVParams for the specified spectrum
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
 		public CVParamList GetSpectrumCVParams(int scanIndex)
 		{
             return _spectrumList.spectrum(scanIndex).cvParams;
 		}
 
+        /// <summary>
+        /// Get the ProteoWizard native spectrum object for the specified spectrum.
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
 		public Spectrum GetSpectrumObject(int scanIndex)
 		{
             return _spectrumList.spectrum(scanIndex, true);

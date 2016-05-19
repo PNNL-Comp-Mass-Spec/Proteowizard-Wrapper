@@ -615,6 +615,14 @@ namespace pwiz.ProteowizardWrapper
             intensityArray = spectrum.Intensities;
         }
 
+        /// <summary>
+        /// Returns an MsDataSpectrum object representing the spectrum requested.
+        /// </summary>
+        /// <param name="spectrumIndex"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// If you need direct access to CVParams, and are using MSDataFileReader, try using "GetSpectrumObject" instead.
+        /// </remarks>
         public MsDataSpectrum GetSpectrum(int spectrumIndex)
         {
             if (_scanCache != null)

@@ -37,6 +37,8 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\ProteowizardWrapper.XML</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Clearcore2.Data.WiffReader, Version=2.0.0.0, Culture=neutral, PublicKeyToken=2a79e0d8fd2e4eca, processorArchitecture=x86">
