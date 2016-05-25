@@ -28,6 +28,16 @@ namespace pwiz.ProteowizardWrapper
 #if DEBUG
                 Console.WriteLine("Adding assembly resolver...");
 #endif
+                try
+                {
+                    // Use ReflectionOnlyLoad because it doesn't load dependencies.
+                    var asm = Assembly.ReflectionOnlyLoad("pwiz_bindings_cli, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+                    Console.WriteLine("Warning: Program will try to use \"" + asm.Location + "\" instead of searching for ProteoWizard installation.");
+                }
+                catch
+                {
+                    // Do nothing; we actually want to hit this, because if we can already resolve pwiz_bindings_cli, that will be used rather than going through this assembly resolver.
+                }
                 AppDomain.CurrentDomain.AssemblyResolve += ProteoWizardAssemblyResolver;
                 _resolverAdded = true;
             }
