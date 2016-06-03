@@ -37,8 +37,57 @@ namespace pwiz.ProteowizardWrapper
     /// after read operations have been completed. This returns a handy CSV-formatted
     /// report on file read performance.
     /// </summary>
-    public class MsDataFileImpl : IDisposable
+    internal class MsDataFileImpl : IDisposable
     {
+#region PNNL Added functions
+
+        static MsDataFileImpl()
+        {
+            pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver();
+        }
+
+        /// <summary>
+        /// Get the list of CVParams for the specified chromatogram
+        /// </summary>
+        /// <param name="chromIndex"></param>
+        /// <returns></returns>
+        public CVParamList GetChromatogramCVParams(int chromIndex)
+        {
+            return _chromatogramList.chromatogram(chromIndex).cvParams;
+        }
+
+        /// <summary>
+        /// Get the ProteoWizard native chromatogram object for the specified spectrum
+        /// </summary>
+        /// <param name="chromIndex"></param>
+        /// <returns></returns>
+        public Chromatogram GetChromatogramObject(int chromIndex)
+        {
+            return _chromatogramList.chromatogram(chromIndex, true);
+        }
+
+        /// <summary>
+        /// Get the list of CVParams for the specified spectrum
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
+        public CVParamList GetSpectrumCVParams(int scanIndex)
+        {
+            return _spectrumList.spectrum(scanIndex).cvParams;
+        }
+
+        /// <summary>
+        /// Get the ProteoWizard native spectrum object for the specified spectrum.
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
+        public Spectrum GetSpectrumObject(int scanIndex)
+        {
+            return _spectrumList.spectrum(scanIndex, true);
+        }
+
+#endregion
+
         private static readonly ReaderList FULL_READER_LIST = ReaderList.FullReaderList;
 
         // Cached disposable objects
@@ -115,16 +164,17 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor; Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.
         /// </summary>
         /// <param name="msData"></param>
+        /// <remarks>Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.</remarks>
         private MsDataFileImpl(MSData msData)
         {
             _msDataFile = msData;
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor; Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.
         /// </summary>
         /// <param name="path">Data file path</param>
         /// <param name="sampleIndex">Sample index, typically 0</param>
@@ -134,6 +184,7 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="acceptZeroLengthSpectra">Whether to accept zero-length spectra, default true</param>
         /// <param name="requireVendorCentroidedMS1">True to return centroided MS1 spectra</param>
         /// <param name="requireVendorCentroidedMS2">True to return centroided MS2 spectra</param>
+        /// <remarks>Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.</remarks>
         public MsDataFileImpl(
             string path, 
             int sampleIndex = 0, 

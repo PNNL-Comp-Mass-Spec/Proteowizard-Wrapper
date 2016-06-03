@@ -20,7 +20,10 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <remarks>This should be called early in the program, so that the ProteoWizard Assembly Resolver will 
         /// already be in the resolver chain before any other use of ProteoWizardWrapper.
-        /// Also, DependencyLoader.ValidateLoader() should be used to make sure a meaningful error message is thrown if ProteoWizard is not available.</remarks>
+        /// Also, <see cref="DependencyLoader.ValidateLoader()"/> should be used to make sure a meaningful error message is thrown if ProteoWizard is not available.</remarks>
+        /// <remarks>This must be called before any portion of <see cref="MsDataFileImpl"/> is used. It cannot be called in the same function
+        /// as a constructor to that class; it must be called from at least 1 step higher on the call stack, to be in place before the
+        /// program attempts to load the DLL</remarks>
         public static void AddAssemblyResolver()
         {
             if (!_resolverAdded)
@@ -39,6 +42,7 @@ namespace pwiz.ProteowizardWrapper
                     // Do nothing; we actually want to hit this, because if we can already resolve pwiz_bindings_cli, that will be used rather than going through this assembly resolver.
                 }
                 AppDomain.CurrentDomain.AssemblyResolve += ProteoWizardAssemblyResolver;
+                ValidateLoader();
                 _resolverAdded = true;
             }
         }
