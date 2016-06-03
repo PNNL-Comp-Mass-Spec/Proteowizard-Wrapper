@@ -53,7 +53,7 @@ namespace pwiz.ProteowizardWrapper
         /// <returns></returns>
         public CVParamList GetChromatogramCVParams(int chromIndex)
         {
-            return _chromatogramList.chromatogram(chromIndex).cvParams;
+            return ChromatogramList.chromatogram(chromIndex).cvParams;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace pwiz.ProteowizardWrapper
         /// <returns></returns>
         public Chromatogram GetChromatogramObject(int chromIndex)
         {
-            return _chromatogramList.chromatogram(chromIndex, true);
+            return ChromatogramList.chromatogram(chromIndex, true);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace pwiz.ProteowizardWrapper
         /// <returns></returns>
         public CVParamList GetSpectrumCVParams(int scanIndex)
         {
-            return _spectrumList.spectrum(scanIndex).cvParams;
+            return SpectrumList.spectrum(scanIndex).cvParams;
         }
 
         /// <summary>
@@ -83,9 +83,80 @@ namespace pwiz.ProteowizardWrapper
         /// <returns></returns>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
-            return _spectrumList.spectrum(scanIndex, true);
+            return SpectrumList.spectrum(scanIndex, true);
         }
 
+        /// <summary>
+        /// List of MSConvert-style filter strings to apply to the spectrum list.
+        /// </summary>
+        /// <remarks>If the filter count is greater than 0, the default handling of the spectrumList using the optional constructor parameters is disabled.</remarks>
+        public readonly List<string> Filters = new List<string>();
+
+        /// <summary>
+        /// Uses the centroiding/peak picking algorithm that the vendor libraries provide, if available; otherwise uses a low-quality centroiding algorithm.
+        /// </summary>
+        public const string VendorCentroiding = "peakPicking true 1-";
+        private bool _useVendorCentroiding = false;
+        /// <summary>
+        /// Continuous Wavelet Transform peak picker - high-quality peak picking, may be slow with some high-res data.
+        /// </summary>
+        public const string CwtCentroiding = "peakPicking cwt snr=1.0 peakSpace=0.1 msLevel=1-";
+        private bool _useCwtCentroiding = false;
+
+        /// <summary>
+        /// Add/remove Vendor Centroiding to the filter list. Call <see cref="RedoFilters()"/> if calling this after reading any spectra.
+        /// </summary>
+        public bool UseVendorCentroiding
+        {
+            get { return Filters.Contains(VendorCentroiding); }
+            set
+            {
+                if (_useVendorCentroiding != value)
+                {
+                    _useVendorCentroiding = value;
+                    if (value)
+                    {
+                        Filters.Add(VendorCentroiding);
+                    }
+                    else
+                    {
+                        Filters.Remove(VendorCentroiding);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add/remove CWT Centroiding to the filter list. Call <see cref="RedoFilters()"/> if calling this after reading any spectra.
+        /// </summary>
+        public bool UseCwtCentroiding
+        {
+            get { return Filters.Contains(CwtCentroiding); }
+            set
+            {
+                if (_useCwtCentroiding != value)
+                {
+                    _useCwtCentroiding = value;
+                    if (value)
+                    {
+                        Filters.Add(CwtCentroiding);
+                    }
+                    else
+                    {
+                        Filters.Remove(CwtCentroiding);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Force the reload of the spectrum list, reapplying any specified filters.
+        /// </summary>
+        public void RedoFilters()
+        {
+            _spectrumList = null;
+            _msDataFile.run.spectrumList = _spectrumListBase;
+        }
 #endregion
 
         private static readonly ReaderList FULL_READER_LIST = ReaderList.FullReaderList;
@@ -93,8 +164,10 @@ namespace pwiz.ProteowizardWrapper
         // Cached disposable objects
         private MSData _msDataFile;
         private readonly ReaderConfig _config;
-        protected SpectrumList _spectrumList;
-        protected ChromatogramList _chromatogramList;
+        private SpectrumList _spectrumList;
+        // For storing the unwrapped spectrumList, in case modification/unwrapping is needed
+        private SpectrumList _spectrumListBase;
+        private ChromatogramList _chromatogramList;
         private MsDataScanCache _scanCache;
         private readonly LockMassParameters _lockmassParameters; // For Waters lockmass correction
         private int? _lockmassFunction;  // For Waters lockmass correction
@@ -130,23 +203,6 @@ namespace pwiz.ProteowizardWrapper
         public const string PREFIX_SINGLE = "SRM SIC "; // Not L10N
         public const string PREFIX_PRECURSOR = "SIM SIC "; // Not L10N
 
-		/// <summary>
-		/// Return an array of MsDataFileImpl objects for all instrument files found in the path
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		[Obsolete("Deprecated")]
-        public static MsDataFileImpl[] ReadAll(string path)
-        {
-            var listAll = new MSDataList();
-            ReaderList.FullReaderList.read(path, listAll);
-            var listAllImpl = new List<MsDataFileImpl>();
-            foreach (var msData in listAll)
-                listAllImpl.Add(new MsDataFileImpl(msData));
-            return listAllImpl.ToArray();
-        }
-
-
         public static bool? IsNegativeChargeIdNullable(string id)
         {
             if (id.StartsWith("+ ")) // Not L10N
@@ -161,16 +217,6 @@ namespace pwiz.ProteowizardWrapper
             if (IsNegativeChargeIdNullable(id).HasValue)
                 id = id.Substring(2);
             return id.StartsWith(PREFIX_SINGLE) || id.StartsWith(PREFIX_PRECURSOR);
-        }
-
-        /// <summary>
-        /// Constructor; Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.
-        /// </summary>
-        /// <param name="msData"></param>
-        /// <remarks>Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.</remarks>
-        private MsDataFileImpl(MSData msData)
-        {
-            _msDataFile = msData;
         }
 
         /// <summary>
@@ -195,7 +241,7 @@ namespace pwiz.ProteowizardWrapper
             bool requireVendorCentroidedMS1 = false, 
             bool requireVendorCentroidedMS2 = false)
         {
-			DependencyLoader.AddAssemblyResolver();
+            DependencyLoader.AddAssemblyResolver();
             FilePath = path;
             _msDataFile = new MSData();
             _config = new ReaderConfig {simAsSpectra = simAsSpectra, srmAsSpectra = srmAsSpectra, acceptZeroLengthSpectra = acceptZeroLengthSpectra};
@@ -402,7 +448,6 @@ namespace pwiz.ProteowizardWrapper
                 }
             }
             return configList;
-          
         }
 
         private static bool HasInfo(UserParam uParam)
@@ -479,48 +524,64 @@ namespace pwiz.ProteowizardWrapper
             {
                 if (_spectrumList == null)
                 {
-                    // CONSIDER(bspratt): there is no acceptable wrapping order when both centroiding and lockmass are needed at the same time 
-                    // (For now, this can't happen in practice, as Waters offers no centroiding, but someday this may force pwiz API rework)
-                    var centroidLevel = new List<int>();
-                    _spectrumList = _msDataFile.run.spectrumList;
-                    bool hasSrmSpectra = HasSrmSpectraInList(_spectrumList);
-                    if (!hasSrmSpectra)
+                    if (_spectrumListBase == null)
                     {
-                        if (_requireVendorCentroidedMS1)
-                            centroidLevel.Add(1);
-                        if (_requireVendorCentroidedMS2)
-                            centroidLevel.Add(2);
-                    }
-                    if (centroidLevel.Any())
-                    {
-                        _spectrumList = new SpectrumList_PeakPicker(_spectrumList,
-                            new VendorOnlyPeakDetector(), // Throws an exception when no vendor centroiding available
-                            true, centroidLevel.ToArray());
+                        _spectrumListBase = _msDataFile.run.spectrumList;
                     }
 
-                    _lockmassFunction = null;
-                    if (_lockmassParameters != null && !_lockmassParameters.IsEmpty)
+                    if (Filters.Count == 0)
                     {
-                        _spectrumList = new SpectrumList_LockmassRefiner(_spectrumList,
-                            _lockmassParameters.LockmassPositive ?? 0,
-                            _lockmassParameters.LockmassNegative ?? 0,
-                            _lockmassParameters.LockmassTolerance ?? LockMassParameters.LOCKMASS_TOLERANCE_DEFAULT);
-                        if (_spectrumList.size() > 0 && !hasSrmSpectra)
+                        // CONSIDER(bspratt): there is no acceptable wrapping order when both centroiding and lockmass are needed at the same time 
+                        // (For now, this can't happen in practice, as Waters offers no centroiding, but someday this may force pwiz API rework)
+                        var centroidLevel = new List<int>();
+                        _spectrumList = _msDataFile.run.spectrumList;
+                        bool hasSrmSpectra = HasSrmSpectraInList(_spectrumList);
+                        if (!hasSrmSpectra)
                         {
-                            // If the first seen spectrum has MS1 data and function > 1 assume it's the lockspray function, 
-                            // and thus to be omitted from chromatogram extraction.
-                            // N.B. for msE data we will always assume function 3 and greater are to be omitted
-                            // CONSIDER(bspratt) I really wish there was some way to communicate decisions like this to the user
-                            using (var spectrum = _spectrumList.spectrum(0, DetailLevel.FullMetadata))
+                            if (_requireVendorCentroidedMS1)
+                                centroidLevel.Add(1);
+                            if (_requireVendorCentroidedMS2)
+                                centroidLevel.Add(2);
+                        }
+                        if (centroidLevel.Any())
+                        {
+                            _spectrumList = new SpectrumList_PeakPicker(_spectrumList,
+                                new VendorOnlyPeakDetector(),
+                                // Throws an exception when no vendor centroiding available
+                                true, centroidLevel.ToArray());
+                        }
+
+                        _lockmassFunction = null;
+                        if (_lockmassParameters != null && !_lockmassParameters.IsEmpty)
+                        {
+                            _spectrumList = new SpectrumList_LockmassRefiner(_spectrumList,
+                                _lockmassParameters.LockmassPositive ?? 0,
+                                _lockmassParameters.LockmassNegative ?? 0,
+                                _lockmassParameters.LockmassTolerance ?? LockMassParameters.LOCKMASS_TOLERANCE_DEFAULT);
+                            if (_spectrumList.size() > 0 && !hasSrmSpectra)
                             {
-                                if (GetMsLevel(spectrum) == 1)
+                                // If the first seen spectrum has MS1 data and function > 1 assume it's the lockspray function, 
+                                // and thus to be omitted from chromatogram extraction.
+                                // N.B. for msE data we will always assume function 3 and greater are to be omitted
+                                // CONSIDER(bspratt) I really wish there was some way to communicate decisions like this to the user
+                                using (var spectrum = _spectrumList.spectrum(0, DetailLevel.FullMetadata))
                                 {
-                                    var function = MsDataSpectrum.WatersFunctionNumberFromId(id.abbreviate(spectrum.id));
-                                    if (function > 1)
-                                        _lockmassFunction = function; // Ignore all scans in this function for chromatogram extraction purposes
+                                    if (GetMsLevel(spectrum) == 1)
+                                    {
+                                        var function =
+                                            MsDataSpectrum.WatersFunctionNumberFromId(id.abbreviate(spectrum.id));
+                                        if (function > 1)
+                                            _lockmassFunction = function;
+                                                // Ignore all scans in this function for chromatogram extraction purposes
+                                    }
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        SpectrumListFactory.wrap(_msDataFile, Filters);
+                        _spectrumList = _msDataFile.run.spectrumList;
                     }
                 }
                 return _spectrumList;
@@ -683,7 +744,7 @@ namespace pwiz.ProteowizardWrapper
                 if (!_scanCache.TryGetSpectrum(spectrumIndex, out returnSpectrum))
                 {
                     // spectrum not in the cache, pull it from the file
-                    returnSpectrum = GetSpectrum(SpectrumList.spectrum(spectrumIndex, true));
+                    returnSpectrum = GetSpectrum(SpectrumList.spectrum(spectrumIndex, true), spectrumIndex);
                     // add it to the cache
                     _scanCache.Add(spectrumIndex, returnSpectrum);
                 }
@@ -691,11 +752,11 @@ namespace pwiz.ProteowizardWrapper
             }
             using (var spectrum = SpectrumList.spectrum(spectrumIndex, true))
             {
-                return GetSpectrum(spectrum);
+                return GetSpectrum(spectrum, spectrumIndex);
             }
         }
 
-        private MsDataSpectrum GetSpectrum(Spectrum spectrum)
+        private MsDataSpectrum GetSpectrum(Spectrum spectrum, int spectrumIndex)
         {
             if (spectrum == null)
             {
@@ -706,9 +767,16 @@ namespace pwiz.ProteowizardWrapper
                     Intensities = new double[0]
                 };
             }
+            string idText = spectrum.id;
+            if (idText.Trim().Length == 0)
+            {
+                throw new ArgumentException(string.Format("Empty spectrum ID (and index = {0}) for scan {1}", // Not L10N
+                    spectrum.index, spectrumIndex)); 
+            }
+
             var msDataSpectrum = new MsDataSpectrum
             {
-                Id = id.abbreviate(spectrum.id),
+                Id = id.abbreviate(idText),
                 Level = GetMsLevel(spectrum) ?? 0,
                 Index = spectrum.index,
                 RetentionTime = GetStartTime(spectrum),
@@ -804,7 +872,7 @@ namespace pwiz.ProteowizardWrapper
         {
             using (var spectrum = SpectrumList.spectrum(scanIndex, true))
             {
-                return GetSpectrum(IsSrmSpectrum(spectrum) ? spectrum : null);
+                return GetSpectrum(IsSrmSpectrum(spectrum) ? spectrum : null, scanIndex);
             }
         }
 

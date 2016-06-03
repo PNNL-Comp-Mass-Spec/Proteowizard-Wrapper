@@ -72,6 +72,57 @@ namespace pwiz.ProteowizardWrapper
             return this.MsDataFileImpl.GetSpectrumObject(scanIndex);
         }
 
+	    /// <summary>
+	    /// List of MSConvert-style filter strings to apply to the spectrum list.
+	    /// </summary>
+	    /// <remarks>If the filter count is greater than 0, the default handling of the spectrumList using the optional constructor parameters is disabled.</remarks>
+	    public List<string> Filters
+	    {
+	        get { return this.MsDataFileImpl.Filters; }
+	    }
+
+	    /// <summary>
+	    /// Uses the centroiding/peak picking algorithm that the vendor libraries provide, if available; otherwise uses a low-quality centroiding algorithm.
+	    /// </summary>
+	    public string VendorCentroiding
+	    {
+	        get { return MsDataFileImpl.VendorCentroiding; }
+	    }
+
+	    /// <summary>
+        /// Continuous Wavelet Transform peak picker - high-quality peak picking, may be slow with some high-res data.
+        /// </summary>
+        public string CwtCentroiding
+	    {
+	        get { return MsDataFileImpl.CwtCentroiding; }
+	    }
+
+        /// <summary>
+        /// Add/remove Vendor Centroiding to the filter list. Call <see cref="RedoFilters()"/> if calling this after reading any spectra.
+        /// </summary>
+        public bool UseVendorCentroiding
+        {
+            get { return this.MsDataFileImpl.UseVendorCentroiding; }
+            set { this.MsDataFileImpl.UseVendorCentroiding = value; }
+        }
+
+        /// <summary>
+        /// Add/remove CWT Centroiding to the filter list. Call <see cref="RedoFilters()"/> if calling this after reading any spectra.
+        /// </summary>
+        public bool UseCwtCentroiding
+        {
+            get { return this.MsDataFileImpl.UseCwtCentroiding; }
+            set { this.MsDataFileImpl.UseCwtCentroiding = value; }
+        }
+
+        /// <summary>
+        /// Force the reload of the spectrum list, reapplying any specified filters.
+        /// </summary>
+        public void RedoFilters()
+        {
+            this.MsDataFileImpl.RedoFilters();
+        }
+
         private MsDataFileImpl MsDataFileImpl;
 
         public static string[] ReadIds(string path)
@@ -82,17 +133,6 @@ namespace pwiz.ProteowizardWrapper
         public static string PREFIX_TOTAL { get { return MsDataFileImpl.PREFIX_TOTAL; } }
         public static string PREFIX_SINGLE { get { return MsDataFileImpl.PREFIX_SINGLE; } }
         public static string PREFIX_PRECURSOR { get { return MsDataFileImpl.PREFIX_PRECURSOR; } }
-
-		/// <summary>
-		/// Return an array of MsDataFileImpl objects for all instrument files found in the path
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		[Obsolete("Deprecated")]
-        internal static MsDataFileImpl[] ReadAll(string path)
-        {
-            return MsDataFileImpl.ReadAll(path);
-        }
 
         public static bool? IsNegativeChargeIdNullable(string id)
         {
