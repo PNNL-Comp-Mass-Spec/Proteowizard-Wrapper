@@ -94,7 +94,10 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
-        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
+        /// <remarks>
+        /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Alternatively, use <see cref="GetSpectrumScanInfo"/> or the GetSpectrum method that returns an <see cref="MsDataSpectrum"/> object
+        /// </remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
             return this.MsDataFileImpl.GetSpectrumObject(scanIndex);
@@ -357,6 +360,12 @@ namespace pwiz.ProteowizardWrapper
             return this.MsDataFileImpl.GetSpectrumIndex(id);
         }
 
+        /// <summary>
+        /// Populate parallel arrays with m/z and intensity values
+        /// </summary>
+        /// <param name="spectrumIndex"></param>
+        /// <param name="mzArray"></param>
+        /// <param name="intensityArray"></param>
         public void GetSpectrum(int spectrumIndex, out double[] mzArray, out double[] intensityArray)
         {
             this.MsDataFileImpl.GetSpectrum(spectrumIndex, out mzArray, out intensityArray);
@@ -369,7 +378,8 @@ namespace pwiz.ProteowizardWrapper
 	    /// <param name="getBinaryData"></param>
 	    /// <returns></returns>
 	    /// <remarks>
-	    /// If you need direct access to CVParams, and are using MSDataFileReader, try using "GetSpectrumObject" instead.
+        /// If you need direct access to CVParams, and are using MSDataFileReader, try using <see cref="GetSpectrumObject"/> instead.
+        /// Alternatively, use <see cref="GetSpectrumScanInfo"/>
 	    /// </remarks>
 	    public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
         {

@@ -804,6 +804,12 @@ namespace pwiz.ProteowizardWrapper
             return index;
         }
 
+        /// <summary>
+        /// Populate parallel arrays with m/z and intensity values
+        /// </summary>
+        /// <param name="spectrumIndex"></param>
+        /// <param name="mzArray"></param>
+        /// <param name="intensityArray"></param>
         public void GetSpectrum(int spectrumIndex, out double[] mzArray, out double[] intensityArray)
         {
             var spectrum = GetSpectrum(spectrumIndex);
@@ -1455,7 +1461,7 @@ namespace pwiz.ProteowizardWrapper
 
         /// <summary>
         /// Constructor
-        /// </summary
+        /// </summary>
         public SpectrumScanContainer()
         {
             CVParams = new List<CVParamData>();
