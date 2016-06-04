@@ -37,6 +37,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="chromIndex"></param>
         /// <returns></returns>
+        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public CVParamList GetChromatogramCVParams(int chromIndex)
         {
             return this.MsDataFileImpl.GetChromatogramCVParams(chromIndex);
@@ -47,6 +48,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="chromIndex"></param>
         /// <returns></returns>
+        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public Chromatogram GetChromatogramObject(int chromIndex)
         {
             return this.MsDataFileImpl.GetChromatogramObject(chromIndex);
@@ -57,16 +59,42 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Alternatively, use <see cref="GetSpectrumCVParamData"/>
+        /// </remarks>
         public CVParamList GetSpectrumCVParams(int scanIndex)
         {
             return this.MsDataFileImpl.GetSpectrumCVParams(scanIndex);
         }
 
         /// <summary>
+        /// Get the list of CVParams for the specified spectrum
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns>List of CVParamData structs</returns>
+        public List<CVParamData> GetSpectrumCVParamData(int scanIndex)
+        {
+            return this.MsDataFileImpl.GetSpectrumCVParamData(scanIndex);
+        }
+
+        /// <summary>
+        /// Get a container describing the scan (or scans) associated with the given spectrum
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns>Scan info container</returns>
+        /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
+        public SpectrumScanContainer GetSpectrumScanInfo(int scanIndex)
+        {
+            return this.MsDataFileImpl.GetSpectrumScanInfo(scanIndex);
+        }
+        
+        /// <summary>
         /// Get the ProteoWizard native spectrum object for the specified spectrum.
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
+        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
             return this.MsDataFileImpl.GetSpectrumObject(scanIndex);
@@ -334,20 +362,49 @@ namespace pwiz.ProteowizardWrapper
             this.MsDataFileImpl.GetSpectrum(spectrumIndex, out mzArray, out intensityArray);
         }
 
-        /// <summary>
-        /// Returns an MsDataSpectrum object representing the spectrum requested.
-        /// </summary>
-        /// <param name="spectrumIndex"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// If you need direct access to CVParams, and are using MSDataFileReader, try using "GetSpectrumObject" instead.
-        /// </remarks>
-        public MsDataSpectrum GetSpectrum(int spectrumIndex)
+	    /// <summary>
+	    /// Returns an MsDataSpectrum object representing the spectrum requested.
+	    /// </summary>
+	    /// <param name="spectrumIndex"></param>
+	    /// <param name="getBinaryData"></param>
+	    /// <returns></returns>
+	    /// <remarks>
+	    /// If you need direct access to CVParams, and are using MSDataFileReader, try using "GetSpectrumObject" instead.
+	    /// </remarks>
+	    public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
-            return this.MsDataFileImpl.GetSpectrum(spectrumIndex);
+            return this.MsDataFileImpl.GetSpectrum(spectrumIndex, getBinaryData);
         }
 
-        public bool HasSrmSpectra
+        /// <summary>
+        /// Get SpectrumIDs for all spectra in the run
+        /// </summary>
+        /// <returns>List of NativeIds</returns>
+        public List<string> GetSpectrumIdList()
+        {
+            return this.MsDataFileImpl.GetSpectrumIdList();
+        }
+
+         /// <summary>
+        /// Return the typical NativeId for a scan number in a thermo .raw file
+        /// </summary>
+        /// <param name="scanNumber"></param>
+        /// <returns></returns>
+        public string GetThermoNativeId(int scanNumber)
+        {
+            return this.MsDataFileImpl.GetThermoNativeId(scanNumber);
+        }
+
+	    /// <summary>
+	    /// Return a mapping from scan number to spectrumIndex for a thermo .raw file
+	    /// </summary>
+	    /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
+	    public Dictionary<int, int> GetThermoScanToIndexMapping()
+	    {
+            return this.MsDataFileImpl.GetThermoScanToIndexMapping();
+	    }
+
+	    public bool HasSrmSpectra
         {
             get { return this.MsDataFileImpl.HasSrmSpectra; }
         }

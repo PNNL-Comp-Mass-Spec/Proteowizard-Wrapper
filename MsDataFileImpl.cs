@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Policy;
+using System.Text.RegularExpressions;
 using System.Threading;
 using pwiz.CLI.cv;
 using pwiz.CLI.data;
@@ -51,6 +53,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="chromIndex"></param>
         /// <returns></returns>
+        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public CVParamList GetChromatogramCVParams(int chromIndex)
         {
             return ChromatogramList.chromatogram(chromIndex).cvParams;
@@ -61,6 +64,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="chromIndex"></param>
         /// <returns></returns>
+        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public Chromatogram GetChromatogramObject(int chromIndex)
         {
             return ChromatogramList.chromatogram(chromIndex, true);
@@ -71,16 +75,96 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Alternatively, use <see cref="GetSpectrumCVParamData"/>
+        /// </remarks>
         public CVParamList GetSpectrumCVParams(int scanIndex)
         {
             return SpectrumList.spectrum(scanIndex).cvParams;
         }
 
         /// <summary>
+        /// Get the list of CVParams for the specified spectrum
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns>List of CVParamData structs</returns>
+        public List<CVParamData> GetSpectrumCVParamData(int scanIndex)
+        {
+            var cvParams = CopyCVParamData(SpectrumList.spectrum(scanIndex).cvParams);
+
+            return cvParams;
+        }
+
+        /// <summary>
+        /// Get a container describing the scan (or scans) associated with the given spectrum
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns>Scan info container</returns>
+        /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
+        public SpectrumScanContainer GetSpectrumScanInfo(int scanIndex)
+        {
+            var scanInfo = new SpectrumScanContainer()
+            {
+                CVParams = CopyCVParamData(SpectrumList.spectrum(scanIndex).scanList.cvParams)
+            };
+
+            foreach (var scan in SpectrumList.spectrum(scanIndex).scanList.scans)
+            {
+                var scanData = new SpectrumScanData
+                {
+                    CVParams = CopyCVParamData(scan.cvParams)
+                };
+
+                foreach (var userParam in scan.userParams)
+                {
+                    scanData.UserParams.Add(new KeyValuePair<string, string>(userParam.name, userParam.value));
+                }
+
+                foreach (var scanWindow in scan.scanWindows)
+                {
+                    scanData.ScanWindowList.AddRange(CopyCVParamData(scanWindow.cvParams));
+                }
+
+                scanInfo.Scans.Add(scanData);
+            }
+
+            return scanInfo;
+
+        }
+
+        private static CVParamData CopyCVParamData(CVParam param)
+        {
+            var paramCopy = new CVParamData
+            {
+                CVId = (int)param.cvid,
+                CVName = param.cvid.ToString(),
+                Name = param.name,
+                Value = param.value,
+                UnitsID = (int)param.units,
+                UnitsName = param.unitsName
+            };
+            return paramCopy;
+        }
+
+        private static List<CVParamData> CopyCVParamData(CVParamList paramList)
+        {
+            var cvParams = new List<CVParamData>();
+
+            foreach (var param in paramList)
+            {
+                cvParams.Add(CopyCVParamData(param));
+            }
+
+            return cvParams;
+        }        
+
+        /// <summary>
         /// Get the ProteoWizard native spectrum object for the specified spectrum.
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
+        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
             return SpectrumList.spectrum(scanIndex, true);
@@ -731,26 +815,31 @@ namespace pwiz.ProteowizardWrapper
         /// Returns an MsDataSpectrum object representing the spectrum requested.
         /// </summary>
         /// <param name="spectrumIndex"></param>
+        /// <param name="getBinaryData"></param>
         /// <returns></returns>
         /// <remarks>
         /// If you need direct access to CVParams, and are using MSDataFileReader, try using "GetSpectrumObject" instead.
         /// </remarks>
-        public MsDataSpectrum GetSpectrum(int spectrumIndex)
+        public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
             if (_scanCache != null)
             {
                 MsDataSpectrum returnSpectrum;
-                // check the scan for this cache
-                if (!_scanCache.TryGetSpectrum(spectrumIndex, out returnSpectrum))
+
+                // Check the scan for this cache
+                var success = _scanCache.TryGetSpectrum(spectrumIndex, out returnSpectrum);
+              
+                if (!success || (!returnSpectrum.BinaryDataLoaded && getBinaryData))
                 {
-                    // spectrum not in the cache, pull it from the file
-                    returnSpectrum = GetSpectrum(SpectrumList.spectrum(spectrumIndex, true), spectrumIndex);
+                    // Spectrum not in the cache (or is in the cache but does not have binary data)
+                    // Pull it from the file
+                    returnSpectrum = GetSpectrum(SpectrumList.spectrum(spectrumIndex, getBinaryData), spectrumIndex);
                     // add it to the cache
                     _scanCache.Add(spectrumIndex, returnSpectrum);
                 }
                 return returnSpectrum;
             }
-            using (var spectrum = SpectrumList.spectrum(spectrumIndex, true))
+            using (var spectrum = SpectrumList.spectrum(spectrumIndex, getBinaryData))
             {
                 return GetSpectrum(spectrum, spectrumIndex);
             }
@@ -785,10 +874,12 @@ namespace pwiz.ProteowizardWrapper
                 Centroided = IsCentroided(spectrum),
                 NegativeCharge = NegativePolarity(spectrum)
             };
+
             if (spectrum.binaryDataArrays.Count <= 1)
             {
                 msDataSpectrum.Mzs = new double[0];
                 msDataSpectrum.Intensities = new double[0];
+                msDataSpectrum.BinaryDataLoaded = false;
             }
             else
             {
@@ -803,6 +894,8 @@ namespace pwiz.ProteowizardWrapper
                         msDataSpectrum.Precursors = GetMs1Precursors(spectrum);
                     }
 
+                    msDataSpectrum.BinaryDataLoaded = true;
+
                     return msDataSpectrum;
                 }
                 catch (NullReferenceException)
@@ -810,6 +903,65 @@ namespace pwiz.ProteowizardWrapper
                 }
             }
             return msDataSpectrum;
+        }
+
+        /// <summary>
+        /// Get SpectrumIDs for all spectra in the run
+        /// </summary>
+        /// <returns>List of NativeIds</returns>
+        public List<string> GetSpectrumIdList()
+        {
+            var spectrumIDs = new List<string>();
+
+            var spectrumCount = SpectrumList.size();
+
+            for (var spectrumIndex = 0; spectrumIndex < spectrumCount; spectrumIndex++)
+            {
+                var nativeId = SpectrumList.spectrumIdentity(spectrumIndex).id;
+                spectrumIDs.Add(nativeId);
+            }
+
+            return spectrumIDs;
+        }
+
+        /// <summary>
+        /// Return the typical NativeId for a scan number in a thermo .raw file
+        /// </summary>
+        /// <param name="scanNumber"></param>
+        /// <returns></returns>
+        public string GetThermoNativeId(int scanNumber)
+        {
+            return string.Format("controllerType=0 controllerNumber=1 scan={0}", scanNumber);
+        }
+
+        /// <summary>
+        /// Return a mapping from scan number to spectrumIndex for a thermo .raw file
+        /// </summary>
+        /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
+        public Dictionary<int, int> GetThermoScanToIndexMapping()
+        {
+            var reScanNumber = new Regex(@"controllerType=\d+ controllerNumber=\d+ scan=(?<ScanNumber>\d+)", RegexOptions.Compiled);
+
+            var spectrumIds = GetSpectrumIdList();
+
+            // Construct a scanNumber to scanIndex mapping
+            var scanNumberToIndexMap = new Dictionary<int, int>();
+
+            for (var spectrumIndex = 0; spectrumIndex < spectrumIds.Count; spectrumIndex++)
+            {
+                var match = reScanNumber.Match(spectrumIds[spectrumIndex]);
+
+                if (!match.Success)
+                {
+                    throw new Exception(string.Format("NativeId did not match the expected format: {0}", spectrumIds[spectrumIndex]));
+                }
+    
+                var scanNumber = int.Parse(match.Groups["ScanNumber"].Value);
+
+                scanNumberToIndexMap.Add(scanNumber, spectrumIndex);
+            }
+
+            return scanNumberToIndexMap;
         }
 
         public bool HasSrmSpectra
@@ -1037,6 +1189,7 @@ namespace pwiz.ProteowizardWrapper
                         IsolationWindowTargetMz = new SignedMz(GetIsolationWindowValue(p, CVID.MS_isolation_window_target_m_z), negativePolarity),
                         IsolationWindowLower = GetIsolationWindowValue(p, CVID.MS_isolation_window_lower_offset),
                         IsolationWindowUpper = GetIsolationWindowValue(p, CVID.MS_isolation_window_upper_offset),
+                        ActivationTypes = GetPrecursorActivationList(p)
                     }).ToArray();
         }
 
@@ -1057,6 +1210,57 @@ namespace pwiz.ProteowizardWrapper
                 }).ToArray();
         }
 
+        /// <summary>
+        /// Construct a list of precursor activation types used (user-friendly abbreviations)
+        /// </summary>
+        /// <param name="precursor"></param>
+        /// <returns></returns>
+        private static List<string> GetPrecursorActivationList(Precursor precursor)
+        {
+            var activationTypes = new List<string>();
+
+            foreach (var cvParam in precursor.activation.cvParams)
+            {
+                switch (cvParam.cvid)
+                {
+                    case CVID.MS_CID:       // Aka MS_collision_induced_dissociation
+                    case CVID.MS_in_source_collision_induced_dissociation:
+                    case CVID.MS_trap_type_collision_induced_dissociation:
+                        activationTypes.Add("cid");
+                        break;
+                    case CVID.MS_ECD:       // Aka MS_electron_capture_dissociation
+                        activationTypes.Add("ecd");
+                        break;
+                    case CVID.MS_ETD:       // Aka MS_electron_transfer_dissociation
+                        activationTypes.Add("etd");
+                        break;
+                    case CVID.MS_HCD:       // Aka MS_beam_type_collision_induced_dissociation
+                    case CVID.MS_higher_energy_beam_type_collision_induced_dissociation:
+                        activationTypes.Add("hcd");
+                        break;
+                    case CVID.MS_PQD:       // Aka MS_pulsed_q_dissociation
+                        activationTypes.Add("pqd");
+                        break;
+                    case CVID.MS_SID:       // Aka MS_surface_induced_dissociation
+                        activationTypes.Add("sid");
+                        break;
+                    case CVID.MS_MPD:       // Aka MS_multiphoton_dissociation
+                        activationTypes.Add("mpd");
+                        break;
+                    case CVID.MS_BIRD:       // Aka MS_blackbody_infrared_radiative_dissociation
+                        activationTypes.Add("bird");
+                        break;
+                    case CVID.MS_IRMPD:       // Aka MS_infrared_multiphoton_dissociation
+                        activationTypes.Add("irmpd");
+                        break;
+                }
+
+            }
+           
+
+            return activationTypes;
+        }
+    
         private static SignedMz GetPrecursorMz(Precursor precursor, bool negativePolarity)
         {
             // CONSIDER: Only the first selected ion m/z is considered for the precursor m/z
@@ -1208,7 +1412,57 @@ namespace pwiz.ProteowizardWrapper
         }
     }
 
-    
+    public struct CVParamData
+    {
+        public int CVId;
+        public string CVName;
+        public string Name;
+        public string Value;
+        public int UnitsID;
+        public string UnitsName;
+
+        public override string ToString()
+        {
+            return Name + ": " + Value;
+        }
+    }
+
+    public class SpectrumScanData
+    {
+        public List<CVParamData> CVParams;
+        public List<CVParamData> ScanWindowList;
+
+        /// <summary>
+        /// List of KeyValuePairs where key is user param name, value is user param value
+        /// </summary>
+        public List<KeyValuePair<string,string>> UserParams;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public SpectrumScanData()
+        {
+            CVParams = new List<CVParamData>();
+            ScanWindowList = new List<CVParamData>();
+            UserParams = new List<KeyValuePair<string, string>>();
+        }
+    }
+
+    public class SpectrumScanContainer
+    {
+        public List<CVParamData> CVParams;
+        public List<SpectrumScanData> Scans;
+
+        /// <summary>
+        /// Constructor
+        /// </summary
+        public SpectrumScanContainer()
+        {
+            CVParams = new List<CVParamData>();
+            Scans = new List<SpectrumScanData>();
+        }
+    }
+
     /// <summary>
     /// We need a way to distinguish chromatograms for negative ion modes from those for positive.
     /// The idea of m/z is inherently "positive", in the sense of sorting etc, so we carry around 
@@ -1404,6 +1658,12 @@ namespace pwiz.ProteowizardWrapper
         public SignedMz IsolationWindowTargetMz { get; set; }
         public double? IsolationWindowUpper { get; set; }
         public double? IsolationWindowLower { get; set; }
+
+        /// <summary>
+        /// Activation types, like cid, etc, hcd, etc.
+        /// </summary>
+        public List<string> ActivationTypes { get; set; }
+
         public SignedMz IsolationMz
         {
             get
@@ -1429,7 +1689,7 @@ namespace pwiz.ProteowizardWrapper
                 }
                 return null;
             }
-        }
+        }        
     }
 
     public sealed class MsTimeAndPrecursors
@@ -1450,6 +1710,8 @@ namespace pwiz.ProteowizardWrapper
         public bool NegativeCharge { get; set; } // True if negative ion mode
         public double[] Mzs { get; set; }
         public double[] Intensities { get; set; }
+
+        public bool BinaryDataLoaded { get; set; }
 
         public static int WatersFunctionNumberFromId(string id)
         {
@@ -1566,8 +1828,16 @@ namespace pwiz.ProteowizardWrapper
             {
                 _cache.Remove(_scanStack.Dequeue());
             }
-            _cache.Add(scanNum, s);
-            _scanStack.Enqueue(scanNum);
+
+            if (_cache.ContainsKey(scanNum))
+            {
+                _cache[scanNum] = s;
+            }
+            else
+            {
+                _cache.Add(scanNum, s);
+                _scanStack.Enqueue(scanNum);
+            }
         }
 
         public bool TryGetSpectrum(int scanNum, out MsDataSpectrum spectrum)
