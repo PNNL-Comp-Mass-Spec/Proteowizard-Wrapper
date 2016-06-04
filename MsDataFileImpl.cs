@@ -104,12 +104,26 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
         public SpectrumScanContainer GetSpectrumScanInfo(int scanIndex)
         {
+            Spectrum spec;
+            if (_scanCache != null)
+            {
+                if (!_scanCache.TryGetSpectrum(scanIndex, out spec))
+                {
+                    spec = SpectrumList.spectrum(scanIndex, false);
+                    _scanCache.Add(scanIndex, spec);
+                }
+            }
+            else
+            {
+                spec = SpectrumList.spectrum(scanIndex, false);
+            }
+            var scanList = spec.scanList;
             var scanInfo = new SpectrumScanContainer()
             {
-                CVParams = CopyCVParamData(SpectrumList.spectrum(scanIndex).scanList.cvParams)
+                CVParams = CopyCVParamData(scanList.cvParams)
             };
 
-            foreach (var scan in SpectrumList.spectrum(scanIndex).scanList.scans)
+            foreach (var scan in scanList.scans)
             {
                 var scanData = new SpectrumScanData
                 {
@@ -167,7 +181,20 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
-            return SpectrumList.spectrum(scanIndex, true);
+            Spectrum spec;
+            if (_scanCache != null)
+            {
+                if (!_scanCache.TryGetSpectrum(scanIndex, out spec))
+                {
+                    spec = SpectrumList.spectrum(scanIndex, true);
+                    _scanCache.Add(scanIndex, spec);
+                }
+            }
+            else
+            {
+                spec = SpectrumList.spectrum(scanIndex, true);
+            }
+            return spec;
         }
 
         /// <summary>
@@ -839,7 +866,14 @@ namespace pwiz.ProteowizardWrapper
                 {
                     // Spectrum not in the cache (or is in the cache but does not have binary data)
                     // Pull it from the file
-                    returnSpectrum = GetSpectrum(SpectrumList.spectrum(spectrumIndex, getBinaryData), spectrumIndex);
+                    Spectrum spectrum;
+                    var success2 = _scanCache.TryGetSpectrum(spectrumIndex, out spectrum);
+                    if (!success2 || (spectrum.binaryDataArrays.Count <= 1 && getBinaryData))
+                    {
+                        spectrum = SpectrumList.spectrum(spectrumIndex, getBinaryData);
+                        _scanCache.Add(spectrumIndex, spectrum);
+                    }
+                    returnSpectrum = GetSpectrum(spectrum, spectrumIndex);
                     // add it to the cache
                     _scanCache.Add(spectrumIndex, returnSpectrum);
                 }
@@ -1804,12 +1838,15 @@ namespace pwiz.ProteowizardWrapper
     {
         private readonly int _cacheSize;
         private readonly Dictionary<int, MsDataSpectrum> _cache;
+        private readonly Dictionary<int, Spectrum> _cacheNative;
         /// <summary>
         /// queue to keep track of order in which scans were added
         /// </summary>
         private readonly Queue<int> _scanStack;
+        private readonly Queue<int> _scanNativeStack;
         public int Capacity { get { return _cacheSize; } }
         public int Size { get { return _scanStack.Count; } }
+        public int SizeNative { get { return _scanNativeStack.Count; } }
 
         public MsDataScanCache()
             : this(100)
@@ -1820,12 +1857,19 @@ namespace pwiz.ProteowizardWrapper
         {
             _cacheSize = cacheSize;
             _cache = new Dictionary<int, MsDataSpectrum>(_cacheSize);
+            _cacheNative = new Dictionary<int, Spectrum>(_cacheSize);
             _scanStack = new Queue<int>();
+            _scanNativeStack = new Queue<int>();
         }
 
         public bool HasScan(int scanNum)
         {
             return _cache.ContainsKey(scanNum);
+        }
+
+        public bool HasScanNative(int scanNum)
+        {
+            return _cacheNative.ContainsKey(scanNum);
         }
 
         public void Add(int scanNum, MsDataSpectrum s)
@@ -1846,6 +1890,29 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        public bool TryGetSpectrum(int scanNum, out Spectrum spectrum)
+        {
+            return _cacheNative.TryGetValue(scanNum, out spectrum);
+        }
+
+        public void Add(int scanNum, Spectrum s)
+        {
+            if (_scanNativeStack.Count() >= _cacheSize)
+            {
+                _cacheNative.Remove(_scanNativeStack.Dequeue());
+            }
+
+            if (_cacheNative.ContainsKey(scanNum))
+            {
+                _cacheNative[scanNum] = s;
+            }
+            else
+            {
+                _cacheNative.Add(scanNum, s);
+                _scanNativeStack.Enqueue(scanNum);
+            }
+        }
+
         public bool TryGetSpectrum(int scanNum, out MsDataSpectrum spectrum)
         {
             return _cache.TryGetValue(scanNum, out spectrum);
@@ -1854,7 +1921,9 @@ namespace pwiz.ProteowizardWrapper
         public void Clear()
         {
             _cache.Clear();
+            _cacheNative.Clear();
             _scanStack.Clear();
+            _scanNativeStack.Clear();
         }
     }
 }

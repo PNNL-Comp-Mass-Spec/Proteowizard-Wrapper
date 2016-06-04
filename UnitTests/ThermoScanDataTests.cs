@@ -315,6 +315,7 @@ namespace ProteowizardWrapperUnitTests
 
             using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFile.FullName))
             {
+                oWrapper.EnableCaching(5);
                 Console.WriteLine("Parsing scan headers for {0}", dataFile.Name);
 
                 var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
@@ -324,10 +325,10 @@ namespace ProteowizardWrapperUnitTests
                 var scanTypeCountsActual = new Dictionary<Tuple<string, string>, int>();
                 var lastProgress = DateTime.Now;
 
-                foreach (var scan in scanNumberToIndexMap)
+                foreach (var scan in scanNumberToIndexMap.Where(x => x.Key >= scanStart && x.Key <= scanEnd))
                 {
-                    var spectrumIndex = scan.Key;
-                    var scanNumber = scan.Value;
+                    var scanNumber = scan.Key;
+                    var spectrumIndex = scan.Value;
 
                     var spectrum = oWrapper.GetSpectrum(spectrumIndex, false);
 
