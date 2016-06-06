@@ -22,6 +22,10 @@ using pwiz.CLI.msdata;
 
 namespace pwiz.ProteowizardWrapper
 {
+    /// <summary>
+    /// A wrapper around the internal class that allows us to add and use an assembly resolver to
+    /// find the appropriate architecture of pwiz_bindings_cli.dll from an installed version of ProteoWizard.
+    /// </summary>
 	public class MSDataFileReader : IDisposable
 	{
         /// <summary>
@@ -33,34 +37,44 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Get the list of CVParams for the specified chromatogram
+        /// Get the list of CVParams for the specified chromatogram (requires reference to pwiz_bindings_cli; set "copy local" to false.)
         /// </summary>
         /// <param name="chromIndex"></param>
         /// <returns></returns>
-        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
+        /// <remarks>
+        /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
+        /// </remarks>
         public CVParamList GetChromatogramCVParams(int chromIndex)
         {
             return this.MsDataFileImpl.GetChromatogramCVParams(chromIndex);
         }
 
         /// <summary>
-        /// Get the ProteoWizard native chromatogram object for the specified spectrum
+        /// Get the ProteoWizard native chromatogram object for the specified spectrum (requires reference to pwiz_bindings_cli; set "copy local" to false.)
         /// </summary>
         /// <param name="chromIndex"></param>
         /// <returns></returns>
-        /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
+        /// <remarks>
+        /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
+        /// </remarks>
         public Chromatogram GetChromatogramObject(int chromIndex)
         {
             return this.MsDataFileImpl.GetChromatogramObject(chromIndex);
         }
 
         /// <summary>
-        /// Get the list of CVParams for the specified spectrum
+        /// Get the list of CVParams for the specified spectrum (requires reference to pwiz_bindings_cli; set "copy local" to false.)
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// Alternatively, use <see cref="GetSpectrumCVParamData"/>
         /// </remarks>
         public CVParamList GetSpectrumCVParams(int scanIndex)
@@ -69,10 +83,15 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Get the list of CVParams for the specified spectrum
+        /// Get the list of CVParams for the specified spectrum (requires reference to pwiz_bindings_cli; set "copy local" to false.)
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns>List of CVParamData structs</returns>
+        /// <remarks>
+        /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
+        /// </remarks>
         public List<CVParamData> GetSpectrumCVParamData(int scanIndex)
         {
             return this.MsDataFileImpl.GetSpectrumCVParamData(scanIndex);
@@ -90,12 +109,14 @@ namespace pwiz.ProteowizardWrapper
         }
         
         /// <summary>
-        /// Get the ProteoWizard native spectrum object for the specified spectrum.
+        /// Get the ProteoWizard native spectrum object for the specified spectrum. (requires reference to pwiz_bindings_cli; set "copy local" to false.)
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
+        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// Alternatively, use <see cref="GetSpectrumScanInfo"/> or the GetSpectrum method that returns an <see cref="MsDataSpectrum"/> object
         /// </remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
@@ -185,23 +206,23 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Constructor; Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.
+        /// Constructor
         /// </summary>
         /// <param name="path">Data file path</param>
         /// <param name="sampleIndex">Sample index to select within the data file, typically 0</param>
         /// <param name="lockmassParameters">Lock mass parameters (used for Waters datasets)</param>
-        /// <param name="simAsSpectra">Whether to treat SIM data as spectra, default false</param>
-        /// <param name="srmAsSpectra">Whether to treat SRM data as spectra, default false</param>
+        /// <param name="simAsSpectra">Whether to treat SIM data as spectra, default true</param>
+        /// <param name="srmAsSpectra">Whether to treat SRM data as spectra, default true</param>
         /// <param name="acceptZeroLengthSpectra">Whether to accept zero-length spectra, default true</param>
         /// <param name="requireVendorCentroidedMS1">True to return centroided MS1 spectra</param>
         /// <param name="requireVendorCentroidedMS2">True to return centroided MS2 spectra</param>
-        /// <remarks>Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.</remarks>
+        /// <remarks>This differs from the ProteoWizard version of this code by defaulting to treating SIM and SRM data as spectra.</remarks>
         public MSDataFileReader(
             string path, 
             int sampleIndex = 0, 
             LockMassParameters lockmassParameters = null, 
-            bool simAsSpectra = false, 
-            bool srmAsSpectra = false, 
+            bool simAsSpectra = true, 
+            bool srmAsSpectra = true, 
             bool acceptZeroLengthSpectra = true, 
             bool requireVendorCentroidedMS1 = false, 
             bool requireVendorCentroidedMS2 = false)
