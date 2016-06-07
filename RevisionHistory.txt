@@ -1,5 +1,25 @@
 Proteowizard Wrapper
 
+Version 1.1.6001; June 6, 2016
+	- Added unit tests for Thermo .Raw files
+		- Ported from unit tests in the ThermoRawFileReader
+	- Make most reads of the native spectrum go through a new function that facilitates caching
+		- Auto-enabled if over a duplicate spectrum is read of 10 times in one session
+
+Version 1.1.5998; June 3, 2016
+	- Partially synchronize the Proteowizard source version of ProteowizardWrapper (didn't add changes that added another DLL dependency)
+	- Added ability to use MSConvert filter strings to trigger Centroiding and other operations.
+
+Version 1.0.5983; May 19, 2016
+	- Modifications to the Dependency Loader, to make it more robust, and improve error messages.
+
+Version 1.0.5934; March 31, 2016
+	- Update to .NET 4.5.1 and ProteoWizard v3.0.9490
+	- Add overload of GetScanTimesAndMsLevels that does not require a CancellationToken
+
+Version 1.0.5794; November 12, 2015
+	- Add a class providing an assemblyResolve handler, for dynamically locating pwiz_bindings_cli, with all of its dependencies.
+
 Version 1.0.5619; May 21, 2015
 	- Updated to March 2015 release of ProteoWizard
 	- Now compiling as AnyCPU instead of x86
