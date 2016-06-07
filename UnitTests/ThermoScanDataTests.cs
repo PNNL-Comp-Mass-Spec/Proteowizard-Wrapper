@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using pwiz.ProteowizardWrapper;
 using ThermoRawFileReader;
 
 namespace ProteowizardWrapperUnitTests
@@ -14,7 +15,14 @@ namespace ProteowizardWrapperUnitTests
 
         private enum CVIDs
         {
-            MS_filter_string = 1000512
+            MS_scan_start_time = 1000016,
+            MS_scan_window_upper_limit = 1000500,
+            MS_scan_window_lower_limit = 1000501,
+            MS_filter_string = 1000512,
+            MS_ion_injection_time = 1000927,
+            MS_TIC = 1000285,
+            MS_base_peak_m_z = 1000504,
+            MS_base_peak_intensity = 1000505
         }
 
         [Test]
@@ -34,7 +42,8 @@ namespace ProteowizardWrapperUnitTests
             var etdScanBuggyResults = new List<double>();
 
             // Keys in this dictionary are scan number and values are collision energies
-            var file1Data = new Dictionary<int, List<double>> {
+            var file1Data = new Dictionary<int, List<double>>
+            {
                 {2250, ce45},
                 {2251, ce45},
                 {2252, ce45},
@@ -49,7 +58,8 @@ namespace ProteowizardWrapperUnitTests
             };
             expectedData.Add("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20", file1Data);
 
-            var file2Data = new Dictionary<int, List<double>> {
+            var file2Data = new Dictionary<int, List<double>>
+            {
                 {39000, ce30},
                 {39001, ce30},
                 {39002, ms1Scan},
@@ -64,7 +74,8 @@ namespace ProteowizardWrapperUnitTests
             };
             expectedData.Add("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53", file2Data);
 
-            var file3Data = new Dictionary<int, List<double>> {
+            var file3Data = new Dictionary<int, List<double>>
+            {
                 {19000, etdScanBuggyResults},   // This is an ETD scan with collision energy 120.55
                 {19001, ce120},
                 {19002, ce120},
@@ -79,14 +90,15 @@ namespace ProteowizardWrapperUnitTests
             };
             expectedData.Add("HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53", file3Data);
 
-            var file4Data = new Dictionary<int, List<double>> {
-                {1, etdScanBuggyResults},   // This is an ETD scan with collision energy 30.00
-                {2, etdScanBuggyResults},   // This is an ETD scan with collision energy 30.00
-               
+            var file4Data = new Dictionary<int, List<double>>
+            {
+                {1, etdScanBuggyResults}, // This is an ETD scan with collision energy 30.00
+                {2, etdScanBuggyResults}, // This is an ETD scan with collision energy 30.00
+
             };
             expectedData.Add("MZ0210MnxEF889ETD", file4Data);
 
-            
+
             var dataFile = GetRawDataFile(rawFileName);
 
             Dictionary<int, List<double>> collisionEnergiesThisFile;
@@ -126,10 +138,11 @@ namespace ProteowizardWrapperUnitTests
                     var precursors = oWrapper.GetPrecursors(spectrumIndex);
 
                     var collisionEnergiesThisScan = (from precursor in precursors
-                                                     select precursor.PrecursorCollisionEnergy into collisionEnergy
-                                                     where collisionEnergy != null
-                                                     select (double)collisionEnergy).ToList();
-                    
+                                                     select precursor.PrecursorCollisionEnergy
+                                                         into collisionEnergy
+                                                         where collisionEnergy != null
+                                                         select (double)collisionEnergy).ToList();
+
                     collisionEnergiesActual.Add(scanNumber, collisionEnergiesThisScan);
 
                     msLevelsActual.Add(scanNumber, spectrum.Level);
@@ -163,8 +176,8 @@ namespace ProteowizardWrapperUnitTests
                         if (msLevel != 1)
                         {
                             var msg = string.Format(
-                                        "Scan {0} has no collision energies, which should only be true for spectra with msLevel=1. This scan has msLevel={1} and activationType={2}",
-                                        scanNumber, msLevel, activationTypes);
+                                "Scan {0} has no collision energies, which should only be true for spectra with msLevel=1. This scan has msLevel={1} and activationType={2}",
+                                scanNumber, msLevel, activationTypes);
                             Console.WriteLine(msg);
 
                             if (activationTypes.Contains("etd"))
@@ -202,7 +215,7 @@ namespace ProteowizardWrapperUnitTests
                     }
 
                 }
-                
+
             }
         }
 
@@ -315,7 +328,6 @@ namespace ProteowizardWrapperUnitTests
 
             using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFile.FullName))
             {
-                oWrapper.EnableCaching(5);
                 Console.WriteLine("Parsing scan headers for {0}", dataFile.Name);
 
                 var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
@@ -336,19 +348,8 @@ namespace ProteowizardWrapperUnitTests
 
                     Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
-                    string filterText = null;
-
-                    foreach(var scanEntry in cvScanInfo.Scans)
-                    {
-                        var query = (from item in scanEntry.CVParams where item.CVId == (int)CVIDs.MS_filter_string select item).ToList();
-
-                        if (query.Count == 0)
-                            continue;
-
-                        filterText = query.First().Value;
-                        break;
-
-                    }
+                    string filterText;
+                    GetScanFilterText(cvScanInfo, out filterText);
 
                     if (filterText == null)
                     {
@@ -357,7 +358,7 @@ namespace ProteowizardWrapperUnitTests
 
                         if (errorCount > 25)
                             return;
-                        
+
                         continue;
                     }
 
@@ -422,6 +423,317 @@ namespace ProteowizardWrapperUnitTests
             }
         }
 
+        [Test]
+        [TestCase(@"Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521, 3, 6)]
+        [TestCase(@"HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165, 3, 42)]
+        public void TestGetScanInfo(string rawFileName, int scanStart, int scanEnd, int expectedMS1, int expectedMS2)
+        {
+            var expectedData = new Dictionary<string, Dictionary<int, string>>();
+
+            // Keys in this dictionary are the scan number whose metadata is being retrieved
+            var file1Data = new Dictionary<int, string>
+            {
+                // Scan MSLevel NumPeaks RetentionTime DriftTimeMsec LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ ActivationType IonMode IsCentroided ScanStartTime IonInjectionTime FilterText
+                {1513, "1   851 44.57 0 400 2000 6.3E+8 1089.978 1.2E+7     0.00          positive True    1.50 + c ESI Full..."},
+                {1514, "2   109 44.60 0 230 1780 5.0E+6  528.128 7.2E+5   884.41 cid      positive True   28.96 + c d Full m..."},
+                {1515, "2   290 44.63 0 305 2000 2.6E+7 1327.414 6.0E+6  1147.67 cid      positive True   14.13 + c d Full m..."},
+                {1516, "2   154 44.66 0 400 2000 7.6E+5 1251.554 3.7E+4  1492.90 cid      positive True  123.30 + c d Full m..."},
+                {1517, "1   887 44.69 0 400 2000 8.0E+8 1147.613 1.0E+7     0.00          positive True    1.41 + c ESI Full..."},
+                {1518, "2   190 44.71 0 380 2000 4.6E+6 1844.618 2.7E+5  1421.21 cid      positive True   40.91 + c d Full m..."},
+                {1519, "2   165 44.74 0 380 2000 6.0E+6 1842.547 6.9E+5  1419.24 cid      positive True   37.84 + c d Full m..."},
+                {1520, "2   210 44.77 0 265 2000 1.5E+6 1361.745 4.2E+4  1014.93 cid      positive True   96.14 + c d Full m..."},
+                {1521, "1   860 44.80 0 400 2000 6.9E+8 1126.627 2.9E+7     0.00          positive True    1.45 + c ESI Full..."}
+            };
+            expectedData.Add("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20", file1Data);
+
+            var file2Data = new Dictionary<int, string>
+            {
+                {16121, "1 11888 47.68 0 350 1550 1.9E+9  503.565 3.4E+8     0.00          positive False   0.44 FTMS + p NSI..."},
+                {16122, "2   490 47.68 0 106  817 1.6E+6  550.309 2.1E+5   403.22 cid      positive True   11.82 ITMS + c NSI..."},
+                {16123, "2   785 47.68 0 143 1627 5.5E+5  506.272 4.9E+4   538.84 cid      positive True   26.07 ITMS + c NSI..."},
+                {16124, "2   996 47.68 0 208 2000 7.8E+5  737.530 7.0E+4   775.94 cid      positive True   24.65 ITMS + c NSI..."},
+                {16125, "2   703 47.68 0 120 1627 2.1E+5  808.486 2.2E+4   538.84 etd      positive True   42.48 ITMS + c NSI..."},
+                {16126, "2   753 47.68 0 120 1627 1.4E+5  536.209 9.0E+3   538.84 cid, etd positive True   58.96 ITMS + c NSI..."},
+                {16127, "2   872 47.68 0 120 1627 1.3E+5  808.487 1.4E+4   538.84 cid, etd positive True   58.96 ITMS + c NSI..."},
+                {16128, "2   972 47.69 0 225 1682 4.4E+5  805.579 2.3E+4   835.88 cid      positive True   42.71 ITMS + c NSI..."},
+                {16129, "2   937 47.69 0 266 1986 3.4E+5  938.679 2.9E+4   987.40 cid      positive True   35.75 ITMS + c NSI..."},
+                {16130, "2   622 47.69 0 110  853 2.7E+5  411.977 1.2E+4   421.26 cid      positive True   50.98 ITMS + c NSI..."},
+                {16131, "2    29 47.69 0 120 1986 2.1E+4  984.504 9.5E+3   987.40 etd      positive True   26.55 ITMS + c NSI..."},
+                {16132, "2   239 47.69 0 120  853 1.2E+4  421.052 6.8E+2   421.26 etd      positive True  127.21 ITMS + c NSI..."},
+                {16133, "2   280 47.70 0 120  853 1.5E+4  421.232 1.2E+3   421.26 cid, etd positive True  110.21 ITMS + c NSI..."},
+                {16134, "2   343 47.70 0 120  853 1.4E+4  838.487 7.5E+2   421.26 cid, etd positive True  110.21 ITMS + c NSI..."},
+                {16135, "2    38 47.70 0 120 1986 2.1E+4  984.498 9.2E+3   987.40 cid, etd positive True   31.82 ITMS + c NSI..."},
+                {16136, "2    93 47.71 0 120 1986 2.3E+4  984.491 9.4E+3   987.40 cid, etd positive True   31.82 ITMS + c NSI..."},
+                {16137, "2  1172 47.71 0 336 2000 3.5E+5 1536.038 4.7E+3  1240.76 cid      positive True   30.70 ITMS + c NSI..."},
+                {16138, "2   925 47.72 0 235 1760 2.9E+5  826.095 2.5E+4   874.84 cid      positive True   40.56 ITMS + c NSI..."},
+                {16139, "2    96 47.72 0 120 1760 1.6E+4  875.506 2.1E+3   874.84 etd      positive True   45.88 ITMS + c NSI..."},
+                {16140, "2   174 47.72 0 120 1760 1.8E+4 1749.846 2.0E+3   874.84 cid, etd positive True   54.15 ITMS + c NSI..."},
+                {16141, "2   240 47.72 0 120 1760 1.6E+4  874.664 1.6E+3   874.84 cid, etd positive True   54.15 ITMS + c NSI..."},
+                {16142, "1 13501 47.73 0 350 1550 1.3E+9  503.565 1.9E+8     0.00          positive False   0.79 FTMS + p NSI..."},
+                {16143, "2   651 47.73 0 128  981 6.5E+5  444.288 6.4E+4   485.28 cid      positive True   22.26 ITMS + c NSI..."},
+                {16144, "2   512 47.73 0 101 1561 5.0E+5  591.309 4.0E+4   387.41 cid      positive True   28.19 ITMS + c NSI..."},
+                {16145, "2   817 47.73 0 162 1830 4.0E+5  567.912 2.8E+4   606.29 cid      positive True   37.30 ITMS + c NSI..."},
+                {16146, "2   573 47.73 0  99  770 1.9E+5  532.308 3.4E+4   379.72 cid      positive True  100.00 ITMS + c NSI..."},
+                {16147, "2   813 47.74 0 120 1830 3.8E+5  603.095 3.1E+4   606.29 etd      positive True   25.47 ITMS + c NSI..."},
+                {16148, "2   882 47.74 0 120 1830 1.5E+5  603.076 1.3E+4   606.29 cid, etd positive True   61.48 ITMS + c NSI..."},
+                {16149, "2  1121 47.74 0 120 1830 1.6E+5  603.027 1.1E+4   606.29 cid, etd positive True   61.48 ITMS + c NSI..."},
+                {16150, "2   625 47.74 0  95 1108 3.8E+5  418.536 1.2E+5   365.88 cid      positive True  134.71 ITMS + c NSI..."},
+                {16151, "2   679 47.75 0 146 1656 2.8E+5  501.523 4.3E+4   548.54 cid      positive True   30.59 ITMS + c NSI..."},
+                {16152, "2  1171 47.75 0 328 2000 1.8E+5  848.497 2.2E+3  1210.06 cid      positive True   38.05 ITMS + c NSI..."},
+                {16153, "2   600 47.75 0 120 1656 1.3E+5  548.396 1.3E+4   548.54 etd      positive True   50.35 ITMS + c NSI..."},
+                {16154, "2   566 47.75 0 120 1656 4.2E+4  548.450 4.2E+3   548.54 cid, etd positive True  122.26 ITMS + c NSI..."},
+                {16155, "2   753 47.76 0 120 1656 4.2E+4  550.402 3.6E+3   548.54 cid, etd positive True  122.26 ITMS + c NSI..."},
+                {16156, "2  1120 47.76 0 324 2000 1.5E+5 1491.872 1.0E+4  1197.16 cid      positive True   63.61 ITMS + c NSI..."},
+                {16157, "2   714 47.76 0 124  950 2.2E+5  420.689 2.2E+4   469.71 cid      positive True  100.00 ITMS + c NSI..."},
+                {16158, "2   692 47.76 0 306 2000 1.3E+5 1100.042 3.5E+3  1132.02 cid      positive True   27.79 ITMS + c NSI..."},
+                {16159, "2   667 47.76 0 122  935 1.9E+5  445.117 2.7E+4   462.15 cid      positive True   69.09 ITMS + c NSI..."},
+                {16160, "2   694 47.77 0 145 1646 3.4E+5  539.065 6.0E+4   544.84 cid      positive True   28.97 ITMS + c NSI..."},
+                {16161, "2   737 47.77 0 157 1191 2.8E+5  541.462 6.0E+4   590.28 cid      positive True   37.92 ITMS + c NSI..."},
+                {16162, "2   288 47.77 0 120 1191 8.4E+4 1180.615 5.1E+3   590.28 etd      positive True   38.31 ITMS + c NSI..."},
+                {16163, "2   305 47.77 0 120 1191 1.8E+4 1184.614 9.0E+2   590.28 cid, etd positive True  109.20 ITMS + c NSI..."},
+                {16164, "2   372 47.77 0 120 1191 1.7E+4 1184.644 8.7E+2   590.28 cid, etd positive True  109.20 ITMS + c NSI..."},
+                {16165, "1 13816 47.78 0 350 1550 1.2E+9  503.565 1.6E+8     0.00          positive False   0.76 FTMS + p NSI..."}
+            };
+            expectedData.Add("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53", file2Data);
+
+            var dataFile = GetRawDataFile(rawFileName);
+
+            using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFile.FullName))
+            {
+                var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+
+                Console.WriteLine("Scan info for {0}", dataFile.Name);
+                Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15}",
+                                  "Scan", "MSLevel",
+                                  "NumPeaks", "RetentionTime", "DriftTimeMsec",
+                                  "LowMass", "HighMass", "TotalIonCurrent",
+                                  "BasePeakMZ", "BasePeakIntensity",
+                                  "ParentIonMZ", "ActivationType",
+                                  "IonMode", "IsCentroided",
+                                  "IonInjectionTime", "FilterText");
+
+                var scanCountMS1 = 0;
+                var scanCountMS2 = 0;
+
+                foreach (var scan in scanNumberToIndexMap.Where(x => x.Key >= scanStart && x.Key <= scanEnd))
+                {
+                    var scanNumber = scan.Key;
+                    var spectrumIndex = scan.Value;
+
+                    var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
+                    var spectrumParams = oWrapper.GetSpectrumCVParamData(spectrumIndex);
+                    var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
+
+                    Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan " + scanNumber);
+
+                    var totalIonCurrent = GetCvParamValueDbl(spectrumParams, CVIDs.MS_TIC);
+                    var basePeakMZ = GetCvParamValueDbl(spectrumParams, CVIDs.MS_base_peak_m_z);
+                    var basePeakIntensity = GetCvParamValueDbl(spectrumParams, CVIDs.MS_base_peak_intensity);
+
+                    double parentIonMZ = 0;
+                    var activationType = string.Empty;
+
+                    if (spectrum.Precursors.Length > 0)
+                    {
+                        var precursor = spectrum.Precursors[0];
+
+                        parentIonMZ = precursor.PrecursorMz.GetValueOrDefault();
+                        if (precursor.ActivationTypes != null)
+                            activationType = string.Join(", ", precursor.ActivationTypes);
+                    }
+
+                    double scanStartTime;
+                    double ionInjectionTime;
+                    string filterText;
+                    double lowMass;
+                    double highMass;
+
+                    GetScanMetadata(cvScanInfo, out scanStartTime, out ionInjectionTime, out filterText, out lowMass, out highMass);
+
+                    var retentionTime = CheckNull(spectrum.RetentionTime);
+                    Assert.AreEqual(retentionTime, scanStartTime, 0.0001, "Mismatch between spectrum.RetentionTime and CVParam MS_scan_start_time");
+
+                    var numPeaks = spectrum.Mzs.Length;
+                    var ionMode = spectrum.NegativeCharge ? "negative" : "positive";
+
+                    var scanSummary =
+                        string.Format(
+                            "{0} {1} {2,5} {3} {4} {5,3} {6,4} {7} {8,8} {9} {10,8} {11,-8} {12} {13,-5} {14,6} {15}",
+                            scanNumber, spectrum.Level,
+                            numPeaks, retentionTime.ToString("0.00"),
+                            CheckNull(spectrum.DriftTimeMsec).ToString("0"),
+                            lowMass.ToString("0"), highMass.ToString("0"),
+                            totalIonCurrent.ToString("0.0E+0"), basePeakMZ.ToString("0.000"),
+                            basePeakIntensity.ToString("0.0E+0"), parentIonMZ.ToString("0.00"),
+                            activationType,
+                            ionMode, spectrum.Centroided,
+                            ionInjectionTime.ToString("0.00"),
+                            filterText.Substring(0, 12) + "...");
+
+                    Console.WriteLine(scanSummary);
+
+                    if (spectrum.Level > 1)
+                        scanCountMS2++;
+                    else
+                        scanCountMS1++;
+
+                    Dictionary<int, string> expectedDataThisFile;
+                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out expectedDataThisFile))
+                    {
+                        Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                    }
+
+                    string expectedScanSummary;
+                    if (expectedDataThisFile.TryGetValue(scanNumber, out expectedScanSummary))
+                    {
+                        Assert.AreEqual(scanNumber + " " + expectedScanSummary, scanSummary,
+                                        "Scan summary mismatch, scan " + scanNumber);
+                    }
+                }
+
+                Console.WriteLine("scanCountMS1={0}", scanCountMS1);
+                Console.WriteLine("scanCountMS2={0}", scanCountMS2);
+
+                Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
+                Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
+            }
+        }
+
+        [Test]
+        [TestCase(@"Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521)]
+        [TestCase(@"HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165)]
+        public void TestGetScanData(string rawFileName, int scanStart, int scanEnd)
+        {
+            var expectedData = new Dictionary<string, Dictionary<int, Dictionary<string, string>>>();
+
+            // Keys in this dictionary are the scan number of data being retrieved
+            var file1Data = new Dictionary<int, Dictionary<string, string>> 
+            {
+                {1513, new Dictionary<string, string>()},
+                {1514, new Dictionary<string, string>()},
+                {1515, new Dictionary<string, string>()},
+                {1516, new Dictionary<string, string>()},
+                {1517, new Dictionary<string, string>()}            
+            };
+
+            // The KeySpec for each dictionary entry is Centroid
+            file1Data[1513].Add("False", "851      851      409.615  4.8E+5   1227.956 1.6E+6    + c ESI Full ms [400.00-2000.00]");
+            file1Data[1514].Add("False", "109      109      281.601  2.4E+4   633.151  4.4E+4    + c d Full ms2 884.41@cid45.00 [230.00-1780.00]");
+            file1Data[1515].Add("False", "290      290      335.798  3.8E+4   1034.194 1.6E+4    + c d Full ms2 1147.67@cid45.00 [305.00-2000.00]");
+            file1Data[1516].Add("False", "154      154      461.889  7.3E+3   1203.274 2.6E+3    + c d Full ms2 1492.90@cid45.00 [400.00-2000.00]");
+            file1Data[1517].Add("False", "887      887      420.016  9.7E+5   1232.206 8.0E+5    + c ESI Full ms [400.00-2000.00]");
+
+            file1Data[1513].Add("True",  "851      851      409.615  4.8E+5   1227.956 1.6E+6    + c ESI Full ms [400.00-2000.00]");
+            file1Data[1514].Add("True",  "109      109      281.601  2.4E+4   633.151  4.4E+4    + c d Full ms2 884.41@cid45.00 [230.00-1780.00]");
+            file1Data[1515].Add("True",  "290      290      335.798  3.8E+4   1034.194 1.6E+4    + c d Full ms2 1147.67@cid45.00 [305.00-2000.00]");
+            file1Data[1516].Add("True",  "154      154      461.889  7.3E+3   1203.274 2.6E+3    + c d Full ms2 1492.90@cid45.00 [400.00-2000.00]");
+            file1Data[1517].Add("True",  "887      887      420.016  9.7E+5   1232.206 8.0E+5    + c ESI Full ms [400.00-2000.00]");
+
+            expectedData.Add("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20", file1Data);
+
+
+            var file2Data = new Dictionary<int, Dictionary<string, string>> 
+            {
+                {16121, new Dictionary<string, string>()},
+                {16122, new Dictionary<string, string>()},
+                {16126, new Dictionary<string, string>()},
+                {16131, new Dictionary<string, string>()},
+                {16133, new Dictionary<string, string>()},
+                {16141, new Dictionary<string, string>()}            
+            };
+
+            // The KeySpec for each dictionary entry is Centroid
+
+            file2Data[16121].Add("False", " 11888    11888    346.518  0.0E+0   706.844  9.8E+4    FTMS + p NSI Full ms [350.0000-1550.0000]");
+            file2Data[16122].Add("False", " 490      490      116.232  7.0E+1   403.932  1.1E+3    ITMS + c NSI r d Full ms2 403.2206@cid30.00 [106.0000-817.0000]");
+            file2Data[16126].Add("False", " 753      753      231.045  1.1E+1   1004.586 2.0E+1    ITMS + c NSI r d sa Full ms2 538.8400@etd53.58@cid20.00 [120.0000-1627.0000]");
+            file2Data[16131].Add("False", " 29       29       984.504  9.5E+3   1931.917 2.4E+1    ITMS + c NSI r d Full ms2 987.8934@etd120.55 [120.0000-1986.0000]");
+            file2Data[16133].Add("False", " 280      280      260.118  2.3E+1   663.160  7.7E+0    ITMS + c NSI r d sa Full ms2 421.2619@etd120.55@cid20.00 [120.0000-853.0000]");
+            file2Data[16141].Add("False", " 240      240      304.425  1.3E+1   1447.649 3.0E+1    ITMS + c NSI r d sa Full ms2 874.8397@etd120.55@hcd20.00 [120.0000-1760.0000]");
+
+            file2Data[16121].Add("True", " 833      833      351.231  2.9E+5   712.813  2.9E+5    FTMS + p NSI Full ms [350.0000-1550.0000]");
+            file2Data[16122].Add("True", " 490      490      116.232  7.0E+1   403.932  1.1E+3    ITMS + c NSI r d Full ms2 403.2206@cid30.00 [106.0000-817.0000]");
+            file2Data[16126].Add("True", " 753      753      231.045  1.1E+1   1004.586 2.0E+1    ITMS + c NSI r d sa Full ms2 538.8400@etd53.58@cid20.00 [120.0000-1627.0000]");
+            file2Data[16131].Add("True", " 29       29       984.504  9.5E+3   1931.917 2.4E+1    ITMS + c NSI r d Full ms2 987.8934@etd120.55 [120.0000-1986.0000]");
+            file2Data[16133].Add("True", " 280      280      260.118  2.3E+1   663.160  7.7E+0    ITMS + c NSI r d sa Full ms2 421.2619@etd120.55@cid20.00 [120.0000-853.0000]");
+            file2Data[16141].Add("True", " 240      240      304.425  1.3E+1   1447.649 3.0E+1    ITMS + c NSI r d sa Full ms2 874.8397@etd120.55@hcd20.00 [120.0000-1760.0000]");
+
+            expectedData.Add("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53", file2Data);
+
+            var dataFile = GetRawDataFile(rawFileName);
+
+            for (var iteration = 1; iteration <= 2; iteration++)
+            {
+                var centroidData = (iteration > 1);
+
+                using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(
+                    dataFile.FullName,
+                    requireVendorCentroidedMS1: centroidData,
+                    requireVendorCentroidedMS2: centroidData))
+                {
+                    if (iteration == 1)
+                    {
+                        Console.WriteLine("Scan data for {0}", dataFile.Name);
+                        Console.WriteLine("{0} {1,8} {2,-8} {3,-8} {4,-8} {5,-8} {6,-8} {7,-8}  {8}",
+                                          "Scan", "Centroid", "MzCount", "IntCount",
+                                          "FirstMz", "FirstInt", "MidMz", "MidInt", "ScanFilter");
+                    }
+
+                    var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+
+                    foreach (var scan in scanNumberToIndexMap.Where(x => x.Key >= scanStart && x.Key <= scanEnd))
+                    {
+                        var scanNumber = scan.Key;
+                        var spectrumIndex = scan.Value;
+
+                        var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
+                        
+                        var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
+
+                        var dataPointsRead = spectrum.Mzs.Length;
+
+                        Assert.IsTrue(dataPointsRead > 0, "GetScanData returned 0 for scan {0}", scanNumber);
+
+                        var midPoint = (int)(spectrum.Intensities.Length / 2f);
+
+                        string filterText;
+                        GetScanFilterText(cvScanInfo, out filterText);
+
+                        var scanSummary =
+                            string.Format(
+                                "{0} {1,8} {2,-8} {3,-8} {4,-8} {5,-8} {6,-8} {7,-8}  {8}",
+                                scanNumber, centroidData,
+                                spectrum.Mzs.Length, spectrum.Intensities.Length,
+                                spectrum.Mzs[0].ToString("0.000"), spectrum.Intensities[0].ToString("0.0E+0"),
+                                spectrum.Mzs[midPoint].ToString("0.000"), spectrum.Intensities[midPoint].ToString("0.0E+0"),
+                                filterText);
+
+                        Console.WriteLine(scanSummary);
+
+                        Dictionary<int, Dictionary<string, string>> expectedDataThisFile;
+                        if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out expectedDataThisFile))
+                        {
+                            Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                        }
+
+                        Dictionary<string, string> expectedDataByType;
+                        if (expectedDataThisFile.TryGetValue(scanNumber, out expectedDataByType))
+                        {
+                            var keySpec = centroidData.ToString();
+                            string expectedDataDetails;
+                            if (expectedDataByType.TryGetValue(keySpec, out expectedDataDetails))
+                            {
+                                Assert.AreEqual(expectedDataDetails, scanSummary.Substring(14),
+                                                "Scan details mismatch, scan " + scanNumber + ", keySpec " + keySpec);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }
+
         private void AddExpectedTupleAndCount(
             IDictionary<string, Dictionary<Tuple<string, string>, int>> expectedData,
             string fileName,
@@ -438,6 +750,54 @@ namespace ProteowizardWrapperUnitTests
             }
 
             expectedScanInfo.Add(new Tuple<string, string>(tupleKey1, tupleKey2), scanCount);
+        }
+
+        private double CheckNull(double? value)
+        {
+            if (value == null)
+                return 0;
+
+            return (double)value;
+        }
+
+        private static string GetCvParamValue(IEnumerable<CVParamData> cvParams, CVIDs cvId)
+        {
+            var query = (from item in cvParams where item.CVId == (int)cvId select item).ToList();
+
+            if (query.Count > 0)
+            {
+                return query.First().Value;
+            }
+
+            return string.Empty;
+        }
+
+        private static int GetCvParamValueInt(IEnumerable<CVParamData> cvParams, CVIDs cvId)
+        {
+            var query = (from item in cvParams where item.CVId == (int)cvId select item).ToList();
+
+            if (query.Count > 0)
+            {
+                int value;
+                if (int.TryParse(query.First().Value, out value))
+                    return value;
+            }
+
+            return 0;
+        }
+
+        private static double GetCvParamValueDbl(IEnumerable<CVParamData> cvParams, CVIDs cvId)
+        {
+            var query = (from item in cvParams where item.CVId == (int)cvId select item).ToList();
+
+            if (query.Count > 0)
+            {
+                double value;
+                if (double.TryParse(query.First().Value, out value))
+                    return value;
+            }
+
+            return 0;
         }
 
         private FileInfo GetRawDataFile(string rawFileName)
@@ -457,9 +817,48 @@ namespace ProteowizardWrapperUnitTests
             {
                 Assert.Fail("File not found: " + dataFile.FullName);
             }
-          
+
             return dataFile;
         }
 
+        private static void GetScanFilterText(SpectrumScanContainer cvScanInfo, out string filterText)
+        {
+            double scanStartTime;
+            double ionInjectionTime;
+            double lowMass;
+            double highMass;
+
+            GetScanMetadata(cvScanInfo, out scanStartTime, out ionInjectionTime, out filterText, out lowMass, out highMass);
+        }
+
+        private static void GetScanMetadata(
+            SpectrumScanContainer cvScanInfo,
+            out double scanStartTime,
+            out double ionInjectionTime,
+            out string filterText,
+            out double lowMass,
+            out double highMass)
+        {
+            scanStartTime = 0;
+            ionInjectionTime = 0;
+            filterText = string.Empty;
+            lowMass = 0;
+            highMass = 0;
+
+            // Lookup details on the scan associated with this spectrum 
+            // (cvScanInfo.Scans is a list, but Thermo .raw files typically have a single scan for each spectrum)
+            foreach (var scanEntry in cvScanInfo.Scans)
+            {
+                scanStartTime = GetCvParamValueDbl(scanEntry.CVParams, CVIDs.MS_scan_start_time);
+                ionInjectionTime = GetCvParamValueDbl(scanEntry.CVParams, CVIDs.MS_ion_injection_time);
+                filterText = GetCvParamValue(scanEntry.CVParams, CVIDs.MS_filter_string);
+
+                lowMass = GetCvParamValueDbl(scanEntry.ScanWindowList, CVIDs.MS_scan_window_lower_limit);
+                highMass = GetCvParamValueDbl(scanEntry.ScanWindowList, CVIDs.MS_scan_window_upper_limit);
+
+                break;
+            }
+
+        }
     }
 }
