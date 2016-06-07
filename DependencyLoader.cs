@@ -70,6 +70,7 @@ namespace pwiz.ProteowizardWrapper
                 var found = false;
                 var assm = args.Name.ToLower();
                 var firstLetter = assm[0];
+
                 // Check to see if it is a file that is in the ProteoWizard directory...
                 foreach (var file in PwizPathFiles.Where(f => f[0] == firstLetter))
                 {
@@ -281,7 +282,11 @@ namespace pwiz.ProteowizardWrapper
             PwizPathFiles = new List<string>(allFiles.Length);
             foreach (var file in allFiles)
             {
-                PwizPathFiles.Add(Path.GetFileNameWithoutExtension(file).ToLower());
+                var fileNameBase = Path.GetFileNameWithoutExtension(file);
+                if (fileNameBase != null)
+                {
+                    PwizPathFiles.Add(fileNameBase.ToLower());
+                }
             }
             PwizPathFiles.Sort();
         }

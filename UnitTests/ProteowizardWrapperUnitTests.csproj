@@ -54,6 +54,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="BrukerScanDataTests.cs" />
+    <Compile Include="cvParamUtilities.cs" />
     <Compile Include="ThermoScanDataTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

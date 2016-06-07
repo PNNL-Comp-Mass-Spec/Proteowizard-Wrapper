@@ -13,23 +13,11 @@ namespace ProteowizardWrapperUnitTests
     {
         private const bool USE_REMOTE_PATHS = true;
 
-        private enum CVIDs
-        {
-            MS_scan_start_time = 1000016,
-            MS_scan_window_upper_limit = 1000500,
-            MS_scan_window_lower_limit = 1000501,
-            MS_filter_string = 1000512,
-            MS_ion_injection_time = 1000927,
-            MS_TIC = 1000285,
-            MS_base_peak_m_z = 1000504,
-            MS_base_peak_intensity = 1000505
-        }
-
         [Test]
-        [TestCase(@"Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW")]
-        [TestCase(@"HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw")]
-        [TestCase(@"HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53.raw")]
-        [TestCase(@"MZ0210MnxEF889ETD.raw")]
+        [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW")]
+        [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw")]
+        [TestCase("HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53.raw")]
+        [TestCase("MZ0210MnxEF889ETD.raw")]
         public void TestGetCollisionEnergy(string rawFileName)
         {
             // Keys in this Dictionary are filename, values are Collision Energies by scan
@@ -116,7 +104,7 @@ namespace ProteowizardWrapperUnitTests
             // Keys are scan number, values are the ActivationType (or list of activation types), for example cid, etd, hcd
             var activationTypesActual = new Dictionary<int, List<string>>();
 
-            using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFile.FullName))
+            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
             {
 
                 Console.WriteLine("Examining data in " + dataFile.Name);
@@ -220,13 +208,113 @@ namespace ProteowizardWrapperUnitTests
         }
 
         [Test]
-        [TestCase(@"Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 3316)]
-        [TestCase(@"HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 71147)]
+        [TestCase("blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", 1500, 1900, 190, 211, 0, 0)]
+        [TestCase("Corrupt_Qc_Shew_13_04_pt1_a_5Sep13_Cougar_13-06-14.raw", 500, 600, 0, 0, 500, 600)]
+        [TestCase("Corrupt_QC_Shew_07_03_pt25_e_6Apr08_Falcon_Fst-75-1.raw", 500, 600, 0, 0, 500, 600)]
+        // This file causes .NET to become unstable and aborts the unit tests
+        // [TestCase("Corrupt_Scans6920-7021_AID_STM_013_101104_06_LTQ_16Nov04_Earth_0904-8.raw", 6900, 7050, 10, 40, 6920, 7021)]
+        public void TestCorruptDataHandling(
+            string rawFileName,
+            int scanStart,
+            int scanEnd,
+            int expectedMS1,
+            int expectedMS2,
+            int corruptScanStart,
+            int corruptScanEnd)
+        {
+            var dataFile = GetRawDataFile(rawFileName);
+
+            try
+            {
+                using (var oWrapper = new MSDataFileReader(dataFile.FullName))
+                {
+
+                    var scanCount = oWrapper.SpectrumCount;
+                    Console.WriteLine("Scan count for {0}: {1}", dataFile.Name, scanCount);
+
+                    if (expectedMS1 + expectedMS2 == 0)
+                    {
+                        Assert.IsTrue(scanCount == 0, "ScanCount is non-zero, while we expected it to be 0");
+                    }
+                    else
+                    {
+                        Assert.IsTrue(scanCount > 0, "ScanCount is zero, while we expected it to be > 0");
+                    }
+
+                    var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+
+                    var scanCountMS1 = 0;
+                    var scanCountMS2 = 0;
+
+                    foreach (var scan in scanNumberToIndexMap.Where(x => x.Key >= scanStart && x.Key <= scanEnd))
+                    {
+                        var scanNumber = scan.Key;
+                        var spectrumIndex = scan.Value;
+                        
+                        try 
+                        {
+                            var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
+
+                            var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
+
+                            Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
+
+                            string filterText;
+                            GetScanFilterText(cvScanInfo, out filterText);
+
+                            Assert.IsFalse(string.IsNullOrEmpty(filterText), "FilterText is empty but should not be");
+
+                            if (spectrum.Level > 1)
+                                scanCountMS2++;
+                            else
+                                scanCountMS1++;
+
+                            var dataPointCount = spectrum.Mzs.Length;
+
+                            Assert.IsTrue(dataPointCount > 0, "Data point count is 0 for scan {0}", scanNumber);
+                            Assert.IsTrue(spectrum.Mzs.Length > 0, "m/z data is empty for scan {0}", scanNumber);
+                            Assert.IsTrue(spectrum.Intensities.Length > 0, "Intensity data is empty for scan {0}", scanNumber);
+                            Assert.IsTrue(spectrum.Mzs.Length == spectrum.Intensities.Length, "Array length mismatch for m/z and intensity data for scan {0}", scanNumber);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Exception reading scan {0}: {1}", scanNumber, ex.Message);
+                            Assert.Fail("Exception reading scan {0}", scanNumber);
+                        }
+                    }
+
+                    Console.WriteLine("scanCountMS1={0}", scanCountMS1);
+                    Console.WriteLine("scanCountMS2={0}", scanCountMS2);
+
+                    Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
+                    Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (expectedMS1 + expectedMS2 == 0)
+                {
+                    Console.WriteLine("Error opening .raw file (this was expected):\n{0}", ex.Message);
+                }
+                else
+                {
+                    var msg = string.Format("Exception opening .raw file {0}:\n{1}", rawFileName, ex.Message);
+                    Console.WriteLine(msg);
+                    Assert.Fail(msg);
+                }
+            }
+
+        }
+
+        [Test]
+        [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 3316)]
+        [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 71147)]
         public void TestGetNumScans(string rawFileName, int expectedResult)
         {
             var dataFile = GetRawDataFile(rawFileName);
 
-            using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFile.FullName))
+            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
             {
                 var scanCount = oWrapper.SpectrumCount;
 
@@ -236,19 +324,19 @@ namespace ProteowizardWrapperUnitTests
         }
 
         [Test]
-        [TestCase(@"B5_50uM_MS_r1.RAW", 1, 20, 20, 0)]
-        [TestCase(@"MNSLTFKK_ms.raw", 1, 88, 88, 0)]
-        [TestCase(@"QCShew200uL.raw", 4000, 4100, 101, 0)]
-        [TestCase(@"Wrighton_MT2_SPE_200avg_240k_neg_330-380.raw", 1, 200, 200, 0)]
-        [TestCase(@"1229_02blk1.raw", 6000, 6100, 77, 24)]
-        [TestCase(@"MCF7_histone_32_49B_400min_HCD_ETD_01172014_b.raw", 2300, 2400, 18, 83)]
-        [TestCase(@"lowdose_IMAC_iTRAQ1_PQDMSA.raw", 15000, 15100, 16, 85)]
-        [TestCase(@"MZ20150721blank2.raw", 1, 434, 62, 372)]
-        [TestCase(@"OG_CEPC_PU_22Oct13_Legolas_13-05-12.raw", 5000, 5100, 9, 92)]
-        [TestCase(@"blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", 1500, 1900, 190, 211)]
-        [TestCase(@"HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53.raw", 25200, 25600, 20, 381)]
-        [TestCase(@"MeOHBlank03POS_11May16_Legolas_HSS-T3_A925.raw", 5900, 6000, 8, 93)]
-        [TestCase(@"IPA-blank-07_25Oct13_Gimli.raw", 1750, 1850, 101, 0)]
+        [TestCase("B5_50uM_MS_r1.RAW", 1, 20, 20, 0)]
+        [TestCase("MNSLTFKK_ms.raw", 1, 88, 88, 0)]
+        [TestCase("QCShew200uL.raw", 4000, 4100, 101, 0)]
+        [TestCase("Wrighton_MT2_SPE_200avg_240k_neg_330-380.raw", 1, 200, 200, 0)]
+        [TestCase("1229_02blk1.raw", 6000, 6100, 77, 24)]
+        [TestCase("MCF7_histone_32_49B_400min_HCD_ETD_01172014_b.raw", 2300, 2400, 18, 83)]
+        [TestCase("lowdose_IMAC_iTRAQ1_PQDMSA.raw", 15000, 15100, 16, 85)]
+        [TestCase("MZ20150721blank2.raw", 1, 434, 62, 372)]
+        [TestCase("OG_CEPC_PU_22Oct13_Legolas_13-05-12.raw", 5000, 5100, 9, 92)]
+        [TestCase("blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", 1500, 1900, 190, 211)]
+        [TestCase("HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53.raw", 25200, 25600, 20, 381)]
+        [TestCase("MeOHBlank03POS_11May16_Legolas_HSS-T3_A925.raw", 5900, 6000, 8, 93)]
+        [TestCase("IPA-blank-07_25Oct13_Gimli.raw", 1750, 1850, 101, 0)]
         public void TestGetScanCountsByScanType(string rawFileName, int scanStart, int scanEnd, int expectedMS1, int expectedMS2)
         {
             // Keys in this Dictionary are filename, values are ScanCounts by collision mode, where the key is a Tuple of ScanType and FilterString
@@ -326,7 +414,7 @@ namespace ProteowizardWrapperUnitTests
             var dataFile = GetRawDataFile(rawFileName);
             var errorCount = 0;
 
-            using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFile.FullName))
+            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
             {
                 Console.WriteLine("Parsing scan headers for {0}", dataFile.Name);
 
@@ -424,8 +512,8 @@ namespace ProteowizardWrapperUnitTests
         }
 
         [Test]
-        [TestCase(@"Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521, 3, 6)]
-        [TestCase(@"HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165, 3, 42)]
+        [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521, 3, 6)]
+        [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165, 3, 42)]
         public void TestGetScanInfo(string rawFileName, int scanStart, int scanEnd, int expectedMS1, int expectedMS2)
         {
             var expectedData = new Dictionary<string, Dictionary<int, string>>();
@@ -498,7 +586,7 @@ namespace ProteowizardWrapperUnitTests
 
             var dataFile = GetRawDataFile(rawFileName);
 
-            using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFile.FullName))
+            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
             {
                 var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
 
@@ -526,9 +614,9 @@ namespace ProteowizardWrapperUnitTests
 
                     Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan " + scanNumber);
 
-                    var totalIonCurrent = GetCvParamValueDbl(spectrumParams, CVIDs.MS_TIC);
-                    var basePeakMZ = GetCvParamValueDbl(spectrumParams, CVIDs.MS_base_peak_m_z);
-                    var basePeakIntensity = GetCvParamValueDbl(spectrumParams, CVIDs.MS_base_peak_intensity);
+                    var totalIonCurrent = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_TIC);
+                    var basePeakMZ = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_m_z);
+                    var basePeakIntensity = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_intensity);
 
                     double parentIonMZ = 0;
                     var activationType = string.Empty;
@@ -550,7 +638,7 @@ namespace ProteowizardWrapperUnitTests
 
                     GetScanMetadata(cvScanInfo, out scanStartTime, out ionInjectionTime, out filterText, out lowMass, out highMass);
 
-                    var retentionTime = CheckNull(spectrum.RetentionTime);
+                    var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
                     Assert.AreEqual(retentionTime, scanStartTime, 0.0001, "Mismatch between spectrum.RetentionTime and CVParam MS_scan_start_time");
 
                     var numPeaks = spectrum.Mzs.Length;
@@ -561,7 +649,7 @@ namespace ProteowizardWrapperUnitTests
                             "{0} {1} {2,5} {3} {4} {5,3} {6,4} {7} {8,8} {9} {10,8} {11,-8} {12} {13,-5} {14,6} {15}",
                             scanNumber, spectrum.Level,
                             numPeaks, retentionTime.ToString("0.00"),
-                            CheckNull(spectrum.DriftTimeMsec).ToString("0"),
+                            cvParamUtilities.CheckNull(spectrum.DriftTimeMsec).ToString("0"),
                             lowMass.ToString("0"), highMass.ToString("0"),
                             totalIonCurrent.ToString("0.0E+0"), basePeakMZ.ToString("0.000"),
                             basePeakIntensity.ToString("0.0E+0"), parentIonMZ.ToString("0.00"),
@@ -600,8 +688,8 @@ namespace ProteowizardWrapperUnitTests
         }
 
         [Test]
-        [TestCase(@"Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521)]
-        [TestCase(@"HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165)]
+        [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521)]
+        [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165)]
         public void TestGetScanData(string rawFileName, int scanStart, int scanEnd)
         {
             var expectedData = new Dictionary<string, Dictionary<int, Dictionary<string, string>>>();
@@ -666,7 +754,7 @@ namespace ProteowizardWrapperUnitTests
             {
                 var centroidData = (iteration > 1);
 
-                using (var oWrapper = new pwiz.ProteowizardWrapper.MSDataFileReader(
+                using (var oWrapper = new MSDataFileReader(
                     dataFile.FullName,
                     requireVendorCentroidedMS1: centroidData,
                     requireVendorCentroidedMS2: centroidData))
@@ -752,54 +840,6 @@ namespace ProteowizardWrapperUnitTests
             expectedScanInfo.Add(new Tuple<string, string>(tupleKey1, tupleKey2), scanCount);
         }
 
-        private double CheckNull(double? value)
-        {
-            if (value == null)
-                return 0;
-
-            return (double)value;
-        }
-
-        private static string GetCvParamValue(IEnumerable<CVParamData> cvParams, CVIDs cvId)
-        {
-            var query = (from item in cvParams where item.CVId == (int)cvId select item).ToList();
-
-            if (query.Count > 0)
-            {
-                return query.First().Value;
-            }
-
-            return string.Empty;
-        }
-
-        private static int GetCvParamValueInt(IEnumerable<CVParamData> cvParams, CVIDs cvId)
-        {
-            var query = (from item in cvParams where item.CVId == (int)cvId select item).ToList();
-
-            if (query.Count > 0)
-            {
-                int value;
-                if (int.TryParse(query.First().Value, out value))
-                    return value;
-            }
-
-            return 0;
-        }
-
-        private static double GetCvParamValueDbl(IEnumerable<CVParamData> cvParams, CVIDs cvId)
-        {
-            var query = (from item in cvParams where item.CVId == (int)cvId select item).ToList();
-
-            if (query.Count > 0)
-            {
-                double value;
-                if (double.TryParse(query.First().Value, out value))
-                    return value;
-            }
-
-            return 0;
-        }
-
         private FileInfo GetRawDataFile(string rawFileName)
         {
             FileInfo dataFile;
@@ -815,7 +855,9 @@ namespace ProteowizardWrapperUnitTests
 
             if (!dataFile.Exists)
             {
-                Assert.Fail("File not found: " + dataFile.FullName);
+                var msg = "File not found: " + dataFile.FullName;
+                Console.WriteLine(msg);
+                Assert.Fail(msg);
             }
 
             return dataFile;
@@ -849,12 +891,12 @@ namespace ProteowizardWrapperUnitTests
             // (cvScanInfo.Scans is a list, but Thermo .raw files typically have a single scan for each spectrum)
             foreach (var scanEntry in cvScanInfo.Scans)
             {
-                scanStartTime = GetCvParamValueDbl(scanEntry.CVParams, CVIDs.MS_scan_start_time);
-                ionInjectionTime = GetCvParamValueDbl(scanEntry.CVParams, CVIDs.MS_ion_injection_time);
-                filterText = GetCvParamValue(scanEntry.CVParams, CVIDs.MS_filter_string);
+                scanStartTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_scan_start_time);
+                ionInjectionTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_ion_injection_time);
+                filterText = cvParamUtilities.GetCvParamValue(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_filter_string);
 
-                lowMass = GetCvParamValueDbl(scanEntry.ScanWindowList, CVIDs.MS_scan_window_lower_limit);
-                highMass = GetCvParamValueDbl(scanEntry.ScanWindowList, CVIDs.MS_scan_window_upper_limit);
+                lowMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_lower_limit);
+                highMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_upper_limit);
 
                 break;
             }
