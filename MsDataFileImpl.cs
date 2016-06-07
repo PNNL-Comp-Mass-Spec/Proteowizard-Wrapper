@@ -81,7 +81,7 @@ namespace pwiz.ProteowizardWrapper
         /// </remarks>
         public CVParamList GetSpectrumCVParams(int scanIndex)
         {
-            return SpectrumList.spectrum(scanIndex).cvParams;
+            return GetPwizSpectrum(scanIndex, false).cvParams;
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace pwiz.ProteowizardWrapper
         /// <returns>List of CVParamData structs</returns>
         public List<CVParamData> GetSpectrumCVParamData(int scanIndex)
         {
-            var cvParams = CopyCVParamData(SpectrumList.spectrum(scanIndex).cvParams);
+            var cvParams = CopyCVParamData(GetSpectrumCVParams(scanIndex));
 
             return cvParams;
         }
@@ -104,19 +104,7 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
         public SpectrumScanContainer GetSpectrumScanInfo(int scanIndex)
         {
-            Spectrum spec;
-            if (_scanCache != null)
-            {
-                if (!_scanCache.TryGetSpectrum(scanIndex, out spec))
-                {
-                    spec = SpectrumList.spectrum(scanIndex, false);
-                    _scanCache.Add(scanIndex, spec);
-                }
-            }
-            else
-            {
-                spec = SpectrumList.spectrum(scanIndex, false);
-            }
+            var spec = GetPwizSpectrum(scanIndex, false);
             var scanList = spec.scanList;
             var scanInfo = new SpectrumScanContainer()
             {
@@ -144,7 +132,6 @@ namespace pwiz.ProteowizardWrapper
             }
 
             return scanInfo;
-
         }
 
         private static CVParamData CopyCVParamData(CVParam param)
@@ -181,20 +168,7 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
-            Spectrum spec;
-            if (_scanCache != null)
-            {
-                if (!_scanCache.TryGetSpectrum(scanIndex, out spec))
-                {
-                    spec = SpectrumList.spectrum(scanIndex, true);
-                    _scanCache.Add(scanIndex, spec);
-                }
-            }
-            else
-            {
-                spec = SpectrumList.spectrum(scanIndex, true);
-            }
-            return spec;
+            return GetPwizSpectrum(scanIndex, true);
         }
 
         /// <summary>
@@ -804,7 +778,7 @@ namespace pwiz.ProteowizardWrapper
             for (int i = 0; i < times.Length; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                using (var spectrum = SpectrumList.spectrum(i))
+                using (var spectrum = SpectrumList.spectrum(i, false))
                 {
                     times[i] = spectrum.scanList.scans[0].cvParam(CVID.MS_scan_start_time).timeInSeconds();
                     msLevels[i] = (byte) (int) spectrum.cvParam(CVID.MS_ms_level).value;
@@ -866,23 +840,62 @@ namespace pwiz.ProteowizardWrapper
                 {
                     // Spectrum not in the cache (or is in the cache but does not have binary data)
                     // Pull it from the file
-                    Spectrum spectrum;
-                    var success2 = _scanCache.TryGetSpectrum(spectrumIndex, out spectrum);
-                    if (!success2 || (spectrum.binaryDataArrays.Count <= 1 && getBinaryData))
-                    {
-                        spectrum = SpectrumList.spectrum(spectrumIndex, getBinaryData);
-                        _scanCache.Add(spectrumIndex, spectrum);
-                    }
-                    returnSpectrum = GetSpectrum(spectrum, spectrumIndex);
+                    returnSpectrum = GetSpectrum(GetPwizSpectrum(spectrumIndex, getBinaryData), spectrumIndex);
                     // add it to the cache
                     _scanCache.Add(spectrumIndex, returnSpectrum);
                 }
                 return returnSpectrum;
             }
-            using (var spectrum = SpectrumList.spectrum(spectrumIndex, getBinaryData))
+            using (var spectrum = GetPwizSpectrum(spectrumIndex, getBinaryData))
             {
                 return GetSpectrum(spectrum, spectrumIndex);
             }
+        }
+
+        /// <summary>
+        /// The last read spectrum index
+        /// </summary>
+        private int _lastRetrievedSpectrumIndex = -1;
+
+        /// <summary>
+        /// How many times a single spectrum has been read twice in a row
+        /// </summary>
+        private int _sequentialDuplicateSpectrumReadCount = 0;
+
+        /// <summary>
+        /// The maximum number of time a single spectrum can be read twice in a row before we enable a cache for sanity.
+        /// </summary>
+        private const int DuplicateSpectrumReadThreshold = 10;
+
+        /// <summary>
+        /// Read the native ProteoWizard spectrum, using caching if enabled, and enabling a 1-spectrum cache if the number of sequential duplicate reads passes a certain threshold.
+        /// </summary>
+        /// <param name="spectrumIndex"></param>
+        /// <param name="getBinaryData"></param>
+        /// <returns></returns>
+        private Spectrum GetPwizSpectrum(int spectrumIndex, bool getBinaryData = true)
+        {
+            if (_scanCache != null)
+            {
+                Spectrum spectrum;
+                var success2 = _scanCache.TryGetSpectrum(spectrumIndex, out spectrum);
+                if (!success2 || (spectrum.binaryDataArrays.Count <= 1 && getBinaryData))
+                {
+                    spectrum = SpectrumList.spectrum(spectrumIndex, getBinaryData);
+                    _scanCache.Add(spectrumIndex, spectrum);
+                }
+                return spectrum;
+            }
+            if (_sequentialDuplicateSpectrumReadCount > DuplicateSpectrumReadThreshold)
+            {
+                _scanCache = new MsDataScanCache(1);
+            }
+            if (_lastRetrievedSpectrumIndex == spectrumIndex)
+            {
+                _sequentialDuplicateSpectrumReadCount++;
+            }
+            _lastRetrievedSpectrumIndex = spectrumIndex;
+            return SpectrumList.spectrum(spectrumIndex, getBinaryData);
         }
 
         private MsDataSpectrum GetSpectrum(Spectrum spectrum, int spectrumIndex)
@@ -1062,26 +1075,18 @@ namespace pwiz.ProteowizardWrapper
 
         public MsDataSpectrum GetSrmSpectrum(int scanIndex)
         {
-            using (var spectrum = SpectrumList.spectrum(scanIndex, true))
-            {
-                return GetSpectrum(IsSrmSpectrum(spectrum) ? spectrum : null, scanIndex);
-            }
+            var spectrum = GetPwizSpectrum(scanIndex, true);
+            return GetSpectrum(IsSrmSpectrum(spectrum) ? spectrum : null, scanIndex);
         }
 
         public string GetSpectrumId(int scanIndex)
         {
-            using (var spectrum = SpectrumList.spectrum(scanIndex))
-            {
-                return spectrum.id;
-            }
+            return GetPwizSpectrum(scanIndex, false).id;
         }
 
         public bool IsCentroided(int scanIndex)
         {
-            using (var spectrum = SpectrumList.spectrum(scanIndex, false))
-            {
-                return IsCentroided(spectrum);
-            }
+            return IsCentroided(GetPwizSpectrum(scanIndex, false));
         }
 
         private static bool IsCentroided(Spectrum spectrum)
@@ -1099,10 +1104,7 @@ namespace pwiz.ProteowizardWrapper
 
         public bool IsSrmSpectrum(int scanIndex)
         {
-            using (var spectrum = SpectrumList.spectrum(scanIndex, false))
-            {
-                return IsSrmSpectrum(spectrum);
-            }
+            return IsSrmSpectrum(GetPwizSpectrum(scanIndex, false));
         }
 
         private static bool IsSrmSpectrum(Spectrum spectrum)
@@ -1211,10 +1213,7 @@ namespace pwiz.ProteowizardWrapper
 
         public MsPrecursor[] GetPrecursors(int scanIndex)
         {
-            using (var spectrum = SpectrumList.spectrum(scanIndex, false))
-            {
-                return GetPrecursors(spectrum);
-            }
+            return GetPrecursors(GetPwizSpectrum(scanIndex, false));
         }
 
         private static MsPrecursor[] GetPrecursors(Spectrum spectrum)
