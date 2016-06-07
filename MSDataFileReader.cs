@@ -29,8 +29,9 @@ namespace pwiz.ProteowizardWrapper
 	public class MSDataFileReader : IDisposable
 	{
         /// <summary>
-        /// This ensures that the Assembly Resolver is added prior to actually using this class.
+        /// This static constructor ensures that the Assembly Resolver is added prior to actually using this class.
         /// </summary>
+        /// <remarks>This code is executed prior to the instance constructor</remarks>
         static MSDataFileReader()
         {
             pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver();
@@ -48,7 +49,7 @@ namespace pwiz.ProteowizardWrapper
         /// </remarks>
         public CVParamList GetChromatogramCVParams(int chromIndex)
         {
-            return this.MsDataFileImpl.GetChromatogramCVParams(chromIndex);
+            return mDataReader.GetChromatogramCVParams(chromIndex);
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace pwiz.ProteowizardWrapper
         /// </remarks>
         public Chromatogram GetChromatogramObject(int chromIndex)
         {
-            return this.MsDataFileImpl.GetChromatogramObject(chromIndex);
+            return mDataReader.GetChromatogramObject(chromIndex);
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace pwiz.ProteowizardWrapper
         /// </remarks>
         public CVParamList GetSpectrumCVParams(int scanIndex)
         {
-            return this.MsDataFileImpl.GetSpectrumCVParams(scanIndex);
+            return mDataReader.GetSpectrumCVParams(scanIndex);
         }
 
         /// <summary>
@@ -94,7 +95,7 @@ namespace pwiz.ProteowizardWrapper
         /// </remarks>
         public List<CVParamData> GetSpectrumCVParamData(int scanIndex)
         {
-            return this.MsDataFileImpl.GetSpectrumCVParamData(scanIndex);
+            return mDataReader.GetSpectrumCVParamData(scanIndex);
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
         public SpectrumScanContainer GetSpectrumScanInfo(int scanIndex)
         {
-            return this.MsDataFileImpl.GetSpectrumScanInfo(scanIndex);
+            return mDataReader.GetSpectrumScanInfo(scanIndex);
         }
         
         /// <summary>
@@ -121,7 +122,7 @@ namespace pwiz.ProteowizardWrapper
         /// </remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
-            return this.MsDataFileImpl.GetSpectrumObject(scanIndex);
+            return mDataReader.GetSpectrumObject(scanIndex);
         }
 
 	    /// <summary>
@@ -130,7 +131,7 @@ namespace pwiz.ProteowizardWrapper
 	    /// <remarks>If the filter count is greater than 0, the default handling of the spectrumList using the optional constructor parameters is disabled.</remarks>
 	    public List<string> Filters
 	    {
-	        get { return this.MsDataFileImpl.Filters; }
+	        get { return mDataReader.Filters; }
 	    }
 
 	    /// <summary>
@@ -154,8 +155,8 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public bool UseVendorCentroiding
         {
-            get { return this.MsDataFileImpl.UseVendorCentroiding; }
-            set { this.MsDataFileImpl.UseVendorCentroiding = value; }
+            get { return mDataReader.UseVendorCentroiding; }
+            set { mDataReader.UseVendorCentroiding = value; }
         }
 
         /// <summary>
@@ -163,8 +164,8 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public bool UseCwtCentroiding
         {
-            get { return this.MsDataFileImpl.UseCwtCentroiding; }
-            set { this.MsDataFileImpl.UseCwtCentroiding = value; }
+            get { return mDataReader.UseCwtCentroiding; }
+            set { mDataReader.UseCwtCentroiding = value; }
         }
 
         /// <summary>
@@ -172,10 +173,10 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public void RedoFilters()
         {
-            this.MsDataFileImpl.RedoFilters();
+            mDataReader.RedoFilters();
         }
 
-        private MsDataFileImpl MsDataFileImpl;
+        private readonly MsDataFileImpl mDataReader;
 
         public static string[] ReadIds(string path)
         {
@@ -220,43 +221,40 @@ namespace pwiz.ProteowizardWrapper
             bool requireVendorCentroidedMS2 = false,
             int spectrumCacheSize = 3)
         {
-            // This one actually won't work.
-			DependencyLoader.AddAssemblyResolver();
-
-            this.MsDataFileImpl = new MsDataFileImpl(path, sampleIndex, lockmassParameters, simAsSpectra, srmAsSpectra, acceptZeroLengthSpectra, requireVendorCentroidedMS1, requireVendorCentroidedMS2);
+            mDataReader = new MsDataFileImpl(path, sampleIndex, lockmassParameters, simAsSpectra, srmAsSpectra, acceptZeroLengthSpectra, requireVendorCentroidedMS1, requireVendorCentroidedMS2);
             EnableCaching(spectrumCacheSize);
         }
 
         public void EnableCaching(int? cacheSize)
         {
-            this.MsDataFileImpl.EnableCaching(cacheSize);
+            mDataReader.EnableCaching(cacheSize);
         }
 
         public void DisableCaching()
         {
-            this.MsDataFileImpl.DisableCaching();
+            mDataReader.DisableCaching();
         }
 
-        public string RunId { get { return this.MsDataFileImpl.RunId; } }
+        public string RunId { get { return mDataReader.RunId; } }
 
         public DateTime? RunStartTime
         {
-            get { return this.MsDataFileImpl.RunStartTime; }
+            get { return mDataReader.RunStartTime; }
         }
 
         public MsDataConfigInfo ConfigInfo
         {
-            get { return this.MsDataFileImpl.ConfigInfo; }
+            get { return mDataReader.ConfigInfo; }
         }
 
         public bool IsProcessedBy(string softwareName)
         {
-            return this.MsDataFileImpl.IsProcessedBy(softwareName);
+            return mDataReader.IsProcessedBy(softwareName);
         }
 
         public bool IsWatersLockmassSpectrum(MsDataSpectrum s)
         {
-            return this.MsDataFileImpl.IsWatersLockmassSpectrum(s);
+            return mDataReader.IsWatersLockmassSpectrum(s);
         }
 
         /// <summary>
@@ -264,58 +262,58 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public IEnumerable<MsInstrumentConfigInfo> GetInstrumentConfigInfoList()
         {
-            return this.MsDataFileImpl.GetInstrumentConfigInfoList();
+            return mDataReader.GetInstrumentConfigInfoList();
         }
 
         public bool IsABFile
         {
-            get { return this.MsDataFileImpl.IsABFile; }
+            get { return mDataReader.IsABFile; }
         }
 
         public bool IsMzWiffXml
         {
-            get { return this.MsDataFileImpl.IsMzWiffXml; } // Not L10N
+            get { return mDataReader.IsMzWiffXml; } // Not L10N
         }
 
         public bool IsAgilentFile
         {
-            get { return this.MsDataFileImpl.IsAgilentFile; }
+            get { return mDataReader.IsAgilentFile; }
         }
 
         public bool IsThermoFile
         {
-            get { return this.MsDataFileImpl.IsThermoFile; }
+            get { return mDataReader.IsThermoFile; }
         }
 
         public bool IsWatersFile
         {
-            get { return this.MsDataFileImpl.IsWatersFile; }
+            get { return mDataReader.IsWatersFile; }
         }
 
         public bool IsWatersLockmassCorrectionCandidate
         {
-            get { return this.MsDataFileImpl.IsWatersLockmassCorrectionCandidate; }
+            get { return mDataReader.IsWatersLockmassCorrectionCandidate; }
         }
 
         public bool IsShimadzuFile
         {
-            get { return this.MsDataFileImpl.IsShimadzuFile; }
+            get { return mDataReader.IsShimadzuFile; }
         }
 
         public int ChromatogramCount
         {
-            get { return this.MsDataFileImpl.ChromatogramCount; }
+            get { return mDataReader.ChromatogramCount; }
         }
 
         public string GetChromatogramId(int index, out int indexId)
         {
-            return this.MsDataFileImpl.GetChromatogramId(index, out indexId);
+            return mDataReader.GetChromatogramId(index, out indexId);
         }
 
         public void GetChromatogram(int chromIndex, out string id,
             out float[] timeArray, out float[] intensityArray)
         {
-            this.MsDataFileImpl.GetChromatogram(chromIndex, out id, out timeArray, out intensityArray);         
+            mDataReader.GetChromatogram(chromIndex, out id, out timeArray, out intensityArray);         
         }
 
         /// <summary>
@@ -324,12 +322,12 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public double[] GetScanTimes()
         {
-            return this.MsDataFileImpl.GetScanTimes();
+            return mDataReader.GetScanTimes();
         }
 
         public double[] GetTotalIonCurrent()
         {
-            return this.MsDataFileImpl.GetTotalIonCurrent();
+            return mDataReader.GetTotalIonCurrent();
         }
 
         /// <summary>
@@ -342,7 +340,7 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
         public void GetScanTimesAndMsLevels(out double[] times, out byte[] msLevels)
         {
-            this.MsDataFileImpl.GetScanTimesAndMsLevels(out times, out msLevels);
+            mDataReader.GetScanTimesAndMsLevels(out times, out msLevels);
         }
 
         /// <summary>
@@ -356,12 +354,12 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
         public void GetScanTimesAndMsLevels(CancellationToken cancellationToken, out double[] times, out byte[] msLevels)
         {
-            this.MsDataFileImpl.GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels);
+            mDataReader.GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels);
         }
 
         public int SpectrumCount
         {
-            get { return this.MsDataFileImpl.SpectrumCount; }
+            get { return mDataReader.SpectrumCount; }
         }
 
         [Obsolete("Use the SpectrumCount property instead")]
@@ -372,7 +370,7 @@ namespace pwiz.ProteowizardWrapper
 
         public int GetSpectrumIndex(string id)
         {
-            return this.MsDataFileImpl.GetSpectrumIndex(id);
+            return mDataReader.GetSpectrumIndex(id);
         }
 
         /// <summary>
@@ -383,7 +381,7 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="intensityArray"></param>
         public void GetSpectrum(int spectrumIndex, out double[] mzArray, out double[] intensityArray)
         {
-            this.MsDataFileImpl.GetSpectrum(spectrumIndex, out mzArray, out intensityArray);
+            mDataReader.GetSpectrum(spectrumIndex, out mzArray, out intensityArray);
         }
 
 	    /// <summary>
@@ -398,7 +396,7 @@ namespace pwiz.ProteowizardWrapper
 	    /// </remarks>
 	    public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
-            return this.MsDataFileImpl.GetSpectrum(spectrumIndex, getBinaryData);
+            return mDataReader.GetSpectrum(spectrumIndex, getBinaryData);
         }
 
         /// <summary>
@@ -407,7 +405,7 @@ namespace pwiz.ProteowizardWrapper
         /// <returns>List of NativeIds</returns>
         public List<string> GetSpectrumIdList()
         {
-            return this.MsDataFileImpl.GetSpectrumIdList();
+            return mDataReader.GetSpectrumIdList();
         }
 
          /// <summary>
@@ -417,7 +415,7 @@ namespace pwiz.ProteowizardWrapper
         /// <returns></returns>
         public string GetThermoNativeId(int scanNumber)
         {
-            return this.MsDataFileImpl.GetThermoNativeId(scanNumber);
+            return mDataReader.GetThermoNativeId(scanNumber);
         }
 
 	    /// <summary>
@@ -426,79 +424,79 @@ namespace pwiz.ProteowizardWrapper
 	    /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
 	    public Dictionary<int, int> GetThermoScanToIndexMapping()
 	    {
-            return this.MsDataFileImpl.GetThermoScanToIndexMapping();
+            return mDataReader.GetThermoScanToIndexMapping();
 	    }
 
 	    public bool HasSrmSpectra
         {
-            get { return this.MsDataFileImpl.HasSrmSpectra; }
+            get { return mDataReader.HasSrmSpectra; }
         }
 
         public bool HasDriftTimeSpectra
         {
-            get { return this.MsDataFileImpl.HasDriftTimeSpectra; }
+            get { return mDataReader.HasDriftTimeSpectra; }
         }
 
         public bool HasChromatogramData
         {
-            get { return this.MsDataFileImpl.HasChromatogramData; }
+            get { return mDataReader.HasChromatogramData; }
         }
 
         public MsDataSpectrum GetSrmSpectrum(int scanIndex)
         {
-            return this.MsDataFileImpl.GetSrmSpectrum(scanIndex);
+            return mDataReader.GetSrmSpectrum(scanIndex);
         }
 
         public string GetSpectrumId(int scanIndex)
         {
-            return this.MsDataFileImpl.GetSpectrumId(scanIndex);
+            return mDataReader.GetSpectrumId(scanIndex);
         }
 
         public bool IsCentroided(int scanIndex)
         {
-            return this.MsDataFileImpl.IsCentroided(scanIndex);
+            return mDataReader.IsCentroided(scanIndex);
         }
 
         public bool IsSrmSpectrum(int scanIndex)
         {
-            return this.MsDataFileImpl.IsSrmSpectrum(scanIndex);
+            return mDataReader.IsSrmSpectrum(scanIndex);
         }
 
         public int GetMsLevel(int scanIndex)
         {
-            return this.MsDataFileImpl.GetMsLevel(scanIndex);
+            return mDataReader.GetMsLevel(scanIndex);
         }
 
         public double? GetDriftTimeMsec(int scanIndex)
         {
-            return this.MsDataFileImpl.GetDriftTimeMsec(scanIndex);
+            return mDataReader.GetDriftTimeMsec(scanIndex);
         }
 
         public double? GetStartTime(int scanIndex)
         {
-            return this.MsDataFileImpl.GetStartTime(scanIndex);
+            return mDataReader.GetStartTime(scanIndex);
         }
 
         public MsTimeAndPrecursors GetInstantTimeAndPrecursors(int scanIndex)
         {
-            return this.MsDataFileImpl.GetInstantTimeAndPrecursors(scanIndex);
+            return mDataReader.GetInstantTimeAndPrecursors(scanIndex);
         }
 
         public MsPrecursor[] GetPrecursors(int scanIndex)
         {
-            return this.MsDataFileImpl.GetPrecursors(scanIndex);
+            return mDataReader.GetPrecursors(scanIndex);
         }
 
         public void Write(string path)
         {
-            this.MsDataFileImpl.Write(path);
+            mDataReader.Write(path);
         }
 
         public void Dispose()
         {
-            this.MsDataFileImpl.Dispose();
+            mDataReader.Dispose();
         }
 
-        public string FilePath { get { return this.MsDataFileImpl.FilePath; } }
+        public string FilePath { get { return mDataReader.FilePath; } }
 	}
 }
