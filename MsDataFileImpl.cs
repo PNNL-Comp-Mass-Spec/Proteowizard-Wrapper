@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Threading;
 using pwiz.CLI.cv;
@@ -43,6 +42,10 @@ namespace pwiz.ProteowizardWrapper
     {
 #region PNNL Added functions
 
+        /// <summary>
+        /// This static constructor ensures that the Assembly Resolver is added prior to actually using this class.
+        /// </summary>
+        /// <remarks>This code is executed prior to the instance constructor</remarks>
         static MsDataFileImpl()
         {
             pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver();
@@ -182,6 +185,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public const string VendorCentroiding = "peakPicking true 1-";
         private bool _useVendorCentroiding = false;
+
         /// <summary>
         /// Continuous Wavelet Transform peak picker - high-quality peak picking, may be slow with some high-res data.
         /// </summary>
@@ -305,7 +309,7 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Constructor; Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.
+        /// Constructor
         /// </summary>
         /// <param name="path">Data file path</param>
         /// <param name="sampleIndex">Sample index, typically 0</param>
@@ -315,7 +319,6 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="acceptZeroLengthSpectra">Whether to accept zero-length spectra, default true</param>
         /// <param name="requireVendorCentroidedMS1">True to return centroided MS1 spectra</param>
         /// <param name="requireVendorCentroidedMS2">True to return centroided MS2 spectra</param>
-        /// <remarks>Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.</remarks>
         public MsDataFileImpl(
             string path, 
             int sampleIndex = 0, 
@@ -326,14 +329,27 @@ namespace pwiz.ProteowizardWrapper
             bool requireVendorCentroidedMS1 = false, 
             bool requireVendorCentroidedMS2 = false)
         {
-            DependencyLoader.AddAssemblyResolver();
             FilePath = path;
             _msDataFile = new MSData();
-            _config = new ReaderConfig {simAsSpectra = simAsSpectra, srmAsSpectra = srmAsSpectra, acceptZeroLengthSpectra = acceptZeroLengthSpectra};
+            _config = new ReaderConfig { simAsSpectra = simAsSpectra, srmAsSpectra = srmAsSpectra, acceptZeroLengthSpectra = acceptZeroLengthSpectra };
             _lockmassParameters = lockmassParameters;
-            FULL_READER_LIST.read(path, _msDataFile, sampleIndex, _config);
+            InitializeReader(path, _msDataFile, sampleIndex, _config);
             _requireVendorCentroidedMS1 = requireVendorCentroidedMS1;
             _requireVendorCentroidedMS2 = requireVendorCentroidedMS2;
+        }
+
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions()]
+        public void InitializeReader(string path, MSData msDataFile, int sampleIndex, ReaderConfig config)
+        {
+
+            try
+            {
+                FULL_READER_LIST.read(path, msDataFile, sampleIndex, config);
+            }
+            catch (AccessViolationException)
+            {
+                throw new Exception("Critical error opening dataset with ProteoWizard. The data is corrupt or in an unsupported format: " + path);
+            }
         }
 
         public void EnableCaching(int? cacheSize)
