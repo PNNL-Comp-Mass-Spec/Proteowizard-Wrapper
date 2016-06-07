@@ -1451,13 +1451,39 @@ namespace pwiz.ProteowizardWrapper
         }
     }
 
+    /// <summary>
+    /// Structure for tracking a single CVParam
+    /// </summary>
     public struct CVParamData
     {
+        /// <summary>
+        /// CV id, e.g. 1000504
+        /// </summary>
         public int CVId;
+
+        /// <summary>
+        /// CV name, e.g. MS_base_peak_m/z
+        /// </summary>
         public string CVName;
+
+        /// <summary>
+        /// Param name, e.g. base peak m/z
+        /// </summary>
         public string Name;
+
+        /// <summary>
+        /// Param value, e.g. 575.15087890625
+        /// </summary>
         public string Value;
+
+        /// <summary>
+        /// Unit id, e.g. 1000040
+        /// </summary>
         public int UnitsID;
+
+        /// <summary>
+        /// Units, e.g. m/z
+        /// </summary>
         public string UnitsName;
 
         public override string ToString()
@@ -1466,14 +1492,27 @@ namespace pwiz.ProteowizardWrapper
         }
     }
 
+    /// <summary>
+    /// Class to track the CVParams and ScanWindows associated with a Scan
+    /// </summary>
     public class SpectrumScanData
     {
+        /// <summary>
+        /// CVParams for this scan
+        /// </summary>
+        /// <remarks>Examples include scan start time, filter string, and ion injection time</remarks>
         public List<CVParamData> CVParams;
+
+        /// <summary>
+        /// Scan windows for this scan
+        /// </summary>
+        /// <remarks>Scan windows define the scan range of the data in the scan, for example 200 to 2000 m/z</remarks>
         public List<CVParamData> ScanWindowList;
 
         /// <summary>
-        /// List of KeyValuePairs where key is user param name, value is user param value
+        /// User parameters for this scan, stored as KeyValuePairs where key is user param name, value is user param value
         /// </summary>
+        /// <remarks>Example is [Thermo Trailer Extra]Monoisotopic M/Z</remarks>
         public List<KeyValuePair<string,string>> UserParams;
 
         /// <summary>
@@ -1487,9 +1526,21 @@ namespace pwiz.ProteowizardWrapper
         }
     }
 
+    /// <summary>
+    /// Class to track the Scans and CVParams associated with a Spectrum
+    /// </summary>
     public class SpectrumScanContainer
     {
+        /// <summary>
+        /// CVParams for this spectrum
+        /// </summary>
+        /// <remarks>Examples include scan start time, filter string, and ion injection time</remarks>
         public List<CVParamData> CVParams;
+
+        /// <summary>
+        /// Scans associated with this spectrum
+        /// </summary>
+        /// <remarks>Typically a spectrum has just one scan</remarks>
         public List<SpectrumScanData> Scans;
 
         /// <summary>
@@ -1830,6 +1881,7 @@ namespace pwiz.ProteowizardWrapper
 
         #endregion
     }
+
     /// <summary>
     /// A class to cache scans recently read from the file
     /// </summary>

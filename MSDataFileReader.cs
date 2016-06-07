@@ -197,15 +197,6 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Constructor; Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.
-        /// </summary>
-        /// <remarks>Call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver"/> in the function that calls the function that calls this.</remarks>
-        protected MSDataFileReader()
-        {
-            DependencyLoader.AddAssemblyResolver();
-        }
-
-        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="path">Data file path</param>
@@ -216,6 +207,7 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="acceptZeroLengthSpectra">Whether to accept zero-length spectra, default true</param>
         /// <param name="requireVendorCentroidedMS1">True to return centroided MS1 spectra</param>
         /// <param name="requireVendorCentroidedMS2">True to return centroided MS2 spectra</param>
+        /// <param name="spectrumCacheSize">Positive number to cache recent spectra in memory to reduce disk I/O; defaults to 3</param>
         /// <remarks>This differs from the ProteoWizard version of this code by defaulting to treating SIM and SRM data as spectra.</remarks>
         public MSDataFileReader(
             string path, 
@@ -225,12 +217,14 @@ namespace pwiz.ProteowizardWrapper
             bool srmAsSpectra = true, 
             bool acceptZeroLengthSpectra = true, 
             bool requireVendorCentroidedMS1 = false, 
-            bool requireVendorCentroidedMS2 = false)
+            bool requireVendorCentroidedMS2 = false,
+            int spectrumCacheSize = 3)
         {
             // This one actually won't work.
 			DependencyLoader.AddAssemblyResolver();
 
             this.MsDataFileImpl = new MsDataFileImpl(path, sampleIndex, lockmassParameters, simAsSpectra, srmAsSpectra, acceptZeroLengthSpectra, requireVendorCentroidedMS1, requireVendorCentroidedMS2);
+            EnableCaching(spectrumCacheSize);
         }
 
         public void EnableCaching(int? cacheSize)
