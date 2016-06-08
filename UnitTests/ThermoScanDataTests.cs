@@ -109,7 +109,7 @@ namespace ProteowizardWrapperUnitTests
 
                 Console.WriteLine("Examining data in " + dataFile.Name);
 
-                var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+                var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
 
                 foreach (var scanNumber in collisionEnergiesThisFile.Keys)
                 {
@@ -241,7 +241,7 @@ namespace ProteowizardWrapperUnitTests
                         Assert.IsTrue(scanCount > 0, "ScanCount is zero, while we expected it to be > 0");
                     }
 
-                    var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+                    var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
 
                     var scanCountMS1 = 0;
                     var scanCountMS2 = 0;
@@ -324,20 +324,26 @@ namespace ProteowizardWrapperUnitTests
         }
 
         [Test]
-        [TestCase("B5_50uM_MS_r1.RAW", 1, 20, 20, 0)]
-        [TestCase("MNSLTFKK_ms.raw", 1, 88, 88, 0)]
-        [TestCase("QCShew200uL.raw", 4000, 4100, 101, 0)]
-        [TestCase("Wrighton_MT2_SPE_200avg_240k_neg_330-380.raw", 1, 200, 200, 0)]
-        [TestCase("1229_02blk1.raw", 6000, 6100, 77, 24)]
-        [TestCase("MCF7_histone_32_49B_400min_HCD_ETD_01172014_b.raw", 2300, 2400, 18, 83)]
-        [TestCase("lowdose_IMAC_iTRAQ1_PQDMSA.raw", 15000, 15100, 16, 85)]
-        [TestCase("MZ20150721blank2.raw", 1, 434, 62, 372)]
-        [TestCase("OG_CEPC_PU_22Oct13_Legolas_13-05-12.raw", 5000, 5100, 9, 92)]
-        [TestCase("blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", 1500, 1900, 190, 211)]
-        [TestCase("HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53.raw", 25200, 25600, 20, 381)]
-        [TestCase("MeOHBlank03POS_11May16_Legolas_HSS-T3_A925.raw", 5900, 6000, 8, 93)]
-        [TestCase("IPA-blank-07_25Oct13_Gimli.raw", 1750, 1850, 101, 0)]
-        public void TestGetScanCountsByScanType(string rawFileName, int scanStart, int scanEnd, int expectedMS1, int expectedMS2)
+        [TestCase("B5_50uM_MS_r1.RAW", 1, 20, 20, 0, 20)]
+        [TestCase("MNSLTFKK_ms.raw", 1, 88, 88, 0, 88)]
+        [TestCase("QCShew200uL.raw", 4000, 4100, 101, 0, 8151)]
+        [TestCase("Wrighton_MT2_SPE_200avg_240k_neg_330-380.raw", 1, 200, 200, 0, 200)]
+        [TestCase("1229_02blk1.raw", 6000, 6100, 77, 24, 16142)]
+        [TestCase("MCF7_histone_32_49B_400min_HCD_ETD_01172014_b.raw", 2300, 2400, 18, 83, 8237)]
+        [TestCase("lowdose_IMAC_iTRAQ1_PQDMSA.raw", 15000, 15100, 16, 85, 27282)]
+        [TestCase("MZ20150721blank2.raw", 1, 434, 62, 372, 434)]
+        [TestCase("OG_CEPC_PU_22Oct13_Legolas_13-05-12.raw", 5000, 5100, 9, 92, 11715)]
+        [TestCase("blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", 1500, 1900, 190, 211, 3139)]
+        [TestCase("HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53.raw", 25200, 25600, 20, 381, 39157)]
+        [TestCase("MeOHBlank03POS_11May16_Legolas_HSS-T3_A925.raw", 5900, 6000, 8, 93, 7906)]
+        [TestCase("IPA-blank-07_25Oct13_Gimli.raw", 1750, 1850, 101, 0, 3085)]
+        public void TestGetScanCountsByScanType(
+            string rawFileName,
+            int scanStart,
+            int scanEnd,
+            int expectedMS1,
+            int expectedMS2,
+            int expectedTotalScanCount)
         {
             // Keys in this Dictionary are filename, values are ScanCounts by collision mode, where the key is a Tuple of ScanType and FilterString
             var expectedData = new Dictionary<string, Dictionary<Tuple<string, string>, int>>();
@@ -418,7 +424,12 @@ namespace ProteowizardWrapperUnitTests
             {
                 Console.WriteLine("Parsing scan headers for {0}", dataFile.Name);
 
-                var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+                var scanCount = oWrapper.SpectrumCount;
+                Console.WriteLine("Total scans: {0}", scanCount);
+                Assert.AreEqual(expectedTotalScanCount, scanCount, "Total scan count mismatch");
+                Console.WriteLine();
+
+                var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
 
                 var scanCountMS1 = 0;
                 var scanCountMS2 = 0;
@@ -588,7 +599,7 @@ namespace ProteowizardWrapperUnitTests
 
             using (var oWrapper = new MSDataFileReader(dataFile.FullName))
             {
-                var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+                var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
 
                 Console.WriteLine("Scan info for {0}", dataFile.Name);
                 Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15}",
@@ -612,7 +623,7 @@ namespace ProteowizardWrapperUnitTests
                     var spectrumParams = oWrapper.GetSpectrumCVParamData(spectrumIndex);
                     var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
 
-                    Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan " + scanNumber);
+                    Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan {0}", scanNumber);
 
                     var totalIonCurrent = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_TIC);
                     var basePeakMZ = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_m_z);
@@ -677,6 +688,9 @@ namespace ProteowizardWrapperUnitTests
                         Assert.AreEqual(scanNumber + " " + expectedScanSummary, scanSummary,
                                         "Scan summary mismatch, scan " + scanNumber);
                     }
+
+                    var expectedNativeId = string.Format("controllerType=0 controllerNumber=1 scan={0}", scanNumber);
+                    Assert.AreEqual(spectrum.NativeId, expectedNativeId, "NativeId is not in the expected format for scan {0}", scanNumber);
                 }
 
                 Console.WriteLine("scanCountMS1={0}", scanCountMS1);
@@ -767,7 +781,7 @@ namespace ProteowizardWrapperUnitTests
                                           "FirstMz", "FirstInt", "MidMz", "MidInt", "ScanFilter");
                     }
 
-                    var scanNumberToIndexMap = oWrapper.GetThermoScanToIndexMapping();
+                    var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
 
                     foreach (var scan in scanNumberToIndexMap.Where(x => x.Key >= scanStart && x.Key <= scanEnd))
                     {
@@ -840,10 +854,16 @@ namespace ProteowizardWrapperUnitTests
             expectedScanInfo.Add(new Tuple<string, string>(tupleKey1, tupleKey2), scanCount);
         }
 
+        /// <summary>
+        /// Get a FileInfo object for the given .raw file
+        /// </summary>
+        /// <param name="rawFileName">Thermo raw file name</param>
+        /// <returns></returns>
         private FileInfo GetRawDataFile(string rawFileName)
         {
             FileInfo dataFile;
 
+#pragma warning disable 0162
             if (USE_REMOTE_PATHS)
             {
                 dataFile = new FileInfo(Path.Combine(@"\\proto-2\UnitTest_Files\ThermoRawFileReader", rawFileName));
@@ -852,6 +872,7 @@ namespace ProteowizardWrapperUnitTests
             {
                 dataFile = new FileInfo(Path.Combine(@"F:\MSData\UnitTestFiles", rawFileName));
             }
+#pragma warning restore 0162
 
             if (!dataFile.Exists)
             {
