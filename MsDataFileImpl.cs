@@ -244,6 +244,10 @@ namespace pwiz.ProteowizardWrapper
         public void RedoFilters()
         {
             _spectrumList = null;
+            if (_spectrumListBase == null)
+            {
+                _spectrumListBase = _msDataFile.run.spectrumList;
+            }
             _msDataFile.run.spectrumList = _spectrumListBase;
         }
 #endregion
@@ -935,6 +939,7 @@ namespace pwiz.ProteowizardWrapper
             var msDataSpectrum = new MsDataSpectrum
             {
                 Id = id.abbreviate(idText),
+                NativeId = idText,
                 Level = GetMsLevel(spectrum) ?? 0,
                 Index = spectrum.index,
                 RetentionTime = GetStartTime(spectrum),
@@ -1004,12 +1009,84 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Return a mapping from scan number to spectrumIndex for a thermo .raw file
+        /// Return a mapping from Frame and Scan number to spectrumIndex
+        /// </summary>
+        /// <returns>Dictionary where keys are KeyValuePairs of Frame,Scan and values are the spectrumIndex for each scan</returns>
+        public Dictionary<KeyValuePair<int, int>, int> GetUimfFrameScanPairToIndexMapping()
+        {
+            // frame=1 scan=1 frameType=1
+            var reNativeIdMatcher = new Regex(@"frame=(?<FrameNumber>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled);
+
+            var spectrumIds = GetSpectrumIdList();
+
+            // Walk through the spectra
+            var frameScanPairToIndexMap = new  Dictionary<KeyValuePair<int, int>, int>();
+
+            for (var spectrumIndex = 0; spectrumIndex < spectrumIds.Count; spectrumIndex++)
+            {
+                var match = reNativeIdMatcher.Match(spectrumIds[spectrumIndex]);
+
+                if (!match.Success)
+                {
+                    throw new Exception(string.Format("NativeId did not match the expected format: {0}", spectrumIds[spectrumIndex]));
+                }
+
+                var frameNumber = int.Parse(match.Groups["FrameNumber"].Value);
+                var scanNumber = int.Parse(match.Groups["ScanNumber"].Value);
+
+                frameScanPairToIndexMap.Add(new KeyValuePair<int,int> (frameNumber, scanNumber), spectrumIndex);
+            }
+
+            return frameScanPairToIndexMap;
+        }
+
+        /// <summary>
+        /// Return a mapping from scan number to spectrumIndex
         /// </summary>
         /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
-        public Dictionary<int, int> GetThermoScanToIndexMapping()
+        /// <remarks>
+        /// Works for Thermo .raw files, Bruker .D folders, Bruker/Agilent .yep files, Agilent MassHunter data, Waters .raw folders, and Shimadzu data
+        /// For UIMF files use <see cref="GetUimfFrameScanPairToIndexMapping"/></remarks>
+        public Dictionary<int, int> GetScanToIndexMapping()
         {
-            var reScanNumber = new Regex(@"controllerType=\d+ controllerNumber=\d+ scan=(?<ScanNumber>\d+)", RegexOptions.Compiled);
+
+            // MGF, PKL, merged DTA files. Index is the spectrum number in the file, starting from 0.
+            // index=5
+            // This function is not appropriate for those files because ProteoWizard does not support extracting / reading actual scan numbers from thos files
+            var reIndexBasedMatcher = new Regex(@"index=(?<ScanIndex>\d+)", RegexOptions.Compiled);
+
+            // Wiff files
+            // sample=1 period=1 cycle=1 experiment=1
+            // This function is not appropriate for Wiff files either because sample, period, cycle, and experiment all increment
+            var reWiffFileMatcher = new Regex(@"sample=(?<Sample>\d+) period=(?<Period>\d+) cycle=(?<Cycle>\d+) experiment=(?<Experiment>\d+)", RegexOptions.Compiled);
+
+            var reNativeIdMatchers = new List<Regex> {
+                // Thermo .raw files
+                // controllerType=0 controllerNumber=1 scan=15
+                new Regex(@"controllerType=(?<ControllerType>\d+) controllerNumber=(?<ControllerNumber>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+
+                // Waters .raw folders
+                // function=5 process=2 scan=15
+                new Regex(@"function=(?<Function>\d+) process=(?<Process>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+
+                // Bruker/Agilent YEP; Bruker BAF; Bruker U2; scan number only nativeID format
+                // scan=1
+                new Regex(@"scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+
+                // Agilent MassHunter
+                // scanId=2110
+                new Regex(@"scanId=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+
+                // Shimadzu Biotech
+                // start=34 end=35
+                new Regex(@"start=(?<ScanNumber>\d+) end=(?<ScanNumberEnd>\d+)", RegexOptions.Compiled),
+                
+                // Not supported: SCIEX TOF/TOF
+                // @"jobRun=\d+ spotLabel=[^ ]+ spectrum=(?<Spectrum>\d+)"
+
+            };
+
+            Regex preferredRegEx = null;
 
             var spectrumIds = GetSpectrumIdList();
 
@@ -1018,10 +1095,40 @@ namespace pwiz.ProteowizardWrapper
 
             for (var spectrumIndex = 0; spectrumIndex < spectrumIds.Count; spectrumIndex++)
             {
-                var match = reScanNumber.Match(spectrumIds[spectrumIndex]);
+                Match match = null;
 
-                if (!match.Success)
+                if (preferredRegEx != null)
                 {
+                    match = preferredRegEx.Match(spectrumIds[spectrumIndex]);
+                }
+
+                if (match == null || !match.Success)
+                {
+                    foreach (var matcher in reNativeIdMatchers)
+                    {
+                        match = matcher.Match(spectrumIds[spectrumIndex]);
+                        if (match.Success)
+                        {
+                            preferredRegEx = matcher;
+                            break;
+                        }
+                    }                    
+                }
+
+                if (match == null || !match.Success)
+                {
+                    if (reIndexBasedMatcher.Match(spectrumIds[spectrumIndex]).Success)
+                    {
+                        throw new Exception(string.Format("Data file is a peak list file with indexed spectra but no tracked scan numbers; " +
+                                                          "this function thus cannot be used; NativeId is: {0}", spectrumIds[spectrumIndex]));
+                    }
+
+                    if (reWiffFileMatcher.Match(spectrumIds[spectrumIndex]).Success)
+                    {
+                        throw new Exception(string.Format("Data file WIFF file and thus this function cannot be used; " +
+                                                          "NativeId is: {0}", spectrumIds[spectrumIndex]));
+                    }
+
                     throw new Exception(string.Format("NativeId did not match the expected format: {0}", spectrumIds[spectrumIndex]));
                 }
     
@@ -1807,6 +1914,7 @@ namespace pwiz.ProteowizardWrapper
     public sealed class MsDataSpectrum
     {
         public string Id { get; set; }
+        public string NativeId { get; set; }
         public int Level { get; set; }
         public int Index { get; set; } // index into parent file, if any
         public double? RetentionTime { get; set; }
