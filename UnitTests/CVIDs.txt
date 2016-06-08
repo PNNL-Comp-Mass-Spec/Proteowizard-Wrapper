@@ -1,5 +1,8 @@
 // Type: pwiz.CLI.cv.CVID
 // Assembly: pwiz_bindings_cli
+//
+// The following terms are tracked via project https://github.com/HUPO-PSI/psi-ms-CV/
+// In particular, see file psi-ms.obo at https://github.com/HUPO-PSI/psi-ms-CV/blob/master/psi-ms.obo
 
 namespace pwiz.CLI.cv
 {
