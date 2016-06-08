@@ -178,20 +178,46 @@ namespace pwiz.ProteowizardWrapper
 
         private readonly MsDataFileImpl mDataReader;
 
+        /// <summary>
+        /// Returns the file id of the specified file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static string[] ReadIds(string path)
         {
             return MsDataFileImpl.ReadIds(path);
         }
 
+        /// <summary>
+        /// Constant that corresponds to "SRM TIC "
+        /// </summary>
         public static string PREFIX_TOTAL { get { return MsDataFileImpl.PREFIX_TOTAL; } }
+
+        /// <summary>
+        /// Constant that corresponds to "SRM SIC "
+        /// </summary>
         public static string PREFIX_SINGLE { get { return MsDataFileImpl.PREFIX_SINGLE; } }
+
+        /// <summary>
+        /// Constant that corresponds to "SIM SIC "
+        /// </summary>
         public static string PREFIX_PRECURSOR { get { return MsDataFileImpl.PREFIX_PRECURSOR; } }
 
+        /// <summary>
+        /// If the specified id is negative charge
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static bool? IsNegativeChargeIdNullable(string id)
         {
             return MsDataFileImpl.IsNegativeChargeIdNullable(id);
         }
 
+        /// <summary>
+        /// If the specified id is Single Ion
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static bool IsSingleIonCurrentId(string id)
         {
             return MsDataFileImpl.IsSingleIonCurrentId(id);
@@ -225,33 +251,59 @@ namespace pwiz.ProteowizardWrapper
             EnableCaching(spectrumCacheSize);
         }
 
+        /// <summary>
+        /// Enable spectrum data caching. May result in faster reading
+        /// </summary>
+        /// <param name="cacheSize"></param>
         public void EnableCaching(int? cacheSize)
         {
             mDataReader.EnableCaching(cacheSize);
         }
 
+        /// <summary>
+        /// Disable the spectrum data caching (NOTE: May result in slower reading)
+        /// </summary>
         public void DisableCaching()
         {
             mDataReader.DisableCaching();
         }
 
+        /// <summary>
+        /// The Run ID
+        /// </summary>
         public string RunId { get { return mDataReader.RunId; } }
 
+        /// <summary>
+        /// The run start time
+        /// </summary>
         public DateTime? RunStartTime
         {
             get { return mDataReader.RunStartTime; }
         }
 
+        /// <summary>
+        /// Data and Instrument Configuration information
+        /// </summary>
         public MsDataConfigInfo ConfigInfo
         {
             get { return mDataReader.ConfigInfo; }
         }
 
+        /// <summary>
+        /// Check if the file has be processed by the specified software
+        /// </summary>
+        /// <param name="softwareName"></param>
+        /// <returns></returns>
         public bool IsProcessedBy(string softwareName)
         {
             return mDataReader.IsProcessedBy(softwareName);
         }
 
+        /// <summary>
+        /// If the spectrum is a Waters Lockmass spectrum
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public bool IsWatersLockmassSpectrum(MsDataSpectrum s)
         {
             return mDataReader.IsWatersLockmassSpectrum(s);
@@ -265,51 +317,88 @@ namespace pwiz.ProteowizardWrapper
             return mDataReader.GetInstrumentConfigInfoList();
         }
 
+        /// <summary>
+        /// If the file is an AB Sciex file
+        /// </summary>
         public bool IsABFile
         {
             get { return mDataReader.IsABFile; }
         }
 
+        /// <summary>
+        /// If the file is a MzWiff file
+        /// </summary>
         public bool IsMzWiffXml
         {
             get { return mDataReader.IsMzWiffXml; } // Not L10N
         }
 
+        /// <summary>
+        /// If the file is an Agilent file
+        /// </summary>
         public bool IsAgilentFile
         {
             get { return mDataReader.IsAgilentFile; }
         }
 
+        /// <summary>
+        /// If the file is a Thermo/Finnigan .raw file
+        /// </summary>
         public bool IsThermoFile
         {
             get { return mDataReader.IsThermoFile; }
         }
 
+        /// <summary>
+        /// If the file is a Waters file
+        /// </summary>
         public bool IsWatersFile
         {
             get { return mDataReader.IsWatersFile; }
         }
 
+        /// <summary>
+        /// If the file is a candidate for Waters Lockmass Correction
+        /// </summary>
         public bool IsWatersLockmassCorrectionCandidate
         {
             get { return mDataReader.IsWatersLockmassCorrectionCandidate; }
         }
 
+        /// <summary>
+        /// If the file is a Shimadzu file
+        /// </summary>
         public bool IsShimadzuFile
         {
             get { return mDataReader.IsShimadzuFile; }
         }
 
+        /// <summary>
+        /// Number of chromatograms
+        /// </summary>
         public int ChromatogramCount
         {
             get { return mDataReader.ChromatogramCount; }
         }
 
+        /// <summary>
+        /// Get the NativeID of the specified chromatogram
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="indexId"></param>
+        /// <returns></returns>
         public string GetChromatogramId(int index, out int indexId)
         {
             return mDataReader.GetChromatogramId(index, out indexId);
         }
 
+        /// <summary>
+        /// Get the data for the specified chromatogram
+        /// </summary>
+        /// <param name="chromIndex"></param>
+        /// <param name="id"></param>
+        /// <param name="timeArray"></param>
+        /// <param name="intensityArray"></param>
         public void GetChromatogram(int chromIndex, out string id,
             out float[] timeArray, out float[] intensityArray)
         {
@@ -325,6 +414,10 @@ namespace pwiz.ProteowizardWrapper
             return mDataReader.GetScanTimes();
         }
 
+        /// <summary>
+        /// Get an array containing the total ion current for all scans
+        /// </summary>
+        /// <returns></returns>
         public double[] GetTotalIonCurrent()
         {
             return mDataReader.GetTotalIonCurrent();
@@ -357,17 +450,29 @@ namespace pwiz.ProteowizardWrapper
             mDataReader.GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels);
         }
 
+        /// <summary>
+        /// Get the spectrum count
+        /// </summary>
         public int SpectrumCount
         {
             get { return mDataReader.SpectrumCount; }
         }
 
+        /// <summary>
+        /// Get the spectrum count
+        /// </summary>
+        /// <returns></returns>
         [Obsolete("Use the SpectrumCount property instead")]
         public int GetSpectrumCount()
         {
             return SpectrumCount;
         }
 
+        /// <summary>
+        /// Get the spectrum index of the specified NativeID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public int GetSpectrumIndex(string id)
         {
             return mDataReader.GetSpectrumIndex(id);
@@ -439,76 +544,140 @@ namespace pwiz.ProteowizardWrapper
             return mDataReader.GetScanToIndexMapping();
 	    }
 
+        /// <summary>
+        /// Check if the file has SRR Spectra
+        /// </summary>
 	    public bool HasSrmSpectra
         {
             get { return mDataReader.HasSrmSpectra; }
         }
 
+        /// <summary>
+        /// Check if the file has drift time spectra
+        /// </summary>
         public bool HasDriftTimeSpectra
         {
             get { return mDataReader.HasDriftTimeSpectra; }
         }
 
+        /// <summary>
+        /// Check if the file contains chromatogram data
+        /// </summary>
         public bool HasChromatogramData
         {
             get { return mDataReader.HasChromatogramData; }
         }
 
+        /// <summary>
+        /// Get the specified SRM spectrum. Returns null if the specified spectrum is not SRM
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public MsDataSpectrum GetSrmSpectrum(int scanIndex)
         {
             return mDataReader.GetSrmSpectrum(scanIndex);
         }
 
+        /// <summary>
+        /// Get the NativeID of the specified scan
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public string GetSpectrumId(int scanIndex)
         {
             return mDataReader.GetSpectrumId(scanIndex);
         }
 
+        /// <summary>
+        /// Check is the specified scan is centroided
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public bool IsCentroided(int scanIndex)
         {
             return mDataReader.IsCentroided(scanIndex);
         }
 
+        /// <summary>
+        /// Check if the specified scan is SRM
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public bool IsSrmSpectrum(int scanIndex)
         {
             return mDataReader.IsSrmSpectrum(scanIndex);
         }
 
+        /// <summary>
+        /// Get the MS Level of the specified scan
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public int GetMsLevel(int scanIndex)
         {
             return mDataReader.GetMsLevel(scanIndex);
         }
 
+        /// <summary>
+        /// Get the drift time (in msec) of the specified scan
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public double? GetDriftTimeMsec(int scanIndex)
         {
             return mDataReader.GetDriftTimeMsec(scanIndex);
         }
 
+        /// <summary>
+        /// Get the start time of the specified scan
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public double? GetStartTime(int scanIndex)
         {
             return mDataReader.GetStartTime(scanIndex);
         }
 
+        /// <summary>
+        /// Get the time and precursors for the specified scan
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public MsTimeAndPrecursors GetInstantTimeAndPrecursors(int scanIndex)
         {
             return mDataReader.GetInstantTimeAndPrecursors(scanIndex);
         }
 
+        /// <summary>
+        /// Get the precursors for the specified scan
+        /// </summary>
+        /// <param name="scanIndex"></param>
+        /// <returns></returns>
         public MsPrecursor[] GetPrecursors(int scanIndex)
         {
             return mDataReader.GetPrecursors(scanIndex);
         }
 
+        /// <summary>
+        /// Write the data to the specified file
+        /// </summary>
+        /// <param name="path"></param>
         public void Write(string path)
         {
             mDataReader.Write(path);
         }
 
+        /// <summary>
+        /// Cleanup the objects; Chains to cleanup all held unmanaged objects
+        /// </summary>
         public void Dispose()
         {
             mDataReader.Dispose();
         }
 
+        /// <summary>
+        /// The filepath of the currently loaded file
+        /// </summary>
         public string FilePath { get { return mDataReader.FilePath; } }
 	}
 }

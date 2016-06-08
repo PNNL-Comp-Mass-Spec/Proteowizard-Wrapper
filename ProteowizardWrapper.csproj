@@ -39,7 +39,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>bin\Release\ProteowizardWrapper.XML</DocumentationFile>
-    <WarningLevel>3</WarningLevel>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="pwiz_bindings_cli">

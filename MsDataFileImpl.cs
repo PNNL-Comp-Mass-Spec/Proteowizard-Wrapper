@@ -29,6 +29,7 @@ using pwiz.CLI.analysis;
 
 namespace pwiz.ProteowizardWrapper
 {
+#pragma warning disable 1591
     /// <summary>
     /// This is our wrapper class for ProteoWizard's MSData file reader interface.
     /// 
@@ -1465,6 +1466,8 @@ namespace pwiz.ProteowizardWrapper
 
         public void Dispose()
         {
+            if (_scanCache != null)
+                _scanCache.Dispose();
             if (_spectrumList != null)
                 _spectrumList.Dispose();
             _spectrumList = null;
@@ -1609,6 +1612,10 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public string UnitsName;
 
+        /// <summary>
+        /// Summary of CVParam - name and value
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name + ": " + Value;
@@ -2009,7 +2016,7 @@ namespace pwiz.ProteowizardWrapper
     /// <summary>
     /// A class to cache scans recently read from the file
     /// </summary>
-    public class MsDataScanCache
+    public class MsDataScanCache : IDisposable
     {
         private readonly int _cacheSize;
         private readonly Dictionary<int, MsDataSpectrum> _cache;
@@ -2074,7 +2081,10 @@ namespace pwiz.ProteowizardWrapper
         {
             if (_scanNativeStack.Count() >= _cacheSize)
             {
-                _cacheNative.Remove(_scanNativeStack.Dequeue());
+                var index = _scanNativeStack.Dequeue();
+                // Cleanup - the spectrum holds unmanaged memory resources
+                _cacheNative[index].Dispose();
+                _cacheNative.Remove(index);
             }
 
             if (_cacheNative.ContainsKey(scanNum))
@@ -2096,9 +2106,24 @@ namespace pwiz.ProteowizardWrapper
         public void Clear()
         {
             _cache.Clear();
-            _cacheNative.Clear();
             _scanStack.Clear();
+            DisposeNativeSpectra();
+        }
+
+        private void DisposeNativeSpectra()
+        {
+            foreach (var spectrum in _cacheNative)
+            {
+                spectrum.Value.Dispose();
+            }
+            _cacheNative.Clear();
             _scanNativeStack.Clear();
         }
+
+        public void Dispose()
+        {
+            DisposeNativeSpectra();
+        }
     }
+#pragma warning restore 1591
 }

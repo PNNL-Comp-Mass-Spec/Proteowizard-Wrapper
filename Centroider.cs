@@ -21,6 +21,7 @@ using System.Linq;
 
 namespace pwiz.ProteowizardWrapper
 {
+#pragma warning disable 1591
     public class Centroider
     {
         public Centroider(IList<double> mzs, IList<double> intensities)
@@ -79,4 +80,5 @@ namespace pwiz.ProteowizardWrapper
             centroidedIntensities = centroidedIntensitiesList.ToArray();
         }
     }
+#pragma warning restore 1591
 }
