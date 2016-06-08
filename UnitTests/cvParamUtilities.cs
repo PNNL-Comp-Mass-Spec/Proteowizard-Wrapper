@@ -16,7 +16,8 @@ namespace ProteowizardWrapperUnitTests
             MS_ion_injection_time = 1000927,
             MS_TIC = 1000285,
             MS_base_peak_m_z = 1000504,
-            MS_base_peak_intensity = 1000505
+            MS_base_peak_intensity = 1000505,
+            MS_ion_mobility_drift_time = 1002476
         }
 
         public static double CheckNull(double? value)

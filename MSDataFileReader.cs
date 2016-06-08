@@ -418,13 +418,25 @@ namespace pwiz.ProteowizardWrapper
             return mDataReader.GetThermoNativeId(scanNumber);
         }
 
-	    /// <summary>
-	    /// Return a mapping from scan number to spectrumIndex for a thermo .raw file
-	    /// </summary>
-	    /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
-	    public Dictionary<int, int> GetThermoScanToIndexMapping()
+        /// <summary>
+        /// Return a mapping from Frame and Scan number to spectrumIndex
+        /// </summary>
+        /// <returns>Dictionary where keys are KeyValuePairs of Frame,Scan and values are the spectrumIndex for each scan</returns>
+        public Dictionary<KeyValuePair<int, int>, int> GetUimfFrameScanPairToIndexMapping()
+        {
+            return mDataReader.GetUimfFrameScanPairToIndexMapping();
+        }
+
+        /// <summary>
+        /// Return a mapping from scan number to spectrumIndex
+        /// </summary>
+        /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
+        /// <remarks>
+        /// Works for Thermo .raw files, Bruker .D folders, Bruker/Agilent .yep files, Agilent MassHunter data, Waters .raw folders, and Shimadzu data
+        /// For UIMF files use <see cref="GetUimfFrameScanPairToIndexMapping"/></remarks>
+        public Dictionary<int, int> GetScanToIndexMapping()
 	    {
-            return mDataReader.GetThermoScanToIndexMapping();
+            return mDataReader.GetScanToIndexMapping();
 	    }
 
 	    public bool HasSrmSpectra

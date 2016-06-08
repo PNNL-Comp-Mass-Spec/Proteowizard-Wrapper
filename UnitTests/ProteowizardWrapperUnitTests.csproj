@@ -58,6 +58,7 @@
     <Compile Include="cvParamUtilities.cs" />
     <Compile Include="ThermoScanDataTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UimfScanDataTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProteowizardWrapper.csproj">
