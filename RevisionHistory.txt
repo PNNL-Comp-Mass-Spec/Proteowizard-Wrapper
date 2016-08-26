@@ -1,10 +1,13 @@
 Proteowizard Wrapper
 
+Version 1.1.6166; November 18, 2016
+	- Improve Proteowizard version parsing when selecting the newest local Proteowizard folder
+
 Version 1.1.6001; June 6, 2016
 	- Added unit tests for Thermo .Raw files
 		- Ported from unit tests in the ThermoRawFileReader
 	- Make most reads of the native spectrum go through a new function that facilitates caching
-		- Auto-enabled if over a duplicate spectrum is read of 10 times in one session
+		- Auto-enabled if a duplicate spectrum is read over 10 times in one session
 
 Version 1.1.5998; June 3, 2016
 	- Partially synchronize the Proteowizard source version of ProteowizardWrapper (didn't add changes that added another DLL dependency)
