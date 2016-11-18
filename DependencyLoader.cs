@@ -11,7 +11,7 @@ namespace pwiz.ProteowizardWrapper
     /// ProteoWizard Dependency Loader
     /// </summary>
     /// <remarks>This class provides a custom AssemblyResolver to find an installation of ProteoWizard, specified in ProteoWizardReaderImplementation.
-    /// This class is a wrapper around ProteoWizardReaderImplementation to encapsulate the usage of the custom AssemblyResolver, which must be 
+    /// This class is a wrapper around ProteoWizardReaderImplementation to encapsulate the usage of the custom AssemblyResolver, which must be
     /// added to the AppDomain.CurrentDomain.AssemblyResolve event before the class is instantiated.</remarks>
     public static class DependencyLoader
     {
@@ -48,7 +48,7 @@ namespace pwiz.ProteowizardWrapper
         }
 
         private static bool _resolverAdded;
-        
+
         #region AssemblyResolverHandler for finding ProteoWizard dlls
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace pwiz.ProteowizardWrapper
             Console.WriteLine("Looking for: " + args.Name);
             //Console.WriteLine("Wanted by: " + args.RequestingAssembly);
 #endif
-            
+
             if (!args.Name.ToLower().StartsWith("pwiz_bindings_cli"))
             {
                 // Check names from other primary assemblies in the ProteoWizard directory
@@ -80,7 +80,7 @@ namespace pwiz.ProteowizardWrapper
                         break;
                     }
                 }
-                
+
                 if (!found)
                 {
                     return Assembly.LoadFrom(""); // We are not interested in searching for anything else - resolving pwiz_bindings_cli provides the hint for all of its dependencies.
@@ -110,7 +110,7 @@ namespace pwiz.ProteowizardWrapper
                 if (strAssmbName.FullName.Substring(0, strAssmbName.FullName.IndexOf(',')) == args.Name.Substring(0, args.Name.IndexOf(',')))
                 {
                     //Console.WriteLine("Attempting to load DLL \"" + Path.Combine(pwizPath, args.Name.Substring(0, args.Name.IndexOf(",")) + ".dll") + "\"");
-                    //Build the path of the assembly from where it has to be loaded.                
+                    //Build the path of the assembly from where it has to be loaded.
                     strTempAssmbPath = Path.Combine(PwizPath, args.Name.Substring(0, args.Name.IndexOf(',')) + ".dll");
                     break;
                 }
@@ -120,7 +120,7 @@ namespace pwiz.ProteowizardWrapper
 #endif
             var assemblyFile = new FileInfo(strTempAssmbPath);
 
-            // Load the assembly from the specified path.  
+            // Load the assembly from the specified path.
             Assembly myAssembly;
             try
             {
@@ -179,9 +179,9 @@ namespace pwiz.ProteowizardWrapper
         /// PwizPath is populated from this, but only causes a single search.
         /// </summary>
         /// <returns></returns>
-        /// <remarks>Paths searched, in order: 
-        /// "%ProteoWizard%" or "%ProteoWizard%_x86" environment variable data, 
-        /// "C:\DMS_Programs\ProteoWizard" or "C:\DMS_Programs\ProteoWizard_x86", 
+        /// <remarks>Paths searched, in order:
+        /// "%ProteoWizard%" or "%ProteoWizard%_x86" environment variable data,
+        /// "C:\DMS_Programs\ProteoWizard" or "C:\DMS_Programs\ProteoWizard_x86",
         /// "%ProgramFiles%\ProteoWizard\(highest sorted)"</remarks>
         public static string FindPwizPath()
         {
@@ -195,7 +195,7 @@ namespace pwiz.ProteowizardWrapper
                 // Check for a x86 ProteoWizard environment variable
                 pwizPath = Environment.GetEnvironmentVariable("ProteoWizard_x86");
 
-                if(string.IsNullOrEmpty(pwizPath) && !Environment.Is64BitOperatingSystem)
+                if (string.IsNullOrEmpty(pwizPath) && !Environment.Is64BitOperatingSystem)
                 {
                     pwizPath = Environment.GetEnvironmentVariable("ProteoWizard");
                 }
@@ -209,7 +209,8 @@ namespace pwiz.ProteowizardWrapper
                 dmsProgPwiz = @"C:\DMS_Programs\ProteoWizard";
             }
 
-            if (string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(dmsProgPwiz) && new DirectoryInfo(dmsProgPwiz).GetFiles(TargetDllName).Length > 0)
+            if (string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(dmsProgPwiz) &&
+                new DirectoryInfo(dmsProgPwiz).GetFiles(TargetDllName).Length > 0)
             {
                 return dmsProgPwiz;
             }
@@ -248,27 +249,59 @@ namespace pwiz.ProteowizardWrapper
             }
 
             // Look for subfolders whose names start with ProteoWizard, for example "ProteoWizard 3.0.9490"
-            var subFolders = pwizFolder.GetDirectories("ProteoWizard*");
+            var subFolders = pwizFolder.GetDirectories("ProteoWizard*").ToList();
 
-            if (subFolders.Length <= 0)
+            if (subFolders.Count <= 0)
             {
                 return null;
             }
 
-            var folderNames = subFolders.Select(subFolder => subFolder.FullName).ToList();
-
-            folderNames.Sort();
-            folderNames.Reverse(); // reverse the sort order - this should give us the highest installed version of ProteoWizard first
-
-            foreach (var folder in folderNames)
+            // Try to sort by version, it properly handles the version rolling over powers of 10 (but string sorting does not)
+            var byVersion = new List<Tuple<Version, DirectoryInfo>>();
+            foreach (var folder in subFolders)
             {
-                if (new DirectoryInfo(folder).GetFiles(TargetDllName).Length > 0)
+                try
                 {
-                    return folder;
+                    // Just ignoring the directory here if it has no version
+                    var version = Version.Parse(folder.Name.Trim().Split(' ').Last());
+                    byVersion.Add(new Tuple<Version, DirectoryInfo>(version, folder));
+                }
+                catch (Exception)
+                {
+                    // Do nothing...
+                }
+            }
+            if (byVersion.Count > 0)
+            {
+                byVersion.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+                byVersion.Reverse();
+                var subFoldersOrig = subFolders.ToArray();
+                subFolders = byVersion.Select(x => x.Item2).ToList();
+                // Guarantee that any folder where we couldn't parse a version is in the list, but at the end.
+                foreach (var folder in subFoldersOrig)
+                {
+                    if (!subFolders.Contains(folder))
+                    {
+                        subFolders.Add(folder);
+                    }
+                }
+            }
+            else
+            {
+                // Sorting by version failed, try the old method.
+                subFolders.Sort((x, y) => x.FullName.CompareTo(y.FullName));
+                subFolders.Reverse(); // reverse the sort order - this should give us the highest installed version of ProteoWizard first
+            }
+
+            foreach (var folder in subFolders)
+            {
+                if (folder.GetFiles(TargetDllName).Length > 0)
+                {
+                    return folder.FullName;
                 }
             }
             // If the above failed, return the highest version installed
-            return folderNames[0];
+            return subFolders[0].FullName;
         }
 
         private static void SetPwizPathFiles()
@@ -294,7 +327,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Checks to make sure the path to ProteoWizard files is set. If not, throws an exception.
         /// </summary>
-        /// <remarks>This function should generally only be called inside of a conditional statement to prevent the 
+        /// <remarks>This function should generally only be called inside of a conditional statement to prevent the
         /// exception from being thrown when the ProteoWizard dlls will not be needed.</remarks>
         public static void ValidateLoader()
         {
