@@ -18,7 +18,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Add the Assembly Resolver to the system assembly resolver chain
         /// </summary>
-        /// <remarks>This should be called early in the program, so that the ProteoWizard Assembly Resolver will 
+        /// <remarks>This should be called early in the program, so that the ProteoWizard Assembly Resolver will
         /// already be in the resolver chain before any other use of ProteoWizardWrapper.
         /// Also, <see cref="DependencyLoader.ValidateLoader()"/> should be used to make sure a meaningful error message is thrown if ProteoWizard is not available.</remarks>
         /// <remarks>This must be called before any portion of <see cref="MsDataFileImpl"/> is used. It cannot be called in the same function
@@ -42,8 +42,20 @@ namespace pwiz.ProteowizardWrapper
                     // Do nothing; we actually want to hit this, because if we can already resolve pwiz_bindings_cli, that will be used rather than going through this assembly resolver.
                 }
                 AppDomain.CurrentDomain.AssemblyResolve += ProteoWizardAssemblyResolver;
-                ValidateLoader();
                 _resolverAdded = true;
+                ValidateLoader();
+            }
+        }
+
+        /// <summary>
+        /// Remove the Assembly Resolver from the system assembly resolver chain
+        /// </summary>
+        public static void RemoveAssemblyResolver()
+        {
+            if (_resolverAdded)
+            {
+                AppDomain.CurrentDomain.AssemblyResolve -= ProteoWizardAssemblyResolver;
+                _resolverAdded = false;
             }
         }
 
@@ -57,7 +69,7 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="sender"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static Assembly ProteoWizardAssemblyResolver(object sender, ResolveEventArgs args)
+        private static Assembly ProteoWizardAssemblyResolver(object sender, ResolveEventArgs args)
         {
 #if DEBUG
             Console.WriteLine("Looking for: " + args.Name);
@@ -331,6 +343,11 @@ namespace pwiz.ProteowizardWrapper
         /// exception from being thrown when the ProteoWizard dlls will not be needed.</remarks>
         public static void ValidateLoader()
         {
+            if (!_resolverAdded)
+            {
+                AddAssemblyResolver();
+            }
+
             try
             {
                 Assembly.Load("pwiz_bindings_cli, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
@@ -371,6 +388,7 @@ namespace pwiz.ProteowizardWrapper
         {
             PwizPath = FindPwizPath();
             SetPwizPathFiles();
+            AddAssemblyResolver();
         }
 
         #endregion
