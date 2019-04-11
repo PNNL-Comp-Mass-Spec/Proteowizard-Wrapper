@@ -104,12 +104,12 @@ namespace ProteowizardWrapperUnitTests
             // Keys are scan number, values are the ActivationType (or list of activation types), for example cid, etd, hcd
             var activationTypesActual = new Dictionary<int, List<string>>();
 
-            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
+            using (var reader  = new MSDataFileReader(dataFile.FullName))
             {
 
                 Console.WriteLine("Examining data in " + dataFile.Name);
 
-                var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
+                var scanNumberToIndexMap = reader .GetScanToIndexMapping();
 
                 foreach (var scanNumber in collisionEnergiesThisFile.Keys)
                 {
@@ -118,11 +118,11 @@ namespace ProteowizardWrapperUnitTests
                         Assert.Fail("ScanToIndexMap does not contain scan number " + scanNumber);
                     }
 
-                    var spectrum = oWrapper.GetSpectrum(spectrumIndex, false);
+                    var spectrum = reader .GetSpectrum(spectrumIndex, false);
 
                     Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan " + scanNumber);
 
-                    var precursors = oWrapper.GetPrecursors(spectrumIndex);
+                    var precursors = reader .GetPrecursors(spectrumIndex);
 
                     var collisionEnergiesThisScan = (from precursor in precursors
                                                      select precursor.PrecursorCollisionEnergy
@@ -225,10 +225,10 @@ namespace ProteowizardWrapperUnitTests
 
             try
             {
-                using (var oWrapper = new MSDataFileReader(dataFile.FullName))
+                using (var reader  = new MSDataFileReader(dataFile.FullName))
                 {
 
-                    var scanCount = oWrapper.SpectrumCount;
+                    var scanCount = reader .SpectrumCount;
                     Console.WriteLine("Scan count for {0}: {1}", dataFile.Name, scanCount);
 
                     if (expectedMS1 + expectedMS2 == 0)
@@ -240,7 +240,7 @@ namespace ProteowizardWrapperUnitTests
                         Assert.IsTrue(scanCount > 0, "ScanCount is zero, while we expected it to be > 0");
                     }
 
-                    var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
+                    var scanNumberToIndexMap = reader .GetScanToIndexMapping();
 
                     var scanCountMS1 = 0;
                     var scanCountMS2 = 0;
@@ -252,9 +252,9 @@ namespace ProteowizardWrapperUnitTests
 
                         try
                         {
-                            var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
+                            var spectrum = reader .GetSpectrum(spectrumIndex, true);
 
-                            var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
+                            var cvScanInfo = reader .GetSpectrumScanInfo(spectrumIndex);
 
                             Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
@@ -312,9 +312,9 @@ namespace ProteowizardWrapperUnitTests
         {
             var dataFile = GetRawDataFile(rawFileName);
 
-            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
+            using (var reader  = new MSDataFileReader(dataFile.FullName))
             {
-                var scanCount = oWrapper.SpectrumCount;
+                var scanCount = reader .SpectrumCount;
 
                 Console.WriteLine("Scan count for {0}: {1}", dataFile.Name, scanCount);
                 Assert.AreEqual(expectedResult, scanCount, "Scan count mismatch");
@@ -418,16 +418,16 @@ namespace ProteowizardWrapperUnitTests
             var dataFile = GetRawDataFile(rawFileName);
             var errorCount = 0;
 
-            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
+            using (var reader  = new MSDataFileReader(dataFile.FullName))
             {
                 Console.WriteLine("Parsing scan headers for {0}", dataFile.Name);
 
-                var scanCount = oWrapper.SpectrumCount;
+                var scanCount = reader .SpectrumCount;
                 Console.WriteLine("Total scans: {0}", scanCount);
                 Assert.AreEqual(expectedTotalScanCount, scanCount, "Total scan count mismatch");
                 Console.WriteLine();
 
-                var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
+                var scanNumberToIndexMap = reader .GetScanToIndexMapping();
 
                 var scanCountMS1 = 0;
                 var scanCountMS2 = 0;
@@ -439,9 +439,9 @@ namespace ProteowizardWrapperUnitTests
                     var scanNumber = scan.Key;
                     var spectrumIndex = scan.Value;
 
-                    var spectrum = oWrapper.GetSpectrum(spectrumIndex, false);
+                    var spectrum = reader .GetSpectrum(spectrumIndex, false);
 
-                    var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
+                    var cvScanInfo = reader .GetSpectrumScanInfo(spectrumIndex);
 
                     Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
@@ -591,9 +591,9 @@ namespace ProteowizardWrapperUnitTests
 
             var dataFile = GetRawDataFile(rawFileName);
 
-            using (var oWrapper = new MSDataFileReader(dataFile.FullName))
+            using (var reader  = new MSDataFileReader(dataFile.FullName))
             {
-                var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
+                var scanNumberToIndexMap = reader .GetScanToIndexMapping();
 
                 Console.WriteLine("Scan info for {0}", dataFile.Name);
                 Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15}",
@@ -613,9 +613,9 @@ namespace ProteowizardWrapperUnitTests
                     var scanNumber = scan.Key;
                     var spectrumIndex = scan.Value;
 
-                    var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
-                    var spectrumParams = oWrapper.GetSpectrumCVParamData(spectrumIndex);
-                    var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
+                    var spectrum = reader .GetSpectrum(spectrumIndex, true);
+                    var spectrumParams = reader .GetSpectrumCVParamData(spectrumIndex);
+                    var cvScanInfo = reader .GetSpectrumScanInfo(spectrumIndex);
 
                     Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan {0}", scanNumber);
 
@@ -753,7 +753,7 @@ namespace ProteowizardWrapperUnitTests
             {
                 var centroidData = (iteration > 1);
 
-                using (var oWrapper = new MSDataFileReader(
+                using (var reader  = new MSDataFileReader(
                     dataFile.FullName,
                     requireVendorCentroidedMS1: centroidData,
                     requireVendorCentroidedMS2: centroidData))
@@ -766,16 +766,16 @@ namespace ProteowizardWrapperUnitTests
                                           "FirstMz", "FirstInt", "MidMz", "MidInt", "ScanFilter");
                     }
 
-                    var scanNumberToIndexMap = oWrapper.GetScanToIndexMapping();
+                    var scanNumberToIndexMap = reader .GetScanToIndexMapping();
 
                     foreach (var scan in scanNumberToIndexMap.Where(x => x.Key >= scanStart && x.Key <= scanEnd))
                     {
                         var scanNumber = scan.Key;
                         var spectrumIndex = scan.Value;
 
-                        var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
+                        var spectrum = reader .GetSpectrum(spectrumIndex, true);
 
-                        var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
+                        var cvScanInfo = reader .GetSpectrumScanInfo(spectrumIndex);
 
                         var dataPointsRead = spectrum.Mzs.Length;
 
