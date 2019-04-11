@@ -1,4 +1,7 @@
 @echo off
+echo Be sure to compile in Release mode
+pause
+
 echo Copying the DLL
 @echo on
 
