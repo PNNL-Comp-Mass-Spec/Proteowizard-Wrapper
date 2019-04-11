@@ -25,7 +25,8 @@ namespace ProteowizardWrapperUnitTests
 
             var ce30 = new List<double> { 30.00 };
             var ce45 = new List<double> { 45.00 };
-            var ce120 = new List<double> { 120.550003 };
+            //var ce120 = new List<double> { 120.550003 }; // This is apparently the value ProteoWizard read when using MSFileReader
+            var ce120 = new List<double> { 120.551193 }; // ProteoWizard gets this value from RawFileReader
             var ms1Scan = new List<double>();
             var etdScanBuggyResults = new List<double>();
 
@@ -553,21 +554,21 @@ namespace ProteowizardWrapperUnitTests
                 {16124, "2   996 47.68 0 208 2000 7.8E+5  737.530 7.0E+4   775.94 cid      positive True   24.65 ITMS + c NSI..."},
                 {16125, "2   703 47.68 0 120 1627 2.1E+5  808.486 2.2E+4   538.84 etd      positive True   42.48 ITMS + c NSI..."},
                 {16126, "2   753 47.68 0 120 1627 1.4E+5  536.209 9.0E+3   538.84 cid, etd positive True   58.96 ITMS + c NSI..."},
-                {16127, "2   872 47.68 0 120 1627 1.3E+5  808.487 1.4E+4   538.84 cid, etd positive True   58.96 ITMS + c NSI..."},
+                {16127, "2   872 47.68 0 120 1627 1.3E+5  808.487 1.4E+4   538.84 etd, hcd positive True   58.96 ITMS + c NSI..."},
                 {16128, "2   972 47.69 0 225 1682 4.4E+5  805.579 2.3E+4   835.88 cid      positive True   42.71 ITMS + c NSI..."},
                 {16129, "2   937 47.69 0 266 1986 3.4E+5  938.679 2.9E+4   987.40 cid      positive True   35.75 ITMS + c NSI..."},
                 {16130, "2   622 47.69 0 110  853 2.7E+5  411.977 1.2E+4   421.26 cid      positive True   50.98 ITMS + c NSI..."},
                 {16131, "2    29 47.69 0 120 1986 2.1E+4  984.504 9.5E+3   987.40 etd      positive True   26.55 ITMS + c NSI..."},
                 {16132, "2   239 47.69 0 120  853 1.2E+4  421.052 6.8E+2   421.26 etd      positive True  127.21 ITMS + c NSI..."},
                 {16133, "2   280 47.70 0 120  853 1.5E+4  421.232 1.2E+3   421.26 cid, etd positive True  110.21 ITMS + c NSI..."},
-                {16134, "2   343 47.70 0 120  853 1.4E+4  838.487 7.5E+2   421.26 cid, etd positive True  110.21 ITMS + c NSI..."},
+                {16134, "2   343 47.70 0 120  853 1.4E+4  838.487 7.5E+2   421.26 etd, hcd positive True  110.21 ITMS + c NSI..."},
                 {16135, "2    38 47.70 0 120 1986 2.1E+4  984.498 9.2E+3   987.40 cid, etd positive True   31.82 ITMS + c NSI..."},
-                {16136, "2    93 47.71 0 120 1986 2.3E+4  984.491 9.4E+3   987.40 cid, etd positive True   31.82 ITMS + c NSI..."},
+                {16136, "2    93 47.71 0 120 1986 2.3E+4  984.491 9.4E+3   987.40 etd, hcd positive True   31.82 ITMS + c NSI..."},
                 {16137, "2  1172 47.71 0 336 2000 3.5E+5 1536.038 4.7E+3  1240.76 cid      positive True   30.70 ITMS + c NSI..."},
                 {16138, "2   925 47.72 0 235 1760 2.9E+5  826.095 2.5E+4   874.84 cid      positive True   40.56 ITMS + c NSI..."},
                 {16139, "2    96 47.72 0 120 1760 1.6E+4  875.506 2.1E+3   874.84 etd      positive True   45.88 ITMS + c NSI..."},
                 {16140, "2   174 47.72 0 120 1760 1.8E+4 1749.846 2.0E+3   874.84 cid, etd positive True   54.15 ITMS + c NSI..."},
-                {16141, "2   240 47.72 0 120 1760 1.6E+4  874.664 1.6E+3   874.84 cid, etd positive True   54.15 ITMS + c NSI..."},
+                {16141, "2   240 47.72 0 120 1760 1.6E+4  874.664 1.6E+3   874.84 etd, hcd positive True   54.15 ITMS + c NSI..."},
                 {16142, "1 13501 47.73 0 350 1550 1.3E+9  503.565 1.9E+8     0.00          positive False   0.79 FTMS + p NSI..."},
                 {16143, "2   651 47.73 0 128  981 6.5E+5  444.288 6.4E+4   485.28 cid      positive True   22.26 ITMS + c NSI..."},
                 {16144, "2   512 47.73 0 101 1561 5.0E+5  591.309 4.0E+4   387.41 cid      positive True   28.19 ITMS + c NSI..."},
@@ -575,13 +576,13 @@ namespace ProteowizardWrapperUnitTests
                 {16146, "2   573 47.73 0  99  770 1.9E+5  532.308 3.4E+4   379.72 cid      positive True  100.00 ITMS + c NSI..."},
                 {16147, "2   813 47.74 0 120 1830 3.8E+5  603.095 3.1E+4   606.29 etd      positive True   25.47 ITMS + c NSI..."},
                 {16148, "2   882 47.74 0 120 1830 1.5E+5  603.076 1.3E+4   606.29 cid, etd positive True   61.48 ITMS + c NSI..."},
-                {16149, "2  1121 47.74 0 120 1830 1.6E+5  603.027 1.1E+4   606.29 cid, etd positive True   61.48 ITMS + c NSI..."},
+                {16149, "2  1121 47.74 0 120 1830 1.6E+5  603.027 1.1E+4   606.29 etd, hcd positive True   61.48 ITMS + c NSI..."},
                 {16150, "2   625 47.74 0  95 1108 3.8E+5  418.536 1.2E+5   365.88 cid      positive True  134.71 ITMS + c NSI..."},
                 {16151, "2   679 47.75 0 146 1656 2.8E+5  501.523 4.3E+4   548.54 cid      positive True   30.59 ITMS + c NSI..."},
                 {16152, "2  1171 47.75 0 328 2000 1.8E+5  848.497 2.2E+3  1210.06 cid      positive True   38.05 ITMS + c NSI..."},
                 {16153, "2   600 47.75 0 120 1656 1.3E+5  548.396 1.3E+4   548.54 etd      positive True   50.35 ITMS + c NSI..."},
                 {16154, "2   566 47.75 0 120 1656 4.2E+4  548.450 4.2E+3   548.54 cid, etd positive True  122.26 ITMS + c NSI..."},
-                {16155, "2   753 47.76 0 120 1656 4.2E+4  550.402 3.6E+3   548.54 cid, etd positive True  122.26 ITMS + c NSI..."},
+                {16155, "2   753 47.76 0 120 1656 4.2E+4  550.402 3.6E+3   548.54 etd, hcd positive True  122.26 ITMS + c NSI..."},
                 {16156, "2  1120 47.76 0 324 2000 1.5E+5 1491.872 1.0E+4  1197.16 cid      positive True   63.61 ITMS + c NSI..."},
                 {16157, "2   714 47.76 0 124  950 2.2E+5  420.689 2.2E+4   469.71 cid      positive True  100.00 ITMS + c NSI..."},
                 {16158, "2   692 47.76 0 306 2000 1.3E+5 1100.042 3.5E+3  1132.02 cid      positive True   27.79 ITMS + c NSI..."},
@@ -590,7 +591,7 @@ namespace ProteowizardWrapperUnitTests
                 {16161, "2   737 47.77 0 157 1191 2.8E+5  541.462 6.0E+4   590.28 cid      positive True   37.92 ITMS + c NSI..."},
                 {16162, "2   288 47.77 0 120 1191 8.4E+4 1180.615 5.1E+3   590.28 etd      positive True   38.31 ITMS + c NSI..."},
                 {16163, "2   305 47.77 0 120 1191 1.8E+4 1184.614 9.0E+2   590.28 cid, etd positive True  109.20 ITMS + c NSI..."},
-                {16164, "2   372 47.77 0 120 1191 1.7E+4 1184.644 8.7E+2   590.28 cid, etd positive True  109.20 ITMS + c NSI..."},
+                {16164, "2   372 47.77 0 120 1191 1.7E+4 1184.644 8.7E+2   590.28 etd, hcd positive True  109.20 ITMS + c NSI..."},
                 {16165, "1 13816 47.78 0 350 1550 1.2E+9  503.565 1.6E+8     0.00          positive False   0.76 FTMS + p NSI..."}
             };
             expectedData.Add("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53", file2Data);
