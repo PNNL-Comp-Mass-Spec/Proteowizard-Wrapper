@@ -15,8 +15,18 @@ namespace ProteowizardWrapper_Test
             Console.WriteLine("DLLs will load from " + pwizPath);
 
             pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver();
+
+            Console.WriteLine();
             TestRaw.TestReadRaw();
+            Console.WriteLine();
+
+            TestRaw.TestReadBruker();
+            Console.WriteLine();
+
             Console.WriteLine("Done");
+            System.Threading.Thread.Sleep(1000);
+
         }
     }
 }
+
