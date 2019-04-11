@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using pwiz.CLI.cv;
@@ -265,6 +266,7 @@ namespace pwiz.ProteowizardWrapper
         private MsDataScanCache _scanCache;
         private readonly LockMassParameters _lockmassParameters; // For Waters lockmass correction
         private int? _lockmassFunction;  // For Waters lockmass correction
+        private MethodInfo _binaryDataArrayGetData;
 
         private readonly bool _requireVendorCentroidedMS1;
         private readonly bool _requireVendorCentroidedMS2;
@@ -275,9 +277,26 @@ namespace pwiz.ProteowizardWrapper
 
         private DetailLevel _detailDriftTime = DetailLevel.InstantMetadata;
 
-        private static double[] ToArray(BinaryDataArray binaryDataArray)
+        private double[] ToArray(BinaryDataArray binaryDataArray)
         {
-            return binaryDataArray.data.ToArray();
+            // Original code
+            //return binaryDataArray.data.ToArray();
+
+            // BinaryDataArray.get_data() problem fix
+            // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.msdata.BinaryData, is a semi-automatic wrapper for a C++ vector, which implements IList<double>
+            // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.util.BinaryData implements IList<double>, but also provides other optimization functions
+            // The best way to access this before was binaryDataArray.data.ToArray()
+            // In the future, this could be changed to binaryDataArray.data.Storage.ToArray(), but that may lead to more data copying than just using the IEnumerable<double> interface
+            // Both versions implement IList<double>, so I can get the object via reflection and cast it to an IList<double> (or IEnumerable<double>).
+
+            // Call via reflection to avoid issues of the ProteoWizardWrapper compiled reference vs. the ProteoWizard compiled DLL
+            var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
+            if (dataObj != null && dataObj is IEnumerable<double> data)
+            {
+                return data.ToArray();
+            }
+
+            return new double[0];
         }
 
         private static float[] ToFloatArray(IList<double> list)
@@ -341,6 +360,16 @@ namespace pwiz.ProteowizardWrapper
             InitializeReader(path, _msDataFile, sampleIndex, _config);
             _requireVendorCentroidedMS1 = requireVendorCentroidedMS1;
             _requireVendorCentroidedMS2 = requireVendorCentroidedMS2;
+
+            // BinaryDataArray.get_data() problem fix
+            // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: bda.data returns pwiz.CLI.msdata.BinaryData,  is a semi-automatic wrapper for a C++ vector, which implements IList<double>
+            // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: bda.data returns pwiz.CLI.util.BinaryData implements IList<double>, but also provides other optimization functions
+            // The best way to access this before was bda.data.ToArray()
+            // In the future, this could be changed to bda.data.Storage.ToArray(), but that may lead to more data copying than just using the IEnumerable<double> interface
+            // Both versions implement IList<double>, so I can get the object via reflection and cast it to an IList<double> (or IEnumerable<double>).
+
+            // Get the MethodInfo for BinaryDataArray.data property accessor
+            _binaryDataArrayGetData = typeof(BinaryDataArray).GetProperty("data", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetMethod;
         }
 
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions()]
