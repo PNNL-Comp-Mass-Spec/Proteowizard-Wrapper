@@ -1436,11 +1436,12 @@ namespace pwiz.ProteowizardWrapper
             return new SignedMz(selectedIon.cvParam(CVID.MS_selected_ion_m_z).value, negativePolarity);
         }
 
-        private const string USERPARAM_DRIFT_TIME = "drift time"; // Not L10N
+        private const string USER_PARAM_DRIFT_TIME = "drift time"; // Not L10N
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static double? GetPrecursorDriftTimeMsec(Precursor precursor)
         {
-            UserParam param = precursor.userParam(USERPARAM_DRIFT_TIME);  //   CONSIDER: this will eventually be a proper CVParam
+            var param = precursor.userParam(USER_PARAM_DRIFT_TIME);  //   CONSIDER: this will eventually be a proper CVParam
             if (param.empty())
                 return null;
             return param.timeInSeconds() * 1000.0;
@@ -1495,9 +1496,9 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public sealed class LockMassParameters : IComparable
     {
-        public LockMassParameters(double? lockmassPositve, double? lockmassNegative, double? lockmassTolerance)
+        public LockMassParameters(double? lockmassPositive, double? lockmassNegative, double? lockmassTolerance)
         {
-            LockmassPositive = lockmassPositve;
+            LockmassPositive = lockmassPositive;
             LockmassNegative = lockmassNegative;
             if (LockmassPositive.HasValue || LockmassNegative.HasValue)
             {
