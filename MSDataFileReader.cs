@@ -26,8 +26,8 @@ namespace pwiz.ProteowizardWrapper
     /// A wrapper around the internal class that allows us to add and use an assembly resolver to
     /// find the appropriate architecture of pwiz_bindings_cli.dll from an installed version of ProteoWizard.
     /// </summary>
-	public class MSDataFileReader : IDisposable
-	{
+    public class MSDataFileReader : IDisposable
+    {
         /// <summary>
         /// This static constructor ensures that the Assembly Resolver is added prior to actually using this class.
         /// </summary>
@@ -108,7 +108,7 @@ namespace pwiz.ProteowizardWrapper
         {
             return mDataReader.GetSpectrumScanInfo(scanIndex);
         }
-        
+
         /// <summary>
         /// Get the ProteoWizard native spectrum object for the specified spectrum. (requires reference to pwiz_bindings_cli; set "copy local" to false.)
         /// </summary>
@@ -125,30 +125,30 @@ namespace pwiz.ProteowizardWrapper
             return mDataReader.GetSpectrumObject(scanIndex);
         }
 
-	    /// <summary>
-	    /// List of MSConvert-style filter strings to apply to the spectrum list.
-	    /// </summary>
-	    /// <remarks>If the filter count is greater than 0, the default handling of the spectrumList using the optional constructor parameters is disabled.</remarks>
-	    public List<string> Filters
-	    {
-	        get { return mDataReader.Filters; }
-	    }
+        /// <summary>
+        /// List of MSConvert-style filter strings to apply to the spectrum list.
+        /// </summary>
+        /// <remarks>If the filter count is greater than 0, the default handling of the spectrumList using the optional constructor parameters is disabled.</remarks>
+        public List<string> Filters
+        {
+            get { return mDataReader.Filters; }
+        }
 
-	    /// <summary>
-	    /// Uses the centroiding/peak picking algorithm that the vendor libraries provide, if available; otherwise uses a low-quality centroiding algorithm.
-	    /// </summary>
-	    public string VendorCentroiding
-	    {
-	        get { return MsDataFileImpl.VendorCentroiding; }
-	    }
+        /// <summary>
+        /// Uses the centroiding/peak picking algorithm that the vendor libraries provide, if available; otherwise uses a low-quality centroiding algorithm.
+        /// </summary>
+        public string VendorCentroiding
+        {
+            get { return MsDataFileImpl.VendorCentroiding; }
+        }
 
-	    /// <summary>
+        /// <summary>
         /// Continuous Wavelet Transform peak picker - high-quality peak picking, may be slow with some high-res data.
         /// </summary>
         public string CwtCentroiding
-	    {
-	        get { return MsDataFileImpl.CwtCentroiding; }
-	    }
+        {
+            get { return MsDataFileImpl.CwtCentroiding; }
+        }
 
         /// <summary>
         /// Add/remove Vendor Centroiding to the filter list. Call <see cref="RedoFilters()"/> if calling this after reading any spectra.
@@ -237,13 +237,13 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="spectrumCacheSize">Positive number to cache recent spectra in memory to reduce disk I/O; defaults to 3</param>
         /// <remarks>This differs from the ProteoWizard version of this code by defaulting to treating SIM and SRM data as spectra.</remarks>
         public MSDataFileReader(
-            string path, 
-            int sampleIndex = 0, 
-            LockMassParameters lockmassParameters = null, 
-            bool simAsSpectra = true, 
-            bool srmAsSpectra = true, 
-            bool acceptZeroLengthSpectra = true, 
-            bool requireVendorCentroidedMS1 = false, 
+            string path,
+            int sampleIndex = 0,
+            LockMassParameters lockmassParameters = null,
+            bool simAsSpectra = true,
+            bool srmAsSpectra = true,
+            bool acceptZeroLengthSpectra = true,
+            bool requireVendorCentroidedMS1 = false,
             bool requireVendorCentroidedMS2 = false,
             int spectrumCacheSize = 3)
         {
@@ -402,7 +402,7 @@ namespace pwiz.ProteowizardWrapper
         public void GetChromatogram(int chromIndex, out string id,
             out float[] timeArray, out float[] intensityArray)
         {
-            mDataReader.GetChromatogram(chromIndex, out id, out timeArray, out intensityArray);         
+            mDataReader.GetChromatogram(chromIndex, out id, out timeArray, out intensityArray);
         }
 
         /// <summary>
@@ -489,17 +489,17 @@ namespace pwiz.ProteowizardWrapper
             mDataReader.GetSpectrum(spectrumIndex, out mzArray, out intensityArray);
         }
 
-	    /// <summary>
-	    /// Returns an MsDataSpectrum object representing the spectrum requested.
-	    /// </summary>
-	    /// <param name="spectrumIndex"></param>
-	    /// <param name="getBinaryData"></param>
-	    /// <returns></returns>
-	    /// <remarks>
+        /// <summary>
+        /// Returns an MsDataSpectrum object representing the spectrum requested.
+        /// </summary>
+        /// <param name="spectrumIndex"></param>
+        /// <param name="getBinaryData"></param>
+        /// <returns></returns>
+        /// <remarks>
         /// If you need direct access to CVParams, and are using MSDataFileReader, try using <see cref="GetSpectrumObject"/> instead.
         /// Alternatively, use <see cref="GetSpectrumScanInfo"/>
-	    /// </remarks>
-	    public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
+        /// </remarks>
+        public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
             return mDataReader.GetSpectrum(spectrumIndex, getBinaryData);
         }
@@ -540,14 +540,14 @@ namespace pwiz.ProteowizardWrapper
         /// Works for Thermo .raw files, Bruker .D folders, Bruker/Agilent .yep files, Agilent MassHunter data, Waters .raw folders, and Shimadzu data
         /// For UIMF files use <see cref="GetUimfFrameScanPairToIndexMapping"/></remarks>
         public Dictionary<int, int> GetScanToIndexMapping()
-	    {
+        {
             return mDataReader.GetScanToIndexMapping();
-	    }
+        }
 
         /// <summary>
         /// Check if the file has SRR Spectra
         /// </summary>
-	    public bool HasSrmSpectra
+        public bool HasSrmSpectra
         {
             get { return mDataReader.HasSrmSpectra; }
         }
@@ -679,5 +679,5 @@ namespace pwiz.ProteowizardWrapper
         /// The filepath of the currently loaded file
         /// </summary>
         public string FilePath { get { return mDataReader.FilePath; } }
-	}
+    }
 }

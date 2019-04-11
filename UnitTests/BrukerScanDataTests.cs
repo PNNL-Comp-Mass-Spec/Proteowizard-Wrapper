@@ -15,7 +15,7 @@ namespace ProteowizardWrapperUnitTests
         [Test]
         [TestCase("MZ20160603PPS_edta_000004.d", 1, 1, 0, 1)]
         [TestCase("Blank-2_05May16_Leopard_Infuse_1_01_7976.d", 1, 1, 1, 0)]
-        [TestCase("Corrupt_2016_05_08_FloroBenzene_PhF_Neg_000002.d", 1, 1, 0, 0)]            
+        [TestCase("Corrupt_2016_05_08_FloroBenzene_PhF_Neg_000002.d", 1, 1, 0, 0)]
         public void TestCorruptDataHandling(
             string dotDFolderName,
             int scanStart,
@@ -151,7 +151,7 @@ namespace ProteowizardWrapperUnitTests
 
                 Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
                 Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
-               
+
             }
         }
 
@@ -167,7 +167,7 @@ namespace ProteowizardWrapperUnitTests
             // Keys in this dictionary are the scan number whose metadata is being retrieved
             var file1Data = new Dictionary<int, string>
             {
-                // Scan MSLevel NumPeaks RetentionTime ScanStartTime DriftTimeMsec LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ 
+                // Scan MSLevel NumPeaks RetentionTime ScanStartTime DriftTimeMsec LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ
                 {1, "1 1 7794096   0.59  35.34 0  92  1300 7.1E+9    0.000 5.5E+8     0.00          positive False   696.00"},
                 {2, "2 1 7794096   1.10  66.27 0  92  1300 7.2E+9    0.000 5.6E+8     0.00          positive False   696.00"},
                 {3, "3 1 7794096   1.62  97.18 0  92  1300 7.2E+9    0.000 5.5E+8     0.00          positive False   696.00"},
@@ -207,8 +207,8 @@ namespace ProteowizardWrapperUnitTests
                 Console.WriteLine("Scan info for {0}", dataFolder.Name);
                 Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15}",
                                   "Scan", "MSLevel",
-                                  "NumPeaks", "RetentionTime", 
-                                  "ScanStartTime", 
+                                  "NumPeaks", "RetentionTime",
+                                  "ScanStartTime",
                                   "DriftTimeMsec",
                                   "LowMass", "HighMass", "TotalIonCurrent",
                                   "BasePeakMZ", "BasePeakIntensity",
@@ -351,7 +351,7 @@ namespace ProteowizardWrapperUnitTests
                     var spectrumIndex = scan.Value;
 
                     var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
-                        
+
                     var dataPointsRead = spectrum.Mzs.Length;
 
                     Assert.IsTrue(dataPointsRead > 0, "GetScanData returned 0 for scan {0}", scanNumber);
@@ -426,7 +426,7 @@ namespace ProteowizardWrapperUnitTests
             lowMass = 0;
             highMass = 0;
 
-            // Lookup details on the scan associated with this spectrum 
+            // Lookup details on the scan associated with this spectrum
             // (cvScanInfo.Scans is a list, but Bruker .D folders typically have a single scan for each spectrum)
             foreach (var scanEntry in cvScanInfo.Scans)
             {

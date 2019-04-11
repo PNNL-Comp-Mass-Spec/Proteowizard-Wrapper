@@ -90,7 +90,7 @@ namespace ProteowizardWrapperUnitTests
                     Console.WriteLine("scanCountMS1={0}", scanCountMS1);
                     Console.WriteLine("scanCountMS2={0}", scanCountMS2);
                     Console.WriteLine("scansWithData={0}", scansWithData);
-                    
+
 
                     Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
                     Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
@@ -119,11 +119,11 @@ namespace ProteowizardWrapperUnitTests
         [TestCase("QC_Shew_IMER_500ng_Run-1_4May16_Oak_15-01-16.UIMF", 515, 533, 2122, 0, 205239)]
         [TestCase("20160524_TuneMix_1574V_neg_001.UIMF", 20, 30, 8250, 0, 26250)]
         public void TestGetScanCountsByScanType(
-            string uimfFileName, 
-            int frameStart, 
-            int frameEnd, 
-            int expectedMS1, 
-            int expectedMS2, 
+            string uimfFileName,
+            int frameStart,
+            int frameEnd,
+            int expectedMS1,
+            int expectedMS2,
             int expectedTotalScanCount)
         {
             var dataFile = GetUimfDataFile(uimfFileName);
@@ -166,7 +166,7 @@ namespace ProteowizardWrapperUnitTests
 
                 Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
                 Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
-               
+
             }
         }
 
@@ -488,7 +488,7 @@ namespace ProteowizardWrapperUnitTests
                     var scanSummary =
                         string.Format(
                             "{0,4} {1,4} {2,-8} {3,-8} {4,-8} {5,-8} {6,-8} {7}",
-                            frameNumber, scanNumber, 
+                            frameNumber, scanNumber,
                             spectrum.Mzs.Length, spectrum.Intensities.Length,
                             spectrum.Mzs[0].ToString("0.000"), spectrum.Intensities[0].ToString("0"),
                             spectrum.Mzs[midPoint].ToString("0.000"), spectrum.Intensities[midPoint].ToString("0"));
@@ -555,7 +555,7 @@ namespace ProteowizardWrapperUnitTests
             lowMass = 0;
             highMass = 0;
 
-            // Lookup details on the scan associated with this spectrum 
+            // Lookup details on the scan associated with this spectrum
             // (cvScanInfo.Scans is a list, but .uimf files typically have a single scan for each spectrum)
             foreach (var scanEntry in cvScanInfo.Scans)
             {

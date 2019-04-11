@@ -250,8 +250,8 @@ namespace ProteowizardWrapperUnitTests
                     {
                         var scanNumber = scan.Key;
                         var spectrumIndex = scan.Value;
-                        
-                        try 
+
+                        try
                         {
                             var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
 
@@ -709,13 +709,13 @@ namespace ProteowizardWrapperUnitTests
             var expectedData = new Dictionary<string, Dictionary<int, Dictionary<string, string>>>();
 
             // Keys in this dictionary are the scan number of data being retrieved
-            var file1Data = new Dictionary<int, Dictionary<string, string>> 
+            var file1Data = new Dictionary<int, Dictionary<string, string>>
             {
                 {1513, new Dictionary<string, string>()},
                 {1514, new Dictionary<string, string>()},
                 {1515, new Dictionary<string, string>()},
                 {1516, new Dictionary<string, string>()},
-                {1517, new Dictionary<string, string>()}            
+                {1517, new Dictionary<string, string>()}
             };
 
             // The KeySpec for each dictionary entry is Centroid
@@ -734,14 +734,14 @@ namespace ProteowizardWrapperUnitTests
             expectedData.Add("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20", file1Data);
 
 
-            var file2Data = new Dictionary<int, Dictionary<string, string>> 
+            var file2Data = new Dictionary<int, Dictionary<string, string>>
             {
                 {16121, new Dictionary<string, string>()},
                 {16122, new Dictionary<string, string>()},
                 {16126, new Dictionary<string, string>()},
                 {16131, new Dictionary<string, string>()},
                 {16133, new Dictionary<string, string>()},
-                {16141, new Dictionary<string, string>()}            
+                {16141, new Dictionary<string, string>()}
             };
 
             // The KeySpec for each dictionary entry is Centroid
@@ -789,7 +789,7 @@ namespace ProteowizardWrapperUnitTests
                         var spectrumIndex = scan.Value;
 
                         var spectrum = oWrapper.GetSpectrum(spectrumIndex, true);
-                        
+
                         var cvScanInfo = oWrapper.GetSpectrumScanInfo(spectrumIndex);
 
                         var dataPointsRead = spectrum.Mzs.Length;
@@ -908,7 +908,7 @@ namespace ProteowizardWrapperUnitTests
             lowMass = 0;
             highMass = 0;
 
-            // Lookup details on the scan associated with this spectrum 
+            // Lookup details on the scan associated with this spectrum
             // (cvScanInfo.Scans is a list, but Thermo .raw files typically have a single scan for each spectrum)
             foreach (var scanEntry in cvScanInfo.Scans)
             {

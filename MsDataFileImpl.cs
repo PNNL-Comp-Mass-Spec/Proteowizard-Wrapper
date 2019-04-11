@@ -3,7 +3,7 @@
  *                  MacCoss Lab, Department of Genome Sciences, UW
  *
  * Copyright 2009 University of Washington - Seattle, WA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,9 +32,9 @@ namespace pwiz.ProteowizardWrapper
 #pragma warning disable 1591
     /// <summary>
     /// This is our wrapper class for ProteoWizard's MSData file reader interface.
-    /// 
-    /// Performance measurements can be made here, see notes below on enabling that.   
-    /// 
+    ///
+    /// Performance measurements can be made here, see notes below on enabling that.
+    ///
     /// When performance measurement is enabled, the GetLog() method can be called
     /// after read operations have been completed. This returns a handy CSV-formatted
     /// report on file read performance.
@@ -162,7 +162,7 @@ namespace pwiz.ProteowizardWrapper
             }
 
             return cvParams;
-        }        
+        }
 
         /// <summary>
         /// Get the ProteoWizard native spectrum object for the specified spectrum.
@@ -325,13 +325,13 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="requireVendorCentroidedMS1">True to return centroided MS1 spectra</param>
         /// <param name="requireVendorCentroidedMS2">True to return centroided MS2 spectra</param>
         public MsDataFileImpl(
-            string path, 
-            int sampleIndex = 0, 
-            LockMassParameters lockmassParameters = null, 
-            bool simAsSpectra = false, 
-            bool srmAsSpectra = false, 
-            bool acceptZeroLengthSpectra = true, 
-            bool requireVendorCentroidedMS1 = false, 
+            string path,
+            int sampleIndex = 0,
+            LockMassParameters lockmassParameters = null,
+            bool simAsSpectra = false,
+            bool srmAsSpectra = false,
+            bool acceptZeroLengthSpectra = true,
+            bool requireVendorCentroidedMS1 = false,
             bool requireVendorCentroidedMS2 = false)
         {
             FilePath = path;
@@ -598,7 +598,7 @@ namespace pwiz.ProteowizardWrapper
                         IsWatersFile &&
                         _msDataFile.run.spectrumList != null &&
                         !_msDataFile.run.spectrumList.empty() &&
-                        !HasChromatogramData && 
+                        !HasChromatogramData &&
                         !HasDriftTimeSpectra && // CDT reader doesn't handle lockmass correction as of Nov 2015
                         !HasSrmSpectra;
                 }
@@ -637,7 +637,7 @@ namespace pwiz.ProteowizardWrapper
 
                     if (Filters.Count == 0)
                     {
-                        // CONSIDER(bspratt): there is no acceptable wrapping order when both centroiding and lockmass are needed at the same time 
+                        // CONSIDER(bspratt): there is no acceptable wrapping order when both centroiding and lockmass are needed at the same time
                         // (For now, this can't happen in practice, as Waters offers no centroiding, but someday this may force pwiz API rework)
                         var centroidLevel = new List<int>();
                         _spectrumList = _msDataFile.run.spectrumList;
@@ -666,7 +666,7 @@ namespace pwiz.ProteowizardWrapper
                                 _lockmassParameters.LockmassTolerance ?? LockMassParameters.LOCKMASS_TOLERANCE_DEFAULT);
                             if (_spectrumList.size() > 0 && !hasSrmSpectra)
                             {
-                                // If the first seen spectrum has MS1 data and function > 1 assume it's the lockspray function, 
+                                // If the first seen spectrum has MS1 data and function > 1 assume it's the lockspray function,
                                 // and thus to be omitted from chromatogram extraction.
                                 // N.B. for msE data we will always assume function 3 and greater are to be omitted
                                 // CONSIDER(bspratt) I really wish there was some way to communicate decisions like this to the user
@@ -704,7 +704,7 @@ namespace pwiz.ProteowizardWrapper
             using (var cid = ChromatogramList.chromatogramIdentity(index))
             {
                 indexId = cid.index;
-                return cid.id;                
+                return cid.id;
             }
         }
 
@@ -716,7 +716,7 @@ namespace pwiz.ProteowizardWrapper
                 id = chrom.id;
                 timeArray = ToFloatArray(chrom.binaryDataArrays[0].data);
                 intensityArray = ToFloatArray(chrom.binaryDataArrays[1].data);
-            }            
+            }
         }
 
         /// <summary>
@@ -856,7 +856,7 @@ namespace pwiz.ProteowizardWrapper
 
                 // Check the scan for this cache
                 var success = _scanCache.TryGetSpectrum(spectrumIndex, out returnSpectrum);
-              
+
                 if (!success || (!returnSpectrum.BinaryDataLoaded && getBinaryData))
                 {
                     // Spectrum not in the cache (or is in the cache but does not have binary data)
@@ -934,7 +934,7 @@ namespace pwiz.ProteowizardWrapper
             if (idText.Trim().Length == 0)
             {
                 throw new ArgumentException(string.Format("Empty spectrum ID (and index = {0}) for scan {1}", // Not L10N
-                    spectrum.index, spectrumIndex)); 
+                    spectrum.index, spectrumIndex));
             }
 
             var msDataSpectrum = new MsDataSpectrum
@@ -1081,7 +1081,7 @@ namespace pwiz.ProteowizardWrapper
                 // Shimadzu Biotech
                 // start=34 end=35
                 new Regex(@"start=(?<ScanNumber>\d+) end=(?<ScanNumberEnd>\d+)", RegexOptions.Compiled),
-                
+
                 // Not supported: SCIEX TOF/TOF
                 // @"jobRun=\d+ spotLabel=[^ ]+ spectrum=(?<Spectrum>\d+)"
 
@@ -1113,7 +1113,7 @@ namespace pwiz.ProteowizardWrapper
                             preferredRegEx = matcher;
                             break;
                         }
-                    }                    
+                    }
                 }
 
                 if (match == null || !match.Success)
@@ -1132,7 +1132,7 @@ namespace pwiz.ProteowizardWrapper
 
                     throw new Exception(string.Format("NativeId did not match the expected format: {0}", spectrumIds[spectrumIndex]));
                 }
-    
+
                 var scanNumber = int.Parse(match.Groups["ScanNumber"].Value);
 
                 scanNumberToIndexMap.Add(scanNumber, spectrumIndex);
@@ -1419,11 +1419,11 @@ namespace pwiz.ProteowizardWrapper
                 }
 
             }
-           
+
 
             return activationTypes;
         }
-    
+
         private static SignedMz GetPrecursorMz(Precursor precursor, bool negativePolarity)
         {
             // CONSIDER: Only the first selected ion m/z is considered for the precursor m/z
@@ -1532,7 +1532,7 @@ namespace pwiz.ProteowizardWrapper
 
         private bool Equals(LockMassParameters other)
         {
-            return LockmassPositive.Equals(other.LockmassPositive) && 
+            return LockmassPositive.Equals(other.LockmassPositive) &&
                    LockmassNegative.Equals(other.LockmassNegative) &&
                    LockmassTolerance.Equals(other.LockmassTolerance);
         }
@@ -1557,7 +1557,7 @@ namespace pwiz.ProteowizardWrapper
 
         public int CompareTo(LockMassParameters other)
         {
-            if (ReferenceEquals(null, other)) 
+            if (ReferenceEquals(null, other))
                 return -1;
             var result = Nullable.Compare(LockmassPositive, other.LockmassPositive);
             if (result != 0)
@@ -1685,11 +1685,11 @@ namespace pwiz.ProteowizardWrapper
 
     /// <summary>
     /// We need a way to distinguish chromatograms for negative ion modes from those for positive.
-    /// The idea of m/z is inherently "positive", in the sense of sorting etc, so we carry around 
-    /// the m/z value, and a sign flag, and when we sort it's by sign then by (normally positive) m/z.  
+    /// The idea of m/z is inherently "positive", in the sense of sorting etc, so we carry around
+    /// the m/z value, and a sign flag, and when we sort it's by sign then by (normally positive) m/z.
     /// The m/z value *could* be negative as a result of an arithmetic operator, that has a special
     /// meaning for comparisons but doesn't happen in normal use.
-    /// There's a lot of operator magic here to minimize code changes where we used to implement mz 
+    /// There's a lot of operator magic here to minimize code changes where we used to implement mz
     /// values as simple doubles.
     /// </summary>
     public struct SignedMz : IComparable, IEquatable<SignedMz>, IFormattable
@@ -1723,7 +1723,7 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// For serialization etc - returns a negative number if IsNegative is true 
+        /// For serialization etc - returns a negative number if IsNegative is true
         /// </summary>
         public double? RawValue
         {
@@ -1856,7 +1856,7 @@ namespace pwiz.ProteowizardWrapper
             }
             if (IsNegative != other.IsNegative)
             {
-                return IsNegative ? -1 : 1; // Not interested in tolerance when signs disagree 
+                return IsNegative ? -1 : 1; // Not interested in tolerance when signs disagree
             }
             // Same sign
             if (Math.Abs(Value - other.Value) <= tolerance)
@@ -1909,7 +1909,7 @@ namespace pwiz.ProteowizardWrapper
                 }
                 return null;
             }
-        }        
+        }
     }
 
     public sealed class MsTimeAndPrecursors
@@ -1941,7 +1941,7 @@ namespace pwiz.ProteowizardWrapper
 
         public int WatersFunctionNumber
         {
-            get 
+            get
             {
                 return WatersFunctionNumberFromId(Id);
             }

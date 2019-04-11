@@ -3,7 +3,7 @@
  *                  MacCoss Lab, Department of Genome Sciences, UW
  *
  * Copyright 2010 University of Washington - Seattle, WA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,7 @@ namespace pwiz.ProteowizardWrapper
         {
             var centroidedMzsList = new List<double>();
             var centroidedIntensitiesList = new List<double>();
-            
+
             bool increasing = true;
             double currentMz = 0;
             double currentIntensity = 0;
