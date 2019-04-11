@@ -260,17 +260,15 @@ namespace ProteowizardWrapperUnitTests
 
                     var scanSummary =
                         string.Format(
-                            "{0} {1} {2,5} {3,6} {4,6} {5} {6,3} {7,5} {8,6} {9,8} {10,6} {11,8} {12,-8} {13} {14,-5} {15,8}",
+                            "{0} {1} {2,5} {3,6:0.00} {4,6:0.00} {5:0} {6,3:0} {7,5:0} {8,6:0.0E+0} {9,8:0.000} {10,6:0.0E+0} {11,8:0.00} {12,-8} {13} {14,-5} {15,8:0.00}",
                             scanNumber, spectrum.Level,
-                            numPeaks, retentionTime.ToString("0.00"),
-                            scanStartTime.ToString("0.00"),
-                            cvParamUtilities.CheckNull(spectrum.DriftTimeMsec).ToString("0"),
-                            lowMass.ToString("0"), highMass.ToString("0"),
-                            totalIonCurrent.ToString("0.0E+0"), basePeakMZ.ToString("0.000"),
-                            basePeakIntensity.ToString("0.0E+0"), parentIonMZ.ToString("0.00"),
+                            numPeaks, retentionTime, scanStartTime,
+                            cvParamUtilities.CheckNull(spectrum.DriftTimeMsec),
+                            lowMass, highMass,
+                            totalIonCurrent,
+                            basePeakMZ, basePeakIntensity, parentIonMZ,
                             activationType,
-                            ionMode, spectrum.Centroided,
-                            isolationMZ.ToString("0.00"));
+                            ionMode, spectrum.Centroided, isolationMZ);
 
                     Console.WriteLine(scanSummary);
 
@@ -354,11 +352,11 @@ namespace ProteowizardWrapperUnitTests
 
                     var scanSummary =
                         string.Format(
-                            "{0} {1,-8} {2,-8} {3,-8} {4,-8} {5,-8} {6}",
+                            "{0} {1,-8} {2,-8} {3,-8:0.000} {4,-8:0.0E+0} {5,-8:0.000} {6:0.0E+0}",
                             scanNumber,
                             spectrum.Mzs.Length, spectrum.Intensities.Length,
-                            spectrum.Mzs[0].ToString("0.000"), spectrum.Intensities[0].ToString("0.0E+0"),
-                            spectrum.Mzs[midPoint].ToString("0.000"), spectrum.Intensities[midPoint].ToString("0.0E+0"));
+                            spectrum.Mzs[0], spectrum.Intensities[0],
+                            spectrum.Mzs[midPoint], spectrum.Intensities[midPoint]);
 
                     Console.WriteLine(scanSummary);
 

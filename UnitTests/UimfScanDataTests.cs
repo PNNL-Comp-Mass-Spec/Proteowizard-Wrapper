@@ -340,18 +340,15 @@ namespace ProteowizardWrapperUnitTests
 
                     var scanSummary =
                         string.Format(
-                            "{0,4} {1,4} {2} {3,5} {4,6} {5,6} {6,8} {7,8} {8,3} {9,5} {10,6} {11,8} {12,6} {13,8} {14,-8} {15} {16,-5} {17,8}",
+                            "{0,4} {1,4} {2} {3,5} {4,6:0.00} {5,6:0.00} {6,8:0.00} {7,8:0.00} {8,3:0} {9,5:0} {10,6:0.0E+0} {11,8:0.000} {12,6:0.0E+0} {13,8:0.00} {14,-8} {15} {16,-5} {17,8:0.00}",
                             frameNumber, scanNumber, spectrum.Level,
-                            numPeaks, retentionTime.ToString("0.00"),
-                            scanStartTime.ToString("0.00"),
-                            cvParamUtilities.CheckNull(spectrum.DriftTimeMsec).ToString("0.00"),
-                            ionMobilityDriftTime.ToString("0.00"),
-                            lowMass.ToString("0"), highMass.ToString("0"),
-                            totalIonCurrent.ToString("0.0E+0"), basePeakMZ.ToString("0.000"),
-                            basePeakIntensity.ToString("0.0E+0"), parentIonMZ.ToString("0.00"),
-                            activationType,
-                            ionMode, spectrum.Centroided,
-                            isolationMZ.ToString("0.00"));
+                            numPeaks, retentionTime, scanStartTime,
+                            cvParamUtilities.CheckNull(spectrum.DriftTimeMsec),
+                            ionMobilityDriftTime,
+                            lowMass, highMass,
+                            totalIonCurrent, basePeakMZ, basePeakIntensity, parentIonMZ,
+                            activationType, ionMode,
+                            spectrum.Centroided, isolationMZ);
 
                     Console.WriteLine(scanSummary);
 
@@ -479,11 +476,11 @@ namespace ProteowizardWrapperUnitTests
 
                     var scanSummary =
                         string.Format(
-                            "{0,4} {1,4} {2,-8} {3,-8} {4,-8} {5,-8} {6,-8} {7}",
+                            "{0,4} {1,4} {2,-8} {3,-8} {4,-8:0.000} {5,-8:0} {6,-8:0.000} {7:0}",
                             frameNumber, scanNumber,
                             spectrum.Mzs.Length, spectrum.Intensities.Length,
-                            spectrum.Mzs[0].ToString("0.000"), spectrum.Intensities[0].ToString("0"),
-                            spectrum.Mzs[midPoint].ToString("0.000"), spectrum.Intensities[midPoint].ToString("0"));
+                            spectrum.Mzs[0], spectrum.Intensities[0],
+                            spectrum.Mzs[midPoint], spectrum.Intensities[midPoint]);
 
                     Console.WriteLine(scanSummary);
 
