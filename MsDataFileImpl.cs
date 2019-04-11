@@ -267,7 +267,7 @@ namespace pwiz.ProteowizardWrapper
         private MsDataScanCache _scanCache;
         private readonly LockMassParameters _lockmassParameters; // For Waters lockmass correction
         private int? _lockmassFunction;  // For Waters lockmass correction
-        private MethodInfo _binaryDataArrayGetData;
+        private readonly MethodInfo _binaryDataArrayGetData;
 
         private readonly bool _requireVendorCentroidedMS1;
         private readonly bool _requireVendorCentroidedMS2;
@@ -1880,11 +1880,15 @@ namespace pwiz.ProteowizardWrapper
                 // If the isolation window is not centered around the target m/z, then return a
                 // m/z value that is centered in the isolation window.
                 if (targetMz.HasValue && IsolationWindowUpper.HasValue && IsolationWindowLower.HasValue &&
-                        IsolationWindowUpper.Value != IsolationWindowLower.Value)
+                    Math.Abs(IsolationWindowUpper.Value - IsolationWindowLower.Value) > float.Epsilon)
+                {
                     return new SignedMz((targetMz * 2 + IsolationWindowUpper.Value - IsolationWindowLower.Value) / 2.0, targetMz.IsNegative);
+                }
+
                 return targetMz;
             }
         }
+
         public double? IsolationWidth
         {
             get
