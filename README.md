@@ -24,15 +24,24 @@ When the running process is x86:
 1) Look for pwiz_bindings_cli.dll in the current working directory
 2) Look for a "ProteoWizard_x86" environment variable that points to an existing directory
 3) Look for directory "C:\DMS_Programs\ProteoWizard_x86"
-4) Look for a directory with a name like
-   "C:\Program Files (x86)\ProteoWizard\ProteoWizard 3.0.9490" on 64-bit Windows, or
-   "C:\Program Files\ProteoWizard\ProteoWizard 3.0.9490"       on 32-bit Windows
+4) Look for standard installs in default locations:
+  * Look for machine installs:
+    * "C:\Program Files (x86)\ProteoWizard\ProteoWizard 3.0.9490" (or different version) on 64-bit Windows
+    * "C:\Program Files\ProteoWizard\ProteoWizard 3.0.9490" (or different version)       on 32-bit Windows
+  * Look for user installs:
+    * "C:\Users\[username]\AppData\Local\Apps\ProteoWizard 3.0.19067.a4153e272 32-bit" (or different 32-bit version)
+  * Out of all standard installs found, the most recent version is used
 
 When the running process is x64 (this includes AnyCPU running on 64-bit Windows)
 1) Look for pwiz_bindings_cli.dll in the current working directory
 2) Look for a "ProteoWizard" environment variable that points to an existing directory
 3) Look for directory "C:\DMS_Programs\ProteoWizard"
-4) Look for a directory with a name like "C:\Program Files\ProteoWizard\ProteoWizard 3.0.9490"
+4) Look for standard installs in default locations:
+  * Look for machine installs:
+    * "C:\Program Files\ProteoWizard\ProteoWizard 3.0.9490" (or different version)
+  * Look for user installs:
+    * "C:\Users\[username]\AppData\Local\Apps\ProteoWizard 3.0.19067.a4153e272 64-bit" (or different 64-bit version)
+  * Out of all standard installs found, the most recent version is used
 
 Technical note: an AnyCPU program can be compiled with setting "prefer 32-bit" enabled.
 In that case, when the AnyCPU program runs on 64-bit windows it will run as an x86 process.
