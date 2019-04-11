@@ -12,7 +12,7 @@ namespace ProteowizardWrapperUnitTests
         private const bool USE_REMOTE_PATHS = true;
 
         [Test]
-        [TestCase("20160211_Agilent_tunemix_pos_0002.UIMF", 1, 20, 2809, 0, 2799)]
+        [TestCase("20160211_Agilent_tunemix_pos_0002.UIMF", 1, 20, 2809, 0, 2809)]
         [TestCase("QC_Shew_IMER_500ng_Run-1_4May16_Oak_15-01-16.UIMF", 50, 70, 2078, 0, 2078)]
         [TestCase("Corrupt_20160504-4uMppep3_100mMformic-NOMeoh_20msec_50c.UIMF", 1, 1, 0, 0, 0)]
         public void TestCorruptDataHandling(
@@ -182,21 +182,21 @@ namespace ProteowizardWrapperUnitTests
             var file1Data = new Dictionary<KeyValuePair<int, int>, string>
             {
                 // Scan MSLevel NumPeaks RetentionTime DriftTimeMsec IonMobilityDriftTime LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ ActivationType IonMode IsCentroided ScanStartTime IonInjectionTime FilterText
-                 {new KeyValuePair<int, int>(1, 0), "   1    0 1     0   0.01   0.01     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(1, 0), "   1    0 1     3   0.01   0.01     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(1, 100), "   1  100 1  1317   0.01   0.01    24.68    24.68   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(1, 200), "   1  200 1     3   0.01   0.01    49.36    49.36   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(2, 0), "   2    0 1     0   0.25   0.25     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(2, 0), "   2    0 1    16   0.25   0.25     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(2, 1), "   2    1 1     6   0.25   0.25     0.25     0.25   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(2, 100), "   2  100 1  3429   0.25   0.25    24.70    24.70   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(2, 200), "   2  200 1     9   0.25   0.25    49.39    49.39   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(3, 0), "   3    0 1     0   0.50   0.50     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(3, 0), "   3    0 1    21   0.50   0.50     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(3, 100), "   3  100 1  4216   0.50   0.50    24.65    24.65   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(3, 200), "   3  200 1     3   0.50   0.50    49.31    49.31   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(4, 0), "   4    0 1     0   0.75   0.75     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(4, 0), "   4    0 1     3   0.75   0.75     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(4, 1), "   4    1 1     6   0.75   0.75     0.25     0.25   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(4, 100), "   4  100 1  5640   0.75   0.75    24.58    24.58   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(4, 200), "   4  200 1     6   0.75   0.75    49.16    49.16   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(5, 0), "   5    0 1     0   1.00   1.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(5, 0), "   5    0 1     9   1.00   1.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(5, 100), "   5  100 1  4605   1.00   1.00    24.70    24.70   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
                  {new KeyValuePair<int, int>(5, 200), "   5  200 1     3   1.00   1.00    49.39    49.39   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"}
             };
@@ -217,9 +217,9 @@ namespace ProteowizardWrapperUnitTests
                  {new KeyValuePair<int, int>(1, 100), "   1  100 1   504   0.01   0.01    16.37    16.37   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
                  {new KeyValuePair<int, int>(2, 100), "   2  100 1   494   0.06   0.06    16.42    16.42   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
                  {new KeyValuePair<int, int>(3, 100), "   3  100 1  1109   0.11   0.11    16.43    16.43   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(4, 0), "   4    0 1     0   0.17   0.17     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(4, 0), "   4    0 1     3   0.17   0.17     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
                  {new KeyValuePair<int, int>(4, 100), "   4  100 1  1061   0.17   0.17    16.41    16.41   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(5, 0), "   5    0 1     0   0.22   0.22     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(5, 0), "   5    0 1     3   0.22   0.22     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
                  {new KeyValuePair<int, int>(5, 100), "   5  100 1  1087   0.22   0.22    16.44    16.44   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
             };
             expectedData.Add("QC_Shew_IMER_500ng_Run-1_4May16_Oak_15-01-16", file3Data);
@@ -364,6 +364,21 @@ namespace ProteowizardWrapperUnitTests
 
                     if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out var expectedScanSummary))
                     {
+                        if (!string.Equals(expectedScanSummary, scanSummary))
+                        {
+                            Console.WriteLine(
+                                "{0,4} {1,4} {2} {3,5} {4,6} {5,6} {6,8} {7,8} {8,3} {9,5} {10,6} {11,8} {12,6} {13,8} {14,-8} {15} {16,-5} {17,8}",
+                                "Frame", "Scan", "MSLevel",
+                                "NumPeaks", "RetentionTime", "ScanStartTime",
+                                "DriftTimeMsec",
+                                "IonMobilityDriftTime",
+                                "LowMass", "HighMass",
+                                "TIC", "BasePeakMZ", "BPI", "ParentIonMZ",
+                                "ActivationType", "IonMode",
+                                "Centroided?", "IsolationMZ");
+
+                        }
+
                         Assert.AreEqual(expectedScanSummary, scanSummary,
                                         "Scan summary mismatch, scan " + scanNumber);
                     }
