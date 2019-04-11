@@ -80,13 +80,13 @@ namespace pwiz.ProteowizardWrapper
             {
                 // Check names from other primary assemblies in the ProteoWizard directory
                 var found = false;
-                var assm = args.Name.ToLower();
-                var firstLetter = assm[0];
+                var assembly = args.Name.ToLower();
+                var firstLetter = assembly[0];
 
                 // Check to see if it is a file that is in the ProteoWizard directory...
                 foreach (var file in PwizPathFiles.Where(f => f[0] == firstLetter))
                 {
-                    if (assm.StartsWith(file))
+                    if (assembly.StartsWith(file))
                     {
                         found = true;
                         break;
@@ -111,26 +111,26 @@ namespace pwiz.ProteowizardWrapper
             }
 
             // Retrieve the list of referenced assemblies in an array of AssemblyName.
-            var strTempAssmbPath = "";
+            var tempAssemblyPath = "";
 
-            var arrReferencedAssmbNames = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
+            var referencedAssemblyNames = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
 
             // Loop through the array of referenced assembly names.
-            foreach (var strAssmbName in arrReferencedAssmbNames)
+            foreach (var assemblyName in referencedAssemblyNames)
             {
                 //Check for the assembly names that have raised the "AssemblyResolve" event.
-                if (strAssmbName.FullName.Substring(0, strAssmbName.FullName.IndexOf(',')) == args.Name.Substring(0, args.Name.IndexOf(',')))
+                if (assemblyName.FullName.Substring(0, assemblyName.FullName.IndexOf(',')) == args.Name.Substring(0, args.Name.IndexOf(',')))
                 {
                     //Console.WriteLine("Attempting to load DLL \"" + Path.Combine(pwizPath, args.Name.Substring(0, args.Name.IndexOf(",")) + ".dll") + "\"");
                     //Build the path of the assembly from where it has to be loaded.
-                    strTempAssmbPath = Path.Combine(PwizPath, args.Name.Substring(0, args.Name.IndexOf(',')) + ".dll");
+                    tempAssemblyPath = Path.Combine(PwizPath, args.Name.Substring(0, args.Name.IndexOf(',')) + ".dll");
                     break;
                 }
             }
 #if DEBUG
-            Console.WriteLine("Loading file \"" + strTempAssmbPath + "\"");
+            Console.WriteLine("Loading file \"" + tempAssemblyPath + "\"");
 #endif
-            var assemblyFile = new FileInfo(strTempAssmbPath);
+            var assemblyFile = new FileInfo(tempAssemblyPath);
 
             // Load the assembly from the specified path.
             Assembly myAssembly;
@@ -200,7 +200,7 @@ namespace pwiz.ProteowizardWrapper
             string pwizPath;
 
             // Set the DMS_Programs ProteoWizard path based on if the process is 32- or 64-bit.
-            string dmsProgPwiz;
+            string dmsProgramsPwiz;
 
             if (!Environment.Is64BitProcess)
             {
@@ -212,19 +212,19 @@ namespace pwiz.ProteowizardWrapper
                     pwizPath = Environment.GetEnvironmentVariable("ProteoWizard");
                 }
 
-                dmsProgPwiz = @"C:\DMS_Programs\ProteoWizard_x86";
+                dmsProgramsPwiz = @"C:\DMS_Programs\ProteoWizard_x86";
             }
             else
             {
                 // Check for a x64 ProteoWizard environment variable
                 pwizPath = Environment.GetEnvironmentVariable("ProteoWizard");
-                dmsProgPwiz = @"C:\DMS_Programs\ProteoWizard";
+                dmsProgramsPwiz = @"C:\DMS_Programs\ProteoWizard";
             }
 
-            if (string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(dmsProgPwiz) &&
-                new DirectoryInfo(dmsProgPwiz).GetFiles(TargetDllName).Length > 0)
+            if (string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(dmsProgramsPwiz) &&
+                new DirectoryInfo(dmsProgramsPwiz).GetFiles(TargetDllName).Length > 0)
             {
-                return dmsProgPwiz;
+                return dmsProgramsPwiz;
             }
 
             if (!string.IsNullOrWhiteSpace(pwizPath) && Directory.Exists(pwizPath) && new DirectoryInfo(pwizPath).GetFiles(TargetDllName).Length > 0)
@@ -245,26 +245,26 @@ namespace pwiz.ProteowizardWrapper
 
             // NOTE: This call returns the 32-bit Program Files folder if the running process is 32-bit
             // or the 64-bit Program Files folder if the running process is 64-bit
-            var progFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-            if (string.IsNullOrWhiteSpace(progFiles))
+            var programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
+            if (string.IsNullOrWhiteSpace(programFiles))
             {
                 return null;
             }
 
             // Construct a path of the form "C:\Program Files\ProteoWizard" or "C:\Program Files (x86)\ProteoWizard"
-            var progPwiz = Path.Combine(progFiles, "ProteoWizard");
-            var pwizFolder = new DirectoryInfo(progPwiz);
+            var programFilesPwiz = Path.Combine(programFiles, "ProteoWizard");
+            var pwizFolder = new DirectoryInfo(programFilesPwiz);
             if (pwizFolder.Exists)
             {
                 if (pwizFolder.GetFiles(TargetDllName).Length > 0)
                 {
-                    return progPwiz;
+                    return programFilesPwiz;
                 }
             }
             else
             {
                 // Update pwizFolder to be "C:\Program Files" or "C:\Program Files (x86)"
-                pwizFolder = new DirectoryInfo(progFiles);
+                pwizFolder = new DirectoryInfo(programFiles);
                 if (!pwizFolder.Exists)
                 {
                     return null;
