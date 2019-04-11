@@ -17,8 +17,8 @@
  * limitations under the License.
  */
 using System.Collections.Generic;
-using System.Linq;
 
+// ReSharper disable UnusedMember.Global
 namespace pwiz.ProteowizardWrapper
 {
 #pragma warning disable 1591
@@ -30,19 +30,20 @@ namespace pwiz.ProteowizardWrapper
             Intensities = intensities;
         }
 
-        public IList<double> Mzs { get; private set; }
-        public IList<double> Intensities { get; private set; }
+        public IList<double> Mzs { get; }
+        public IList<double> Intensities { get; }
 
         public void GetCentroidedData(out double[] centroidedMzs, out double[] centroidedIntensities)
         {
             var centroidedMzsList = new List<double>();
             var centroidedIntensitiesList = new List<double>();
 
-            bool increasing = true;
+            var increasing = true;
             double currentMz = 0;
             double currentIntensity = 0;
             double lastIntensity = 0;
-            for (int i = 0; i < Mzs.Count(); i++)
+
+            for (var i = 0; i < Mzs.Count; i++)
             {
                 var intensity = Intensities[i];
                 if (intensity < lastIntensity)

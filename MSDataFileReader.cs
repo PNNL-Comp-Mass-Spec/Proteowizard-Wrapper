@@ -20,6 +20,7 @@ using System.Threading;
 using pwiz.CLI.data;
 using pwiz.CLI.msdata;
 
+// ReSharper disable UnusedMember.Global
 namespace pwiz.ProteowizardWrapper
 {
     /// <summary>
@@ -129,34 +130,25 @@ namespace pwiz.ProteowizardWrapper
         /// List of MSConvert-style filter strings to apply to the spectrum list.
         /// </summary>
         /// <remarks>If the filter count is greater than 0, the default handling of the spectrumList using the optional constructor parameters is disabled.</remarks>
-        public List<string> Filters
-        {
-            get { return mDataReader.Filters; }
-        }
+        public List<string> Filters => mDataReader.Filters;
 
         /// <summary>
         /// Uses the centroiding/peak picking algorithm that the vendor libraries provide, if available; otherwise uses a low-quality centroiding algorithm.
         /// </summary>
-        public string VendorCentroiding
-        {
-            get { return MsDataFileImpl.VendorCentroiding; }
-        }
+        public string VendorCentroiding => MsDataFileImpl.VendorCentroiding;
 
         /// <summary>
         /// Continuous Wavelet Transform peak picker - high-quality peak picking, may be slow with some high-res data.
         /// </summary>
-        public string CwtCentroiding
-        {
-            get { return MsDataFileImpl.CwtCentroiding; }
-        }
+        public string CwtCentroiding => MsDataFileImpl.CwtCentroiding;
 
         /// <summary>
         /// Add/remove Vendor Centroiding to the filter list. Call <see cref="RedoFilters()"/> if calling this after reading any spectra.
         /// </summary>
         public bool UseVendorCentroiding
         {
-            get { return mDataReader.UseVendorCentroiding; }
-            set { mDataReader.UseVendorCentroiding = value; }
+            get => mDataReader.UseVendorCentroiding;
+            set => mDataReader.UseVendorCentroiding = value;
         }
 
         /// <summary>
@@ -164,8 +156,8 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public bool UseCwtCentroiding
         {
-            get { return mDataReader.UseCwtCentroiding; }
-            set { mDataReader.UseCwtCentroiding = value; }
+            get => mDataReader.UseCwtCentroiding;
+            set => mDataReader.UseCwtCentroiding = value;
         }
 
         /// <summary>
@@ -191,17 +183,17 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Constant that corresponds to "SRM TIC "
         /// </summary>
-        public static string PREFIX_TOTAL { get { return MsDataFileImpl.PREFIX_TOTAL; } }
+        public static string PREFIX_TOTAL => MsDataFileImpl.PREFIX_TOTAL;
 
         /// <summary>
         /// Constant that corresponds to "SRM SIC "
         /// </summary>
-        public static string PREFIX_SINGLE { get { return MsDataFileImpl.PREFIX_SINGLE; } }
+        public static string PREFIX_SINGLE => MsDataFileImpl.PREFIX_SINGLE;
 
         /// <summary>
         /// Constant that corresponds to "SIM SIC "
         /// </summary>
-        public static string PREFIX_PRECURSOR { get { return MsDataFileImpl.PREFIX_PRECURSOR; } }
+        public static string PREFIX_PRECURSOR => MsDataFileImpl.PREFIX_PRECURSOR;
 
         /// <summary>
         /// If the specified id is negative charge
@@ -271,23 +263,17 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// The Run ID
         /// </summary>
-        public string RunId { get { return mDataReader.RunId; } }
+        public string RunId => mDataReader.RunId;
 
         /// <summary>
         /// The run start time
         /// </summary>
-        public DateTime? RunStartTime
-        {
-            get { return mDataReader.RunStartTime; }
-        }
+        public DateTime? RunStartTime => mDataReader.RunStartTime;
 
         /// <summary>
         /// Data and Instrument Configuration information
         /// </summary>
-        public MsDataConfigInfo ConfigInfo
-        {
-            get { return mDataReader.ConfigInfo; }
-        }
+        public MsDataConfigInfo ConfigInfo => mDataReader.ConfigInfo;
 
         /// <summary>
         /// Check if the file has be processed by the specified software
@@ -320,66 +306,42 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// If the file is an AB Sciex file
         /// </summary>
-        public bool IsABFile
-        {
-            get { return mDataReader.IsABFile; }
-        }
+        public bool IsABFile => mDataReader.IsABFile;
 
         /// <summary>
         /// If the file is a MzWiff file
         /// </summary>
-        public bool IsMzWiffXml
-        {
-            get { return mDataReader.IsMzWiffXml; } // Not L10N
-        }
+        public bool IsMzWiffXml => mDataReader.IsMzWiffXml;
 
         /// <summary>
         /// If the file is an Agilent file
         /// </summary>
-        public bool IsAgilentFile
-        {
-            get { return mDataReader.IsAgilentFile; }
-        }
+        public bool IsAgilentFile => mDataReader.IsAgilentFile;
 
         /// <summary>
-        /// If the file is a Thermo/Finnigan .raw file
+        /// If the file is a Thermo .raw file
         /// </summary>
-        public bool IsThermoFile
-        {
-            get { return mDataReader.IsThermoFile; }
-        }
+        public bool IsThermoFile => mDataReader.IsThermoFile;
 
         /// <summary>
         /// If the file is a Waters file
         /// </summary>
-        public bool IsWatersFile
-        {
-            get { return mDataReader.IsWatersFile; }
-        }
+        public bool IsWatersFile => mDataReader.IsWatersFile;
 
         /// <summary>
         /// If the file is a candidate for Waters Lockmass Correction
         /// </summary>
-        public bool IsWatersLockmassCorrectionCandidate
-        {
-            get { return mDataReader.IsWatersLockmassCorrectionCandidate; }
-        }
+        public bool IsWatersLockmassCorrectionCandidate => mDataReader.IsWatersLockmassCorrectionCandidate;
 
         /// <summary>
         /// If the file is a Shimadzu file
         /// </summary>
-        public bool IsShimadzuFile
-        {
-            get { return mDataReader.IsShimadzuFile; }
-        }
+        public bool IsShimadzuFile => mDataReader.IsShimadzuFile;
 
         /// <summary>
         /// Number of chromatograms
         /// </summary>
-        public int ChromatogramCount
-        {
-            get { return mDataReader.ChromatogramCount; }
-        }
+        public int ChromatogramCount => mDataReader.ChromatogramCount;
 
         /// <summary>
         /// Get the NativeID of the specified chromatogram
@@ -453,10 +415,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get the spectrum count
         /// </summary>
-        public int SpectrumCount
-        {
-            get { return mDataReader.SpectrumCount; }
-        }
+        public int SpectrumCount => mDataReader.SpectrumCount;
 
         /// <summary>
         /// Get the spectrum count
@@ -547,26 +506,17 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Check if the file has SRR Spectra
         /// </summary>
-        public bool HasSrmSpectra
-        {
-            get { return mDataReader.HasSrmSpectra; }
-        }
+        public bool HasSrmSpectra => mDataReader.HasSrmSpectra;
 
         /// <summary>
         /// Check if the file has drift time spectra
         /// </summary>
-        public bool HasDriftTimeSpectra
-        {
-            get { return mDataReader.HasDriftTimeSpectra; }
-        }
+        public bool HasDriftTimeSpectra => mDataReader.HasDriftTimeSpectra;
 
         /// <summary>
         /// Check if the file contains chromatogram data
         /// </summary>
-        public bool HasChromatogramData
-        {
-            get { return mDataReader.HasChromatogramData; }
-        }
+        public bool HasChromatogramData => mDataReader.HasChromatogramData;
 
         /// <summary>
         /// Get the specified SRM spectrum. Returns null if the specified spectrum is not SRM
@@ -678,6 +628,6 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// The filepath of the currently loaded file
         /// </summary>
-        public string FilePath { get { return mDataReader.FilePath; } }
+        public string FilePath => mDataReader.FilePath;
     }
 }

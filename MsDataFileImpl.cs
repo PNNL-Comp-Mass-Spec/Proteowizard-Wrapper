@@ -42,7 +42,7 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     internal class MsDataFileImpl : IDisposable
     {
-#region PNNL Added functions
+        #region PNNL Added functions
 
         /// <summary>
         /// This static constructor ensures that the Assembly Resolver is added prior to actually using this class.
@@ -186,20 +186,20 @@ namespace pwiz.ProteowizardWrapper
         /// Uses the centroiding/peak picking algorithm that the vendor libraries provide, if available; otherwise uses a low-quality centroiding algorithm.
         /// </summary>
         public const string VendorCentroiding = "peakPicking true 1-";
-        private bool _useVendorCentroiding = false;
+        private bool _useVendorCentroiding;
 
         /// <summary>
         /// Continuous Wavelet Transform peak picker - high-quality peak picking, may be slow with some high-res data.
         /// </summary>
         public const string CwtCentroiding = "peakPicking cwt snr=1.0 peakSpace=0.1 msLevel=1-";
-        private bool _useCwtCentroiding = false;
+        private bool _useCwtCentroiding;
 
         /// <summary>
         /// Add/remove Vendor Centroiding to the filter list. Call <see cref="RedoFilters()"/> if calling this after reading any spectra.
         /// </summary>
         public bool UseVendorCentroiding
         {
-            get { return Filters.Contains(VendorCentroiding); }
+            get => Filters.Contains(VendorCentroiding);
             set
             {
                 if (_useVendorCentroiding != value)
@@ -222,7 +222,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public bool UseCwtCentroiding
         {
-            get { return Filters.Contains(CwtCentroiding); }
+            get => Filters.Contains(CwtCentroiding);
             set
             {
                 if (_useCwtCentroiding != value)
@@ -252,7 +252,7 @@ namespace pwiz.ProteowizardWrapper
             }
             _msDataFile.run.spectrumList = _spectrumListBase;
         }
-#endregion
+        #endregion
 
         private static readonly ReaderList FULL_READER_LIST = ReaderList.FullReaderList;
 
@@ -301,9 +301,9 @@ namespace pwiz.ProteowizardWrapper
 
         private static float[] ToFloatArray(IList<double> list)
         {
-            float[] result = new float[list.Count];
-            for (int i = 0; i < result.Length; i++)
-                result[i] = (float) list[i];
+            var result = new float[list.Count];
+            for (var i = 0; i < result.Length; i++)
+                result[i] = (float)list[i];
             return result;
         }
 
@@ -404,15 +404,14 @@ namespace pwiz.ProteowizardWrapper
             _scanCache = null;
         }
 
-        public string RunId { get { return _msDataFile.run.id; } }
+        public string RunId => _msDataFile.run.id;
 
         public DateTime? RunStartTime
         {
             get
             {
-                string stampText = _msDataFile.run.startTimeStamp;
-                DateTime runStartTime;
-                if (!DateTime.TryParse(stampText, CultureInfo.InvariantCulture, DateTimeStyles.None, out runStartTime) &&
+                var stampText = _msDataFile.run.startTimeStamp;
+                if (!DateTime.TryParse(stampText, CultureInfo.InvariantCulture, DateTimeStyles.None, out var runStartTime) &&
                     !DateTime.TryParse(stampText, out runStartTime))
                     return null;
                 return runStartTime;
@@ -423,16 +422,13 @@ namespace pwiz.ProteowizardWrapper
         {
             get
             {
-                int spectra = SpectrumList.size();
-                string ionSource = string.Empty;
-                string analyzer = string.Empty;
-                string detector = string.Empty;
-                foreach (InstrumentConfiguration ic in _msDataFile.instrumentConfigurationList)
+                var spectra = SpectrumList.size();
+                var ionSource = string.Empty;
+                var analyzer = string.Empty;
+                var detector = string.Empty;
+                foreach (var ic in _msDataFile.instrumentConfigurationList)
                 {
-                    string instrumentIonSource;
-                    string instrumentAnalyzer;
-                    string instrumentDetector;
-                    GetInstrumentConfig(ic, out instrumentIonSource, out instrumentAnalyzer, out instrumentDetector);
+                    GetInstrumentConfig(ic, out var instrumentIonSource, out var instrumentAnalyzer, out var instrumentDetector);
 
                     if (ionSource.Length > 0)
                         ionSource += ", "; // Not L10N
@@ -447,33 +443,33 @@ namespace pwiz.ProteowizardWrapper
                     detector += instrumentDetector;
                 }
 
-                HashSet<string> contentTypeSet = new HashSet<string>();
-                foreach (CVParam term in _msDataFile.fileDescription.fileContent.cvParams)
+                var contentTypeSet = new HashSet<string>();
+                foreach (var term in _msDataFile.fileDescription.fileContent.cvParams)
                     contentTypeSet.Add(term.name);
                 var contentTypes = contentTypeSet.ToArray();
                 Array.Sort(contentTypes);
-                string contentType = String.Join(", ", contentTypes); // Not L10N
+                var contentType = String.Join(", ", contentTypes); // Not L10N
 
                 return new MsDataConfigInfo
-                           {
-                               Analyzer = analyzer,
-                               ContentType = contentType,
-                               Detector = detector,
-                               IonSource = ionSource,
-                               Spectra = spectra
-                           };
+                {
+                    Analyzer = analyzer,
+                    ContentType = contentType,
+                    Detector = detector,
+                    IonSource = ionSource,
+                    Spectra = spectra
+                };
             }
         }
 
         private static void GetInstrumentConfig(InstrumentConfiguration ic, out string ionSource, out string analyzer, out string detector)
         {
             // ReSharper disable CollectionNeverQueried.Local  (why does ReSharper warn on this?)
-            SortedDictionary<int, string> ionSources = new SortedDictionary<int, string>();
-            SortedDictionary<int, string> analyzers = new SortedDictionary<int, string>();
-            SortedDictionary<int, string> detectors = new SortedDictionary<int, string>();
+            var ionSources = new SortedDictionary<int, string>();
+            var analyzers = new SortedDictionary<int, string>();
+            var detectors = new SortedDictionary<int, string>();
             // ReSharper restore CollectionNeverQueried.Local
 
-            foreach (Component c in ic.componentList)
+            foreach (var c in ic.componentList)
             {
                 CVParam term;
                 switch (c.type)
@@ -485,7 +481,7 @@ namespace pwiz.ProteowizardWrapper
                         else
                         {
                             // If we did not find the ion source in a CVParam it may be in a UserParam
-                            UserParam uParam = c.userParam("msIonisation"); // Not L10N
+                            var uParam = c.userParam("msIonisation"); // Not L10N
                             if (HasInfo(uParam))
                             {
                                 ionSources.Add(c.order, uParam.value);
@@ -499,7 +495,7 @@ namespace pwiz.ProteowizardWrapper
                         else
                         {
                             // If we did not find the analyzer in a CVParam it may be in a UserParam
-                            UserParam uParam = c.userParam("msMassAnalyzer"); // Not L10N
+                            var uParam = c.userParam("msMassAnalyzer"); // Not L10N
                             if (HasInfo(uParam))
                             {
                                 analyzers.Add(c.order, uParam.value);
@@ -513,7 +509,7 @@ namespace pwiz.ProteowizardWrapper
                         else
                         {
                             // If we did not find the detector in a CVParam it may be in a UserParam
-                            UserParam uParam = c.userParam("msDetector"); // Not L10N
+                            var uParam = c.userParam("msDetector"); // Not L10N
                             if (HasInfo(uParam))
                             {
                                 detectors.Add(c.order, uParam.value);
@@ -552,22 +548,19 @@ namespace pwiz.ProteowizardWrapper
         {
             IList<MsInstrumentConfigInfo> configList = new List<MsInstrumentConfigInfo>();
 
-            foreach (InstrumentConfiguration ic in _msDataFile.instrumentConfigurationList)
+            foreach (var ic in _msDataFile.instrumentConfigurationList)
             {
                 string instrumentModel = null;
-                string ionization;
-                string analyzer;
-                string detector;
 
-                CVParam param = ic.cvParamChild(CVID.MS_instrument_model);
+                var param = ic.cvParamChild(CVID.MS_instrument_model);
                 if (!param.empty() && param.cvid != CVID.MS_instrument_model)
                 {
                     instrumentModel = param.name;
                 }
-                if(instrumentModel == null)
+                if (instrumentModel == null)
                 {
                     // If we did not find the instrument model in a CVParam it may be in a UserParam
-                    UserParam uParam = ic.userParam("msModel"); // Not L10N
+                    var uParam = ic.userParam("msModel"); // Not L10N
                     if (HasInfo(uParam))
                     {
                         instrumentModel = uParam.value;
@@ -575,7 +568,7 @@ namespace pwiz.ProteowizardWrapper
                 }
 
                 // get the ionization type, analyzer and detector
-                GetInstrumentConfig(ic, out ionization, out analyzer, out detector);
+                GetInstrumentConfig(ic, out var ionization, out var analyzer, out var detector);
 
                 if (instrumentModel != null || ionization != null || analyzer != null || detector != null)
                 {
@@ -596,10 +589,7 @@ namespace pwiz.ProteowizardWrapper
             get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_ABI_WIFF_format)); }
         }
 
-        public bool IsMzWiffXml
-        {
-            get { return IsProcessedBy("mzWiff"); } // Not L10N
-        }
+        public bool IsMzWiffXml => IsProcessedBy("mzWiff");
 
         public bool IsAgilentFile
         {
@@ -670,7 +660,7 @@ namespace pwiz.ProteowizardWrapper
                         // (For now, this can't happen in practice, as Waters offers no centroiding, but someday this may force pwiz API rework)
                         var centroidLevel = new List<int>();
                         _spectrumList = _msDataFile.run.spectrumList;
-                        bool hasSrmSpectra = HasSrmSpectraInList(_spectrumList);
+                        var hasSrmSpectra = HasSrmSpectraInList(_spectrumList);
                         if (!hasSrmSpectra)
                         {
                             if (_requireVendorCentroidedMS1)
@@ -695,7 +685,7 @@ namespace pwiz.ProteowizardWrapper
                                 _lockmassParameters.LockmassTolerance ?? LockMassParameters.LOCKMASS_TOLERANCE_DEFAULT);
                             if (_spectrumList.size() > 0 && !hasSrmSpectra)
                             {
-                                // If the first seen spectrum has MS1 data and function > 1 assume it's the lockspray function,
+                                // If the first seen spectrum has MS1 data and function > 1 assume it's the lock spray function,
                                 // and thus to be omitted from chromatogram extraction.
                                 // N.B. for msE data we will always assume function 3 and greater are to be omitted
                                 // CONSIDER(bspratt) I really wish there was some way to communicate decisions like this to the user
@@ -707,7 +697,7 @@ namespace pwiz.ProteowizardWrapper
                                             MsDataSpectrum.WatersFunctionNumberFromId(id.abbreviate(spectrum.id));
                                         if (function > 1)
                                             _lockmassFunction = function;
-                                                // Ignore all scans in this function for chromatogram extraction purposes
+                                        // Ignore all scans in this function for chromatogram extraction purposes
                                     }
                                 }
                             }
@@ -723,10 +713,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-        public int ChromatogramCount
-        {
-            get { return ChromatogramList != null ? ChromatogramList.size() : 0; }
-        }
+        public int ChromatogramCount => ChromatogramList?.size() ?? 0;
 
         public string GetChromatogramId(int index, out int indexId)
         {
@@ -740,7 +727,7 @@ namespace pwiz.ProteowizardWrapper
         public void GetChromatogram(int chromIndex, out string id,
             out float[] timeArray, out float[] intensityArray)
         {
-            using (Chromatogram chrom = ChromatogramList.chromatogram(chromIndex, true))
+            using (var chrom = ChromatogramList.chromatogram(chromIndex, true))
             {
                 id = chrom.id;
                 timeArray = ToFloatArray(chrom.binaryDataArrays[0].data);
@@ -764,10 +751,10 @@ namespace pwiz.ProteowizardWrapper
                 {
                     return null;
                 }
-                TimeIntensityPairList timeIntensityPairList = new TimeIntensityPairList();
+                var timeIntensityPairList = new TimeIntensityPairList();
                 chromatogram.getTimeIntensityPairs(ref timeIntensityPairList);
-                double[] times = new double[timeIntensityPairList.Count];
-                for (int i = 0; i < times.Length; i++)
+                var times = new double[timeIntensityPairList.Count];
+                for (var i = 0; i < times.Length; i++)
                 {
                     times[i] = timeIntensityPairList[i].time;
                 }
@@ -787,10 +774,10 @@ namespace pwiz.ProteowizardWrapper
                 {
                     return null;
                 }
-                TimeIntensityPairList timeIntensityPairList = new TimeIntensityPairList();
+                var timeIntensityPairList = new TimeIntensityPairList();
                 chromatogram.getTimeIntensityPairs(ref timeIntensityPairList);
-                double[] intensities = new double[timeIntensityPairList.Count];
-                for (int i = 0; i < intensities.Length; i++)
+                var intensities = new double[timeIntensityPairList.Count];
+                for (var i = 0; i < intensities.Length; i++)
                 {
                     intensities[i] = timeIntensityPairList[i].intensity;
                 }
@@ -825,21 +812,18 @@ namespace pwiz.ProteowizardWrapper
         {
             times = new double[SpectrumCount];
             msLevels = new byte[times.Length];
-            for (int i = 0; i < times.Length; i++)
+            for (var i = 0; i < times.Length; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 using (var spectrum = SpectrumList.spectrum(i, false))
                 {
                     times[i] = spectrum.scanList.scans[0].cvParam(CVID.MS_scan_start_time).timeInSeconds();
-                    msLevels[i] = (byte) (int) spectrum.cvParam(CVID.MS_ms_level).value;
+                    msLevels[i] = (byte)(int)spectrum.cvParam(CVID.MS_ms_level).value;
                 }
             }
         }
 
-        public int SpectrumCount
-        {
-            get { return SpectrumList != null ? SpectrumList.size() : 0; }
-        }
+        public int SpectrumCount => SpectrumList?.size() ?? 0;
 
         [Obsolete("Use the SpectrumCount property instead")]
         public int GetSpectrumCount()
@@ -849,7 +833,7 @@ namespace pwiz.ProteowizardWrapper
 
         public int GetSpectrumIndex(string id)
         {
-            int index = SpectrumList.findAbbreviated(id);
+            var index = SpectrumList.findAbbreviated(id);
             if (0 > index || index >= SpectrumList.size())
                 return -1;
             return index;
@@ -881,10 +865,8 @@ namespace pwiz.ProteowizardWrapper
         {
             if (_scanCache != null)
             {
-                MsDataSpectrum returnSpectrum;
-
                 // Check the scan for this cache
-                var success = _scanCache.TryGetSpectrum(spectrumIndex, out returnSpectrum);
+                var success = _scanCache.TryGetSpectrum(spectrumIndex, out MsDataSpectrum returnSpectrum);
 
                 if (!success || (!returnSpectrum.BinaryDataLoaded && getBinaryData))
                 {
@@ -910,7 +892,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// How many times a single spectrum has been read twice in a row
         /// </summary>
-        private int _sequentialDuplicateSpectrumReadCount = 0;
+        private int _sequentialDuplicateSpectrumReadCount;
 
         /// <summary>
         /// The maximum number of time a single spectrum can be read twice in a row before we enable a cache for sanity.
@@ -927,8 +909,7 @@ namespace pwiz.ProteowizardWrapper
         {
             if (_scanCache != null)
             {
-                Spectrum spectrum;
-                var success2 = _scanCache.TryGetSpectrum(spectrumIndex, out spectrum);
+                var success2 = _scanCache.TryGetSpectrum(spectrumIndex, out Spectrum spectrum);
                 if (!success2 || (spectrum.binaryDataArrays.Count <= 1 && getBinaryData))
                 {
                     spectrum = SpectrumList.spectrum(spectrumIndex, getBinaryData);
@@ -959,7 +940,7 @@ namespace pwiz.ProteowizardWrapper
                     Intensities = new double[0]
                 };
             }
-            string idText = spectrum.id;
+            var idText = spectrum.id;
             if (idText.Trim().Length == 0)
             {
                 throw new ArgumentException(string.Format("Empty spectrum ID (and index = {0}) for scan {1}", // Not L10N
@@ -1050,7 +1031,7 @@ namespace pwiz.ProteowizardWrapper
             var spectrumIds = GetSpectrumIdList();
 
             // Walk through the spectra
-            var frameScanPairToIndexMap = new  Dictionary<KeyValuePair<int, int>, int>();
+            var frameScanPairToIndexMap = new Dictionary<KeyValuePair<int, int>, int>();
 
             for (var spectrumIndex = 0; spectrumIndex < spectrumIds.Count; spectrumIndex++)
             {
@@ -1064,7 +1045,7 @@ namespace pwiz.ProteowizardWrapper
                 var frameNumber = int.Parse(match.Groups["FrameNumber"].Value);
                 var scanNumber = int.Parse(match.Groups["ScanNumber"].Value);
 
-                frameScanPairToIndexMap.Add(new KeyValuePair<int,int> (frameNumber, scanNumber), spectrumIndex);
+                frameScanPairToIndexMap.Add(new KeyValuePair<int, int>(frameNumber, scanNumber), spectrumIndex);
             }
 
             return frameScanPairToIndexMap;
@@ -1082,7 +1063,7 @@ namespace pwiz.ProteowizardWrapper
 
             // MGF, PKL, merged DTA files. Index is the spectrum number in the file, starting from 0.
             // index=5
-            // This function is not appropriate for those files because ProteoWizard does not support extracting / reading actual scan numbers from thos files
+            // This function is not appropriate for those files because ProteoWizard does not support extracting / reading actual scan numbers from those files
             var reIndexBasedMatcher = new Regex(@"index=(?<ScanIndex>\d+)", RegexOptions.Compiled);
 
             // Wiff files
@@ -1170,15 +1151,9 @@ namespace pwiz.ProteowizardWrapper
             return scanNumberToIndexMap;
         }
 
-        public bool HasSrmSpectra
-        {
-            get { return HasSrmSpectraInList(SpectrumList); }
-        }
+        public bool HasSrmSpectra => HasSrmSpectraInList(SpectrumList);
 
-        public bool HasDriftTimeSpectra
-        {
-            get { return HasDriftTimeSpectraInList(SpectrumList); }
-        }
+        public bool HasDriftTimeSpectra => HasDriftTimeSpectraInList(SpectrumList);
 
         public bool HasChromatogramData
         {
@@ -1192,8 +1167,7 @@ namespace pwiz.ProteowizardWrapper
 
                 for (var i = 0; i < len; i++)
                 {
-                    int index;
-                    var id = GetChromatogramId(i, out index);
+                    var id = GetChromatogramId(i, out _);
 
                     if (IsSingleIonCurrentId(id))
                         return true;
@@ -1269,7 +1243,7 @@ namespace pwiz.ProteowizardWrapper
         {
             using (var spectrum = SpectrumList.spectrum(scanIndex, _detailMsLevel))
             {
-                int? level = GetMsLevel(spectrum);
+                var level = GetMsLevel(spectrum);
                 if (level.HasValue || _detailMsLevel == DetailLevel.FullMetadata)
                     return level ?? 0;
 
@@ -1284,17 +1258,17 @@ namespace pwiz.ProteowizardWrapper
 
         private static int? GetMsLevel(Spectrum spectrum)
         {
-            CVParam param = spectrum.cvParam(CVID.MS_ms_level);
+            var param = spectrum.cvParam(CVID.MS_ms_level);
             if (param.empty())
                 return null;
-            return (int) param.value;
+            return (int)param.value;
         }
 
         public double? GetDriftTimeMsec(int scanIndex)
         {
             using (var spectrum = SpectrumList.spectrum(scanIndex, _detailDriftTime))
             {
-                double? driftTime = GetDriftTimeMsec(spectrum);
+                var driftTime = GetDriftTimeMsec(spectrum);
                 if (driftTime.HasValue || _detailDriftTime >= DetailLevel.FullMetadata)
                     return driftTime ?? 0;
 
@@ -1312,23 +1286,23 @@ namespace pwiz.ProteowizardWrapper
             if (spectrum.scanList.scans.Count == 0)
                 return null;
             var scan = spectrum.scanList.scans[0];
-            CVParam driftTime = scan.cvParam(CVID.MS_ion_mobility_drift_time);
+            var driftTime = scan.cvParam(CVID.MS_ion_mobility_drift_time);
             if (driftTime.empty())
             {
-                UserParam param = scan.userParam(USERPARAM_DRIFT_TIME); // support files with the original drift time UserParam
+                var param = scan.userParam(USER_PARAM_DRIFT_TIME); // support files with the original drift time UserParam
                 if (param.empty())
                     return null;
                 return param.timeInSeconds() * 1000.0;
             }
-            else
-                return driftTime.timeInSeconds() * 1000.0;
+
+            return driftTime.timeInSeconds() * 1000.0;
         }
 
         public double? GetStartTime(int scanIndex)
         {
             using (var spectrum = SpectrumList.spectrum(scanIndex, _detailStartTime))
             {
-                double? startTime = GetStartTime(spectrum);
+                var startTime = GetStartTime(spectrum);
                 if (startTime.HasValue || _detailStartTime >= DetailLevel.FullMetadata)
                     return startTime ?? 0;
 
@@ -1346,7 +1320,7 @@ namespace pwiz.ProteowizardWrapper
             if (spectrum.scanList.scans.Count == 0)
                 return null;
             var scan = spectrum.scanList.scans[0];
-            CVParam param = scan.cvParam(CVID.MS_scan_start_time);
+            var param = scan.cvParam(CVID.MS_scan_start_time);
             if (param.empty())
                 return null;
             return param.timeInSeconds() / 60;
@@ -1371,34 +1345,34 @@ namespace pwiz.ProteowizardWrapper
 
         private static MsPrecursor[] GetPrecursors(Spectrum spectrum)
         {
-            bool negativePolarity = NegativePolarity(spectrum);
+            var negativePolarity = NegativePolarity(spectrum);
             return spectrum.precursors.Select(p =>
                 new MsPrecursor
-                    {
-                        PrecursorMz = GetPrecursorMz(p, negativePolarity),
-                        PrecursorDriftTimeMsec = GetPrecursorDriftTimeMsec(p),
-                        PrecursorCollisionEnergy = GetPrecursorCollisionEnergy(p),
-                        IsolationWindowTargetMz = new SignedMz(GetIsolationWindowValue(p, CVID.MS_isolation_window_target_m_z), negativePolarity),
-                        IsolationWindowLower = GetIsolationWindowValue(p, CVID.MS_isolation_window_lower_offset),
-                        IsolationWindowUpper = GetIsolationWindowValue(p, CVID.MS_isolation_window_upper_offset),
-                        ActivationTypes = GetPrecursorActivationList(p)
-                    }).ToArray();
+                {
+                    PrecursorMz = GetPrecursorMz(p, negativePolarity),
+                    PrecursorDriftTimeMsec = GetPrecursorDriftTimeMsec(p),
+                    PrecursorCollisionEnergy = GetPrecursorCollisionEnergy(p),
+                    IsolationWindowTargetMz = new SignedMz(GetIsolationWindowValue(p, CVID.MS_isolation_window_target_m_z), negativePolarity),
+                    IsolationWindowLower = GetIsolationWindowValue(p, CVID.MS_isolation_window_lower_offset),
+                    IsolationWindowUpper = GetIsolationWindowValue(p, CVID.MS_isolation_window_upper_offset),
+                    ActivationTypes = GetPrecursorActivationList(p)
+                }).ToArray();
         }
 
         private static MsPrecursor[] GetMs1Precursors(Spectrum spectrum)
         {
-            bool negativePolarity = NegativePolarity(spectrum);
+            var negativePolarity = NegativePolarity(spectrum);
             return spectrum.scanList.scans[0].scanWindows.Select(s =>
                 {
                     double windowStart = s.cvParam(CVID.MS_scan_window_lower_limit).value;
                     double windowEnd = s.cvParam(CVID.MS_scan_window_upper_limit).value;
-                    double isolationWidth = (windowEnd - windowStart) / 2;
+                    var isolationWidth = (windowEnd - windowStart) / 2;
                     return new MsPrecursor
-                        {
-                            IsolationWindowTargetMz = new SignedMz(windowStart + isolationWidth, negativePolarity),
-                            IsolationWindowLower = isolationWidth,
-                            IsolationWindowUpper = isolationWidth
-                        };
+                    {
+                        IsolationWindowTargetMz = new SignedMz(windowStart + isolationWidth, negativePolarity),
+                        IsolationWindowLower = isolationWidth,
+                        IsolationWindowUpper = isolationWidth
+                    };
                 }).ToArray();
         }
 
@@ -1495,20 +1469,16 @@ namespace pwiz.ProteowizardWrapper
 
         public void Dispose()
         {
-            if (_scanCache != null)
-                _scanCache.Dispose();
-            if (_spectrumList != null)
-                _spectrumList.Dispose();
+            _scanCache?.Dispose();
+            _spectrumList?.Dispose();
             _spectrumList = null;
-            if (_chromatogramList != null)
-                _chromatogramList.Dispose();
+            _chromatogramList?.Dispose();
             _chromatogramList = null;
-            if (_msDataFile != null)
-                _msDataFile.Dispose();
+            _msDataFile?.Dispose();
             _msDataFile = null;
         }
 
-        public string FilePath { get; private set; }
+        public string FilePath { get; }
     }
 
     public sealed class MsDataConfigInfo
@@ -1539,9 +1509,9 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-        public double? LockmassPositive { get; private set; }
-        public double? LockmassNegative { get; private set; }
-        public double? LockmassTolerance { get; private set; }
+        public double? LockmassPositive { get; }
+        public double? LockmassNegative { get; }
+        public double? LockmassTolerance { get; }
 
         public static readonly double LOCKMASS_TOLERANCE_DEFAULT = 0.1; // Per Will T
         public static readonly double LOCKMASS_TOLERANCE_MAX = 10.0;
@@ -1549,15 +1519,9 @@ namespace pwiz.ProteowizardWrapper
 
         public static readonly LockMassParameters EMPTY = new LockMassParameters(null, null, null);
 
-        public bool IsEmpty
-        {
-            get
-            {
-                return (0 == (LockmassNegative ?? 0)) &&
-                       (0 == (LockmassPositive ?? 0));
-                // Ignoring tolerance here, which means nothing when no mz is given
-            }
-        }
+        public bool IsEmpty =>
+            Math.Abs(LockmassNegative ?? 0) < float.Epsilon &&
+            Math.Abs(LockmassPositive ?? 0) < float.Epsilon;
 
         private bool Equals(LockMassParameters other)
         {
@@ -1570,7 +1534,7 @@ namespace pwiz.ProteowizardWrapper
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj is LockMassParameters && Equals((LockMassParameters) obj);
+            return obj is LockMassParameters lockmassParams && Equals(lockmassParams);
         }
 
         public override int GetHashCode()
@@ -1672,7 +1636,7 @@ namespace pwiz.ProteowizardWrapper
         /// User parameters for this scan, stored as KeyValuePairs where key is user param name, value is user param value
         /// </summary>
         /// <remarks>Example is [Thermo Trailer Extra]Monoisotopic M/Z</remarks>
-        public List<KeyValuePair<string,string>> UserParams;
+        public List<KeyValuePair<string, string>> UserParams;
 
         /// <summary>
         /// Constructor
@@ -1724,57 +1688,47 @@ namespace pwiz.ProteowizardWrapper
     public struct SignedMz : IComparable, IEquatable<SignedMz>, IFormattable
     {
         private readonly double? _mz;
-        private readonly bool _isNegative;
 
         public SignedMz(double? mz, bool isNegative)
         {
             _mz = mz;
-            _isNegative = isNegative;
+            IsNegative = isNegative;
         }
 
         public SignedMz(double? mz)  // For deserialization - a negative value is taken to mean negative polarity
         {
-            _isNegative = (mz??0) < 0;
-            _mz = mz.HasValue ? Math.Abs(mz.Value) : (double?) null;
+            IsNegative = (mz ?? 0) < 0;
+            _mz = mz.HasValue ? Math.Abs(mz.Value) : (double?)null;
         }
 
         public static readonly SignedMz EMPTY = new SignedMz(null, false);
+
+        // ReSharper disable once UnusedMember.Global
         public static readonly SignedMz ZERO = new SignedMz(0);
 
-        public double Value
-        {
-            get { return _mz.Value; }
-        }
+        // ReSharper disable once PossibleInvalidOperationException
+        public double Value => _mz.Value;
 
         public double GetValueOrDefault()
         {
-            return HasValue? Value : 0.0;
+            return HasValue ? Value : 0.0;
         }
 
         /// <summary>
         /// For serialization etc - returns a negative number if IsNegative is true
         /// </summary>
-        public double? RawValue
-        {
-            get { return _mz.HasValue ? (_isNegative ? -_mz.Value : _mz.Value) : _mz;  }
-        }
+        public double? RawValue => _mz.HasValue ? (IsNegative ? -_mz.Value : _mz.Value) : _mz;
 
-        public bool IsNegative
-        {
-            get { return _isNegative; }
-        }
+        public bool IsNegative { get; }
 
-        public bool HasValue
-        {
-            get { return _mz.HasValue; }
-        }
+        public bool HasValue => _mz.HasValue;
 
         public static implicit operator double(SignedMz mz)
         {
             return mz.Value;
         }
 
-        public static implicit operator double?(SignedMz mz)
+        public static implicit operator double? (SignedMz mz)
         {
             return mz._mz;
         }
@@ -1841,7 +1795,7 @@ namespace pwiz.ProteowizardWrapper
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is SignedMz && Equals((SignedMz)obj);
+            return obj is SignedMz mz && Equals(mz);
         }
 
         public override int GetHashCode()
@@ -1903,7 +1857,7 @@ namespace pwiz.ProteowizardWrapper
     {
         public SignedMz PrecursorMz { get; set; }
         public double? PrecursorDriftTimeMsec { get; set; }
-        public double? PrecursorCollisionEnergy  { get; set; }
+        public double? PrecursorCollisionEnergy { get; set; }
         public SignedMz IsolationWindowTargetMz { get; set; }
         public double? IsolationWindowUpper { get; set; }
         public double? IsolationWindowLower { get; set; }
@@ -1932,7 +1886,7 @@ namespace pwiz.ProteowizardWrapper
             {
                 if (IsolationWindowUpper.HasValue && IsolationWindowLower.HasValue)
                 {
-                    double width = IsolationWindowUpper.Value + IsolationWindowLower.Value;
+                    var width = IsolationWindowUpper.Value + IsolationWindowLower.Value;
                     if (width > 0)
                         return width;
                 }
@@ -1968,43 +1922,32 @@ namespace pwiz.ProteowizardWrapper
             return int.Parse(id.Split('.')[0]); // Yes, this will throw if it's not in dotted format - and that's good
         }
 
-        public int WatersFunctionNumber
-        {
-            get
-            {
-                return WatersFunctionNumberFromId(Id);
-            }
-        }
+        public int WatersFunctionNumber => WatersFunctionNumberFromId(Id);
     }
 
     public sealed class MsInstrumentConfigInfo
     {
-        public string Model { get; private set; }
-        public string Ionization { get; private set; }
-        public string Analyzer { get; private set; }
-        public string Detector { get; private set; }
+        public string Model { get; }
+        public string Ionization { get; }
+        public string Analyzer { get; }
+        public string Detector { get; }
 
         public static readonly MsInstrumentConfigInfo EMPTY = new MsInstrumentConfigInfo(null, null, null, null);
 
         public MsInstrumentConfigInfo(string model, string ionization,
                                       string analyzer, string detector)
         {
-            Model = model != null ? model.Trim() : null;
-            Ionization = ionization != null ? ionization.Replace('\n',' ').Trim() : null; // Not L10N
-            Analyzer = analyzer != null ? analyzer.Replace('\n', ' ').Trim() : null; // Not L10N
-            Detector = detector != null ? detector.Replace('\n', ' ').Trim() : null; // Not L10N
+            Model = model?.Trim();
+            Ionization = ionization?.Replace('\n', ' ').Trim(); // Not L10N
+            Analyzer = analyzer?.Replace('\n', ' ').Trim(); // Not L10N
+            Detector = detector?.Replace('\n', ' ').Trim(); // Not L10N
         }
 
-        public bool IsEmpty
-        {
-            get
-            {
-                return (string.IsNullOrEmpty(Model)) &&
-                       (string.IsNullOrEmpty(Ionization)) &&
-                       (string.IsNullOrEmpty(Analyzer)) &&
-                       (string.IsNullOrEmpty(Detector));
-            }
-        }
+        public bool IsEmpty =>
+            string.IsNullOrEmpty(Model) &&
+            string.IsNullOrEmpty(Ionization) &&
+            string.IsNullOrEmpty(Analyzer) &&
+            string.IsNullOrEmpty(Detector);
 
         #region object overrides
 
@@ -2030,7 +1973,7 @@ namespace pwiz.ProteowizardWrapper
         {
             unchecked
             {
-                int result = 0;
+                var result = 0;
                 result = (result * 397) ^ (Model != null ? Model.GetHashCode() : 0);
                 result = (result * 397) ^ (Ionization != null ? Ionization.GetHashCode() : 0);
                 result = (result * 397) ^ (Analyzer != null ? Analyzer.GetHashCode() : 0);
@@ -2047,17 +1990,17 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public class MsDataScanCache : IDisposable
     {
-        private readonly int _cacheSize;
         private readonly Dictionary<int, MsDataSpectrum> _cache;
         private readonly Dictionary<int, Spectrum> _cacheNative;
+
         /// <summary>
         /// queue to keep track of order in which scans were added
         /// </summary>
         private readonly Queue<int> _scanStack;
         private readonly Queue<int> _scanNativeStack;
-        public int Capacity { get { return _cacheSize; } }
-        public int Size { get { return _scanStack.Count; } }
-        public int SizeNative { get { return _scanNativeStack.Count; } }
+        public int Capacity { get; }
+        public int Size => _scanStack.Count;
+        public int SizeNative => _scanNativeStack.Count;
 
         public MsDataScanCache()
             : this(100)
@@ -2066,9 +2009,9 @@ namespace pwiz.ProteowizardWrapper
 
         public MsDataScanCache(int cacheSize)
         {
-            _cacheSize = cacheSize;
-            _cache = new Dictionary<int, MsDataSpectrum>(_cacheSize);
-            _cacheNative = new Dictionary<int, Spectrum>(_cacheSize);
+            Capacity = cacheSize;
+            _cache = new Dictionary<int, MsDataSpectrum>(Capacity);
+            _cacheNative = new Dictionary<int, Spectrum>(Capacity);
             _scanStack = new Queue<int>();
             _scanNativeStack = new Queue<int>();
         }
@@ -2085,7 +2028,7 @@ namespace pwiz.ProteowizardWrapper
 
         public void Add(int scanNum, MsDataSpectrum s)
         {
-            if (_scanStack.Count() >= _cacheSize)
+            if (_scanStack.Count() >= Capacity)
             {
                 _cache.Remove(_scanStack.Dequeue());
             }
@@ -2108,7 +2051,7 @@ namespace pwiz.ProteowizardWrapper
 
         public void Add(int scanNum, Spectrum s)
         {
-            if (_scanNativeStack.Count() >= _cacheSize)
+            if (_scanNativeStack.Count() >= Capacity)
             {
                 var index = _scanNativeStack.Dequeue();
                 // Cleanup - the spectrum holds unmanaged memory resources

@@ -251,11 +251,7 @@ namespace ProteowizardWrapperUnitTests
                             activationType = string.Join(", ", precursor.ActivationTypes);
                     }
 
-                    double scanStartTime;
-                    double lowMass;
-                    double highMass;
-
-                    GetScanMetadata(cvScanInfo, out scanStartTime, out lowMass, out highMass);
+                    GetScanMetadata(cvScanInfo, out var scanStartTime, out var lowMass, out var highMass);
 
                     var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
 
@@ -283,14 +279,12 @@ namespace ProteowizardWrapperUnitTests
                     else
                         scanCountMS1++;
 
-                    Dictionary<int, string> expectedDataThisFile;
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFolder.Name), out expectedDataThisFile))
+                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFolder.Name), out var expectedDataThisFile))
                     {
                         Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFolder.Name);
                     }
 
-                    string expectedScanSummary;
-                    if (expectedDataThisFile.TryGetValue(scanNumber, out expectedScanSummary))
+                    if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedScanSummary))
                     {
                         Assert.AreEqual(expectedScanSummary, scanSummary,
                                         "Scan summary mismatch, scan " + scanNumber);
@@ -368,14 +362,12 @@ namespace ProteowizardWrapperUnitTests
 
                     Console.WriteLine(scanSummary);
 
-                    Dictionary<int, string> expectedDataThisFile;
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFolder.Name), out expectedDataThisFile))
+                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFolder.Name), out var expectedDataThisFile))
                     {
                         Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFolder.Name);
                     }
 
-                    string expectedDataDetails;
-                    if (expectedDataThisFile.TryGetValue(scanNumber, out expectedDataDetails))
+                    if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedDataDetails))
                     {
                         Assert.AreEqual(expectedDataDetails, scanSummary,
                                         "Scan details mismatch, scan " + scanNumber);

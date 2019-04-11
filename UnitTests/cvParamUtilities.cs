@@ -40,14 +40,14 @@ namespace ProteowizardWrapperUnitTests
             return string.Empty;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public static int GetCvParamValueInt(IEnumerable<CVParamData> cvParams, CVIDs cvId)
         {
             var query = (from item in cvParams where item.CVId == (int)cvId select item).ToList();
 
             if (query.Count > 0)
             {
-                int value;
-                if (Int32.TryParse(query.First().Value, out value))
+                if (Int32.TryParse(query.First().Value, out var value))
                     return value;
             }
 
@@ -60,8 +60,7 @@ namespace ProteowizardWrapperUnitTests
 
             if (query.Count > 0)
             {
-                double value;
-                if (Double.TryParse(query.First().Value, out value))
+                if (Double.TryParse(query.First().Value, out var value))
                     return value;
             }
 

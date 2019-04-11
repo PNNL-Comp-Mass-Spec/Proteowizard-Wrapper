@@ -90,8 +90,7 @@ namespace ProteowizardWrapperUnitTests
 
             var dataFile = GetRawDataFile(rawFileName);
 
-            Dictionary<int, List<double>> collisionEnergiesThisFile;
-            if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out collisionEnergiesThisFile))
+            if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var collisionEnergiesThisFile))
             {
                 Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
             }
@@ -114,8 +113,7 @@ namespace ProteowizardWrapperUnitTests
 
                 foreach (var scanNumber in collisionEnergiesThisFile.Keys)
                 {
-                    int spectrumIndex;
-                    if (!scanNumberToIndexMap.TryGetValue(scanNumber, out spectrumIndex))
+                    if (!scanNumberToIndexMap.TryGetValue(scanNumber, out var spectrumIndex))
                     {
                         Assert.Fail("ScanToIndexMap does not contain scan number " + scanNumber);
                     }
@@ -190,9 +188,9 @@ namespace ProteowizardWrapperUnitTests
                         {
                             var isValid = expectedEnergies.Any(expectedEnergy => Math.Abs(actualEnergy - expectedEnergy) < 0.00001);
 
-                            Console.WriteLine("{0,-5} {1,-5} {2}", isValid, scanNumber, actualEnergy.ToString("0.00"));
+                            Console.WriteLine("{0,-5} {1,-5} {2:0.00}", isValid, scanNumber, actualEnergy);
 
-                            Assert.IsTrue(isValid, "Unexpected collision energy {0} for scan {1}", actualEnergy.ToString("0.00"), scanNumber);
+                            Assert.IsTrue(isValid, "Unexpected collision energy {0:0.00} for scan {1}", actualEnergy, scanNumber);
                         }
                     }
 
@@ -260,8 +258,7 @@ namespace ProteowizardWrapperUnitTests
 
                             Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
-                            string filterText;
-                            GetScanFilterText(cvScanInfo, out filterText);
+                            GetScanFilterText(cvScanInfo, out var filterText);
 
                             Assert.IsFalse(string.IsNullOrEmpty(filterText), "FilterText is empty but should not be");
 
@@ -448,8 +445,7 @@ namespace ProteowizardWrapperUnitTests
 
                     Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
-                    string filterText;
-                    GetScanFilterText(cvScanInfo, out filterText);
+                    GetScanFilterText(cvScanInfo, out var filterText);
 
                     if (filterText == null)
                     {
@@ -467,8 +463,7 @@ namespace ProteowizardWrapperUnitTests
 
                     var scanTypeKey = new Tuple<string, string>(scanType, genericScanFilter);
 
-                    int observedScanCount;
-                    if (scanTypeCountsActual.TryGetValue(scanTypeKey, out observedScanCount))
+                    if (scanTypeCountsActual.TryGetValue(scanTypeKey, out var observedScanCount))
                     {
                         scanTypeCountsActual[scanTypeKey] = observedScanCount + 1;
                     }
@@ -495,8 +490,7 @@ namespace ProteowizardWrapperUnitTests
                 Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
                 Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
 
-                Dictionary<Tuple<string, string>, int> expectedScanInfo;
-                if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out expectedScanInfo))
+                if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedScanInfo))
                 {
                     Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
                 }
@@ -505,8 +499,7 @@ namespace ProteowizardWrapperUnitTests
 
                 foreach (var scanType in (from item in scanTypeCountsActual orderby item.Key select item))
                 {
-                    int expectedScanCount;
-                    if (expectedScanInfo.TryGetValue(scanType.Key, out expectedScanCount))
+                    if (expectedScanInfo.TryGetValue(scanType.Key, out var expectedScanCount))
                     {
                         var isValid = scanType.Value == expectedScanCount;
 
@@ -642,13 +635,7 @@ namespace ProteowizardWrapperUnitTests
                             activationType = string.Join(", ", precursor.ActivationTypes);
                     }
 
-                    double scanStartTime;
-                    double ionInjectionTime;
-                    string filterText;
-                    double lowMass;
-                    double highMass;
-
-                    GetScanMetadata(cvScanInfo, out scanStartTime, out ionInjectionTime, out filterText, out lowMass, out highMass);
+                    GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionInjectionTime, out var filterText, out var lowMass, out var highMass);
 
                     var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
                     Assert.AreEqual(retentionTime, scanStartTime, 0.0001, "Mismatch between spectrum.RetentionTime and CVParam MS_scan_start_time");
@@ -677,14 +664,12 @@ namespace ProteowizardWrapperUnitTests
                     else
                         scanCountMS1++;
 
-                    Dictionary<int, string> expectedDataThisFile;
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out expectedDataThisFile))
+                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
                     {
                         Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
                     }
 
-                    string expectedScanSummary;
-                    if (expectedDataThisFile.TryGetValue(scanNumber, out expectedScanSummary))
+                    if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedScanSummary))
                     {
                         Assert.AreEqual(scanNumber + " " + expectedScanSummary, scanSummary,
                                         "Scan summary mismatch, scan " + scanNumber);
@@ -799,8 +784,7 @@ namespace ProteowizardWrapperUnitTests
 
                         var midPoint = (int)(spectrum.Intensities.Length / 2f);
 
-                        string filterText;
-                        GetScanFilterText(cvScanInfo, out filterText);
+                        GetScanFilterText(cvScanInfo, out var filterText);
 
                         var scanSummary =
                             string.Format(
@@ -813,18 +797,15 @@ namespace ProteowizardWrapperUnitTests
 
                         Console.WriteLine(scanSummary);
 
-                        Dictionary<int, Dictionary<string, string>> expectedDataThisFile;
-                        if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out expectedDataThisFile))
+                        if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
                         {
                             Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
                         }
 
-                        Dictionary<string, string> expectedDataByType;
-                        if (expectedDataThisFile.TryGetValue(scanNumber, out expectedDataByType))
+                        if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedDataByType))
                         {
                             var keySpec = centroidData.ToString();
-                            string expectedDataDetails;
-                            if (expectedDataByType.TryGetValue(keySpec, out expectedDataDetails))
+                            if (expectedDataByType.TryGetValue(keySpec, out var expectedDataDetails))
                             {
                                 Assert.AreEqual(expectedDataDetails, scanSummary.Substring(14),
                                                 "Scan details mismatch, scan " + scanNumber + ", keySpec " + keySpec);
@@ -844,9 +825,7 @@ namespace ProteowizardWrapperUnitTests
             string tupleKey2,
             int scanCount)
         {
-
-            Dictionary<Tuple<string, string>, int> expectedScanInfo;
-            if (!expectedData.TryGetValue(fileName, out expectedScanInfo))
+            if (!expectedData.TryGetValue(fileName, out var expectedScanInfo))
             {
                 expectedScanInfo = new Dictionary<Tuple<string, string>, int>();
                 expectedData.Add(fileName, expectedScanInfo);
@@ -887,12 +866,7 @@ namespace ProteowizardWrapperUnitTests
 
         private static void GetScanFilterText(SpectrumScanContainer cvScanInfo, out string filterText)
         {
-            double scanStartTime;
-            double ionInjectionTime;
-            double lowMass;
-            double highMass;
-
-            GetScanMetadata(cvScanInfo, out scanStartTime, out ionInjectionTime, out filterText, out lowMass, out highMass);
+            GetScanMetadata(cvScanInfo, out _, out _, out filterText, out _, out _);
         }
 
         private static void GetScanMetadata(

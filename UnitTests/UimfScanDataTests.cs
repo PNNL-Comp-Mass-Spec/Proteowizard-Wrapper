@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using pwiz.ProteowizardWrapper;
 
@@ -332,12 +331,7 @@ namespace ProteowizardWrapperUnitTests
                             activationType = string.Join(", ", precursor.ActivationTypes);
                     }
 
-                    double scanStartTime;
-                    double ionMobilityDriftTime;
-                    double lowMass;
-                    double highMass;
-
-                    GetScanMetadata(cvScanInfo, out scanStartTime, out ionMobilityDriftTime, out lowMass, out highMass);
+                    GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionMobilityDriftTime, out var lowMass, out var highMass);
 
                     var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
 
@@ -366,14 +360,12 @@ namespace ProteowizardWrapperUnitTests
                     else
                         scanCountMS1++;
 
-                    Dictionary<KeyValuePair<int, int>, string> expectedDataThisFile;
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out expectedDataThisFile))
+                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
                     {
                         Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
                     }
 
-                    string expectedScanSummary;
-                    if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out expectedScanSummary))
+                    if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out var expectedScanSummary))
                     {
                         Assert.AreEqual(expectedScanSummary, scanSummary,
                                         "Scan summary mismatch, scan " + scanNumber);
@@ -495,14 +487,12 @@ namespace ProteowizardWrapperUnitTests
 
                     Console.WriteLine(scanSummary);
 
-                    Dictionary<KeyValuePair<int, int>, string> expectedDataThisFile;
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out expectedDataThisFile))
+                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
                     {
                         Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
                     }
 
-                    string expectedDataDetails;
-                    if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out expectedDataDetails))
+                    if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out var expectedDataDetails))
                     {
                         Assert.AreEqual(expectedDataDetails, scanSummary,
                                         "Scan details mismatch, scan " + scanNumber);
