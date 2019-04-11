@@ -50,6 +50,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Remove the Assembly Resolver from the system assembly resolver chain
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public static void RemoveAssemblyResolver()
         {
             if (_resolverAdded)
@@ -61,10 +62,10 @@ namespace pwiz.ProteowizardWrapper
 
         private static bool _resolverAdded;
 
-        #region AssemblyResolverHandler for finding ProteoWizard dlls
+        #region AssemblyResolverHandler for finding ProteoWizard DLLs
 
         /// <summary>
-        /// On a missing DLL event, searches a path specified by FindPwizPath for the ProteoWizard dlls, and loads them
+        /// On a missing DLL event, searches a path specified by FindPwizPath for the ProteoWizard DLLs, and loads them
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
@@ -180,7 +181,7 @@ namespace pwiz.ProteowizardWrapper
 
         /// <summary>
         /// The path to the most recent 64-bit ProteoWizard install
-        /// If this is not null/empty, we can usually make a safe assumption that the ProteoWizard dlls are available.
+        /// If this is not null/empty, we can usually make a safe assumption that the ProteoWizard DLLs are available.
         /// </summary>
         public static readonly string PwizPath;
 
@@ -373,7 +374,7 @@ namespace pwiz.ProteowizardWrapper
         /// Checks to make sure the path to ProteoWizard files is set. If not, throws an exception.
         /// </summary>
         /// <remarks>This function should generally only be called inside of a conditional statement to prevent the
-        /// exception from being thrown when the ProteoWizard dlls will not be needed.</remarks>
+        /// exception from being thrown when the ProteoWizard DLLs will not be needed.</remarks>
         public static void ValidateLoader()
         {
             if (!_resolverAdded)
@@ -408,10 +409,10 @@ namespace pwiz.ProteowizardWrapper
         private static string CannotFindExceptionMessage()
         {
             var bits = Environment.Is64BitProcess ? "64" : "32";
-            var message = "Cannot load ProteoWizard dlls. Please ensure that " + bits
+            var message = "Cannot load ProteoWizard DLLs. Please ensure that " + bits
                 + "-bit ProteoWizard is installed to its default install directory (\""
                 + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\")."
-                + "\nCurrently trying to load ProteoWizard dlls from path \"" + PwizPath + "\".";
+                + "\nCurrently trying to load ProteoWizard DLLs from path \"" + PwizPath + "\".";
 
             return message;
         }

@@ -28,6 +28,7 @@ using pwiz.CLI.data;
 using pwiz.CLI.msdata;
 using pwiz.CLI.analysis;
 
+// ReSharper disable UnusedMember.Global
 namespace pwiz.ProteowizardWrapper
 {
 #pragma warning disable 1591
@@ -1216,11 +1217,13 @@ namespace pwiz.ProteowizardWrapper
             return IsCentroided(GetPwizSpectrum(scanIndex, false));
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static bool IsCentroided(Spectrum spectrum)
         {
             return spectrum.hasCVParam(CVID.MS_centroid_spectrum);
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static bool NegativePolarity(Spectrum spectrum)
         {
             var param = spectrum.cvParamChild(CVID.MS_scan_polarity);
@@ -1234,6 +1237,7 @@ namespace pwiz.ProteowizardWrapper
             return IsSrmSpectrum(GetPwizSpectrum(scanIndex, false));
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static bool IsSrmSpectrum(Spectrum spectrum)
         {
             return spectrum.hasCVParam(CVID.MS_SRM_spectrum);
@@ -1256,6 +1260,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static int? GetMsLevel(Spectrum spectrum)
         {
             var param = spectrum.cvParam(CVID.MS_ms_level);
@@ -1704,7 +1709,6 @@ namespace pwiz.ProteowizardWrapper
 
         public static readonly SignedMz EMPTY = new SignedMz(null, false);
 
-        // ReSharper disable once UnusedMember.Global
         public static readonly SignedMz ZERO = new SignedMz(0);
 
         // ReSharper disable once PossibleInvalidOperationException
