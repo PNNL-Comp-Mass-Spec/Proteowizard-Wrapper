@@ -308,6 +308,25 @@ namespace pwiz.ProteowizardWrapper
             return result;
         }
 
+        private float[] ToFloatArray(BinaryDataArray binaryDataArray)
+        {
+            // BinaryDataArray.get_data() problem fix
+            // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.msdata.BinaryData, is a semi-automatic wrapper for a C++ vector, which implements IList<double>
+            // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.util.BinaryData implements IList<double>, but also provides other optimization functions
+            // The best way to access this before was binaryDataArray.data.ToArray()
+            // In the future, this could be changed to binaryDataArray.data.Storage.ToArray(), but that may lead to more data copying than just using the IEnumerable<double> interface
+            // Both versions implement IList<double>, so I can get the object via reflection and cast it to an IList<double> (or IEnumerable<double>).
+
+            // Call via reflection to avoid issues of the ProteoWizardWrapper compiled reference vs. the ProteoWizard compiled DLL
+            var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
+            if (dataObj != null && dataObj is IList<double> data)
+            {
+                return ToFloatArray(data);
+            }
+
+            return new float[0];
+        }
+
         public static string[] ReadIds(string path)
         {
             return FULL_READER_LIST.readIds(path);
@@ -731,8 +750,14 @@ namespace pwiz.ProteowizardWrapper
             using (var chrom = ChromatogramList.chromatogram(chromIndex, true))
             {
                 id = chrom.id;
-                timeArray = ToFloatArray(chrom.binaryDataArrays[0].data);
-                intensityArray = ToFloatArray(chrom.binaryDataArrays[1].data);
+
+                // Original code
+                //timeArray = ToFloatArray(chrom.binaryDataArrays[0].data);
+                //intensityArray = ToFloatArray(chrom.binaryDataArrays[1].data);
+
+                // BinaryDataArray.get_data() problem fix
+                timeArray = ToFloatArray(chrom.binaryDataArrays[0]);
+                intensityArray = ToFloatArray(chrom.binaryDataArrays[1]);
             }
         }
 
