@@ -19,7 +19,6 @@ xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_
 xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\Release\" /D /Y
 xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\UnitTests\bin\Debug\" /D /Y
 
-
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\GordonSlysz\DeconTools_IQ\Library\" /D /Y
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\GordonSlysz\DeconTools_IQ\DeconConsole\bin\x64\Debug\" /D /Y
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\GordonSlysz\DeconTools_IQ\DeconConsole\bin\x86\Debug\" /D /Y
@@ -27,5 +26,11 @@ xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\GordonSlysz\DeconTo
 
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\Instrument-Software\LCMS-Spectator\Library\" /D /Y
 
+xcopy Release\ProteowizardWrapper.dll "C:\DMS_Programs\MSFileInfoScanner" /D /Y
+
 @echo off
+echo.
+echo You must manually copy ProteowizardWrapper.dll to
+echo \\pnl\projects\OmicsSW\DMS_Programs\CaptureTaskManagerDistribution\MSFileInfoScanner
+echo.
 pause
