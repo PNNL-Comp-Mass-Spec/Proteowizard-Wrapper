@@ -4,6 +4,7 @@ using System.IO;
 using NUnit.Framework;
 using pwiz.ProteowizardWrapper;
 
+// ReSharper disable StringLiteralTypo
 namespace ProteowizardWrapperUnitTests
 {
     [TestFixture]
@@ -548,7 +549,7 @@ namespace ProteowizardWrapperUnitTests
             foreach (var scanEntry in cvScanInfo.Scans)
             {
                 scanStartTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_scan_start_time);
-                ionMobilityDriftTime= cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_ion_mobility_drift_time);
+                ionMobilityDriftTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_ion_mobility_drift_time);
 
                 lowMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_lower_limit);
                 highMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_upper_limit);
