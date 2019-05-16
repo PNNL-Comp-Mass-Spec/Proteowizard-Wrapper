@@ -609,6 +609,68 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
+        /// Look for the specified CVParam in cvParams
+        /// </summary>
+        /// <param name="cvParams">List of CVParams</param>
+        /// <param name="cvidToFind">CVID to find</param>
+        /// <param name="paramMatch">Matching parameter, or null if no match</param>
+        /// <returns>True on success, false if not found</returns>
+        public static bool TryGetCVParam(CVParamList cvParams, pwiz.CLI.cv.CVID cvidToFind, out CVParam paramMatch)
+        {
+            foreach (var param in cvParams)
+            {
+                if (param.cvid != cvidToFind)
+                    continue;
+
+                if (param.empty())
+                    continue;
+
+                paramMatch = param;
+                return true;
+            }
+
+            paramMatch = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Look for the specified CVParam in cvParams
+        /// </summary>
+        /// <param name="cvParams">List of CVParams</param>
+        /// <param name="cvidToFind">CVID to find</param>
+        /// <param name="value">Value of the matching param, or valueIfMissing if no match</param>
+        /// <param name="valueIfMissing">Value to assign to the value argument if the parameter is not found, or if the parameter's value is not numeric</param>
+        /// <returns>True on success, false if not found or not numeric</returns>
+        public static bool TryGetCVParamDouble(CVParamList cvParams, pwiz.CLI.cv.CVID cvidToFind, out double value, double valueIfMissing = 0)
+        {
+            if (!TryGetCVParam(cvParams, cvidToFind, out var paramMatch))
+            {
+                value = valueIfMissing;
+                return false;
+            }
+
+            try
+            {
+                // Try to use implicit casting
+                value = paramMatch.value;
+                return true;
+            }
+            catch
+            {
+                // The value could not be converted implicitly; use an explicit conversion
+            }
+
+            if (double.TryParse(paramMatch.value.ToString(), out var parsedValue))
+            {
+                value = parsedValue;
+                return true;
+            }
+
+            value = valueIfMissing;
+            return false;
+        }
+
+        /// <summary>
         /// Write the data to the specified file
         /// </summary>
         /// <param name="path"></param>
