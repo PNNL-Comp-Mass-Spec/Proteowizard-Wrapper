@@ -5,12 +5,12 @@ using System.Linq;
 using NUnit.Framework;
 using pwiz.ProteowizardWrapper;
 
+// ReSharper disable StringLiteralTypo
 namespace ProteowizardWrapperUnitTests
 {
     [TestFixture]
     public class BrukerScanDataTests
     {
-        private const bool USE_REMOTE_PATHS = true;
 
         [Test]
         [TestCase("MZ20160603PPS_edta_000004.d", 1, 1, 0, 1)]
@@ -377,33 +377,20 @@ namespace ProteowizardWrapperUnitTests
         }
 
         /// <summary>
-        /// Get a DirectoryInfo object for the given .D folder
+        /// Get a DirectoryInfo object for the given .D directory
         /// </summary>
-        /// <param name="dotDFolderName">.D folder name</param>
+        /// <param name="dotDDirectoryName">.D directory name</param>
         /// <returns></returns>
-        private DirectoryInfo GetBrukerDataFolder(string dotDFolderName)
+        private DirectoryInfo GetBrukerDataFolder(string dotDDirectoryName)
         {
-            DirectoryInfo dotDFolder;
-
-#pragma warning disable 0162
-            if (USE_REMOTE_PATHS)
+            if (InstrumentDataUtilities.FindInstrumentData(dotDDirectoryName, true, out var instrumentDataDirectory))
             {
-                dotDFolder = new DirectoryInfo(Path.Combine(@"\\proto-2\unitTest_Files\ProteowizardWrapper", dotDFolderName));
-            }
-            else
-            {
-                dotDFolder = new DirectoryInfo(Path.Combine(@"F:\MSData\UnitTestFiles", dotDFolderName));
-            }
-#pragma warning restore 0162
-
-            if (!dotDFolder.Exists)
-            {
-                var msg = "Folder not found: " + dotDFolder.FullName;
-                Console.WriteLine(msg);
-                Assert.Fail(msg);
+                if (instrumentDataDirectory is DirectoryInfo dotDDirectory)
+                    return dotDDirectory;
             }
 
-            return dotDFolder;
+            Assert.Fail("Directory not found: " + dotDDirectoryName);
+            return null;
         }
 
         private static void GetScanMetadata(

@@ -9,7 +9,6 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     class UimfScanDataTests
     {
-        private const bool USE_REMOTE_PATHS = true;
 
         [Test]
         [TestCase("20160211_Agilent_tunemix_pos_0002.UIMF", 1, 20, 2809, 0, 2809)]
@@ -518,31 +517,18 @@ namespace ProteowizardWrapperUnitTests
         /// <summary>
         /// Get a FileInfo object for the given .raw file
         /// </summary>
-        /// <param name="rawFileName">Thermo raw file name</param>
+        /// <param name="uimfFileName">UIMF file name</param>
         /// <returns></returns>
-        private FileInfo GetUimfDataFile(string rawFileName)
+        private FileInfo GetUimfDataFile(string uimfFileName)
         {
-            FileInfo dataFile;
-
-#pragma warning disable 0162
-            if (USE_REMOTE_PATHS)
+            if (InstrumentDataUtilities.FindInstrumentData(uimfFileName, false, out var instrumentDataFile))
             {
-                dataFile = new FileInfo(Path.Combine(@"\\proto-2\UnitTest_Files\ProteowizardWrapper", rawFileName));
-            }
-            else
-            {
-                dataFile = new FileInfo(Path.Combine(@"F:\MSData\UnitTestFiles", rawFileName));
-            }
-#pragma warning restore 0162
-
-            if (!dataFile.Exists)
-            {
-                var msg = "File not found: " + dataFile.FullName;
-                Console.WriteLine(msg);
-                Assert.Fail(msg);
+                if (instrumentDataFile is FileInfo uimfFile)
+                    return uimfFile;
             }
 
-            return dataFile;
+            Assert.Fail("File not found: " + uimfFileName);
+            return null;
         }
 
         private static void GetScanMetadata(

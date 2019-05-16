@@ -840,27 +840,16 @@ namespace ProteowizardWrapperUnitTests
         /// <returns></returns>
         private FileInfo GetRawDataFile(string rawFileName)
         {
-            FileInfo dataFile;
+            const string REMOTE_PATH = @"\\proto-2\UnitTest_Files\ThermoRawFileReader";
 
-#pragma warning disable 0162
-            if (USE_REMOTE_PATHS)
+            if (InstrumentDataUtilities.FindInstrumentData(rawFileName, false, REMOTE_PATH, out var instrumentDataFile))
             {
-                dataFile = new FileInfo(Path.Combine(@"\\proto-2\UnitTest_Files\ThermoRawFileReader", rawFileName));
-            }
-            else
-            {
-                dataFile = new FileInfo(Path.Combine(@"F:\MSData\UnitTestFiles", rawFileName));
-            }
-#pragma warning restore 0162
-
-            if (!dataFile.Exists)
-            {
-                var msg = "File not found: " + dataFile.FullName;
-                Console.WriteLine(msg);
-                Assert.Fail(msg);
+                if (instrumentDataFile is FileInfo rawFile)
+                    return rawFile;
             }
 
-            return dataFile;
+            Assert.Fail("File not found: " + rawFileName);
+            return null;
         }
 
         private static void GetScanFilterText(SpectrumScanContainer cvScanInfo, out string filterText)

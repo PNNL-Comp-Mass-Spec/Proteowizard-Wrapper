@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="BrukerScanDataTests.cs" />
     <Compile Include="cvParamUtilities.cs" />
+    <Compile Include="InstrumentDataUtilities.cs" />
     <Compile Include="ThermoScanDataTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UimfScanDataTests.cs" />
