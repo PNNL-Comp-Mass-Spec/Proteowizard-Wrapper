@@ -1581,7 +1581,7 @@ namespace pwiz.ProteowizardWrapper
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj is LockMassParameters lockmassParams && Equals(lockmassParams);
         }
@@ -1599,7 +1599,7 @@ namespace pwiz.ProteowizardWrapper
 
         public int CompareTo(LockMassParameters other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
                 return -1;
             var result = Nullable.Compare(LockmassPositive, other.LockmassPositive);
             if (result != 0)
@@ -1612,7 +1612,7 @@ namespace pwiz.ProteowizardWrapper
 
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)) return -1;
+            if (obj is null) return -1;
             if (ReferenceEquals(this, obj)) return 0;
             if (obj.GetType() != GetType()) return -1;
             return CompareTo((LockMassParameters)obj);
@@ -1776,7 +1776,7 @@ namespace pwiz.ProteowizardWrapper
             return mz.Value;
         }
 
-        public static implicit operator double? (SignedMz mz)
+        public static implicit operator double?(SignedMz mz)
         {
             return mz._mz;
         }
@@ -1842,7 +1842,7 @@ namespace pwiz.ProteowizardWrapper
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             return obj is SignedMz mz && Equals(mz);
         }
 
@@ -1858,7 +1858,7 @@ namespace pwiz.ProteowizardWrapper
 
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)) return -1;
+            if (obj is null) return -1;
             if (obj.GetType() != GetType()) return -1;
             return CompareTo((SignedMz)obj);
         }
@@ -2005,7 +2005,7 @@ namespace pwiz.ProteowizardWrapper
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != typeof(MsInstrumentConfigInfo)) return false;
             return Equals((MsInstrumentConfigInfo)obj);
@@ -2013,7 +2013,7 @@ namespace pwiz.ProteowizardWrapper
 
         public bool Equals(MsInstrumentConfigInfo other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.Model, Model) &&
                 Equals(other.Ionization, Ionization) &&
