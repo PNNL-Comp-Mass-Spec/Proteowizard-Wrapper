@@ -327,6 +327,11 @@ namespace pwiz.ProteowizardWrapper
             return new float[0];
         }
 
+        /// <summary>
+        /// Returns the file id of the specified file (as an array, which typically only has one item)
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static string[] ReadIds(string path)
         {
             return FULL_READER_LIST.readIds(path);
@@ -336,6 +341,13 @@ namespace pwiz.ProteowizardWrapper
         public const string PREFIX_SINGLE = "SRM SIC "; // Not L10N
         public const string PREFIX_PRECURSOR = "SIM SIC "; // Not L10N
 
+        /// <summary>
+        /// Return false if id starts with "+ "
+        /// Return true  if id starts with "- "
+        /// Otherwise, return null
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static bool? IsNegativeChargeIdNullable(string id)
         {
             if (id.StartsWith("+ ")) // Not L10N
@@ -345,6 +357,11 @@ namespace pwiz.ProteowizardWrapper
             return null;
         }
 
+        /// <summary>
+        /// Return true if the id starts with "SRM SIC" or "SIM SIC"
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static bool IsSingleIonCurrentId(string id)
         {
             if (IsNegativeChargeIdNullable(id).HasValue)
@@ -392,6 +409,13 @@ namespace pwiz.ProteowizardWrapper
             _binaryDataArrayGetData = typeof(BinaryDataArray).GetProperty("data", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetMethod;
         }
 
+        /// <summary>
+        /// Initialize the reader
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="msDataFile"></param>
+        /// <param name="sampleIndex"></param>
+        /// <param name="config"></param>
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions()]
         public void InitializeReader(string path, MSData msDataFile, int sampleIndex, ReaderConfig config)
         {
@@ -406,6 +430,10 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        /// <summary>
+        /// Call this method to enable caching recently read spectra
+        /// </summary>
+        /// <param name="cacheSize"></param>
         public void EnableCaching(int? cacheSize)
         {
             if (cacheSize == null || cacheSize.Value <= 0)
@@ -418,14 +446,23 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        /// <summary>
+        /// Disable the spectrum data caching
+        /// </summary>
         public void DisableCaching()
         {
             _scanCache.Clear();
             _scanCache = null;
         }
 
+        /// <summary>
+        /// The Run ID
+        /// </summary>
         public string RunId => _msDataFile.run.id;
 
+        /// <summary>
+        /// The run start time
+        /// </summary>
         public DateTime? RunStartTime
         {
             get
@@ -438,6 +475,9 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        /// <summary>
+        /// Data and Instrument Configuration information
+        /// </summary>
         public MsDataConfigInfo ConfigInfo
         {
             get
@@ -546,6 +586,11 @@ namespace pwiz.ProteowizardWrapper
             detector = String.Join("/", new List<string>(detectors.Values).ToArray()); // Not L10N
         }
 
+        /// <summary>
+        /// Check if the file has be processed by the specified software
+        /// </summary>
+        /// <param name="softwareName"></param>
+        /// <returns></returns>
         public bool IsProcessedBy(string softwareName)
         {
             foreach (var softwareApp in _msDataFile.softwareList)
@@ -556,6 +601,11 @@ namespace pwiz.ProteowizardWrapper
             return false;
         }
 
+        /// <summary>
+        /// If the spectrum is a Waters Lockmass spectrum
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public bool IsWatersLockmassSpectrum(MsDataSpectrum s)
         {
             return _lockmassFunction.HasValue && (s.WatersFunctionNumber >= _lockmassFunction.Value);

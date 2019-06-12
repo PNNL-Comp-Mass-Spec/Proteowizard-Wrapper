@@ -171,7 +171,7 @@ namespace pwiz.ProteowizardWrapper
         private readonly MsDataFileImpl mDataReader;
 
         /// <summary>
-        /// Returns the file id of the specified file
+        /// Returns the file id of the specified file (as an array, which typically only has one item)
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
