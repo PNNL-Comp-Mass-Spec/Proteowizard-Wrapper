@@ -1804,7 +1804,7 @@ namespace pwiz.ProteowizardWrapper
     /// There's a lot of operator magic here to minimize code changes where we used to implement mz
     /// values as simple doubles.
     /// </summary>
-    public struct SignedMz : IComparable, IEquatable<SignedMz>, IFormattable
+    public readonly struct SignedMz : IComparable, IEquatable<SignedMz>, IFormattable
     {
         private readonly double? _mz;
 
