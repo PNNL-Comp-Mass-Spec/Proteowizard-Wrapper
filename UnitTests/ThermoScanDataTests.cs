@@ -458,8 +458,8 @@ namespace ProteowizardWrapperUnitTests
                         continue;
                     }
 
-                    var scanType = XRawFileIO.GetScanTypeNameFromFinniganScanFilterText(filterText);
-                    var genericScanFilter = XRawFileIO.MakeGenericFinniganScanFilter(filterText);
+                    var scanType = XRawFileIO.GetScanTypeNameFromThermoScanFilterText(filterText);
+                    var genericScanFilter = XRawFileIO.MakeGenericThermoScanFilter(filterText);
 
                     var scanTypeKey = new Tuple<string, string>(scanType, genericScanFilter);
 
