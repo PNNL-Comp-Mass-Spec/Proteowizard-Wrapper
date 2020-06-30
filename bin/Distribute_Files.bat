@@ -24,8 +24,6 @@ xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\GordonSlysz\DeconTo
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\GordonSlysz\DeconTools_IQ\DeconConsole\bin\x86\Debug\" /D /Y
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\GordonSlysz\DeconTools_IQ\DeconConsole\bin\x86\Release\" /D /Y
 
-xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\Instrument-Software\LCMS-Spectator\Library\" /D /Y
-
 xcopy Release\ProteowizardWrapper.dll "C:\DMS_Programs\MSFileInfoScanner" /D /Y
 
 @echo off
