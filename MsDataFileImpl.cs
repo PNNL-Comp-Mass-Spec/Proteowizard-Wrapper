@@ -174,7 +174,7 @@ namespace pwiz.ProteowizardWrapper
         /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
-            return GetPwizSpectrum(scanIndex, true);
+            return GetPwizSpectrum(scanIndex, getBinaryData: true);
         }
 
         /// <summary>
@@ -1296,7 +1296,7 @@ namespace pwiz.ProteowizardWrapper
 
         public MsDataSpectrum GetSrmSpectrum(int scanIndex)
         {
-            var spectrum = GetPwizSpectrum(scanIndex, true);
+            var spectrum = GetPwizSpectrum(scanIndex, getBinaryData: true);
             return GetSpectrum(IsSrmSpectrum(spectrum) ? spectrum : null, scanIndex);
         }
 
