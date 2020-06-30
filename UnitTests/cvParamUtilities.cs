@@ -50,7 +50,7 @@ namespace ProteowizardWrapperUnitTests
 
             if (query.Count > 0)
             {
-                if (Int32.TryParse(query.First().Value, out var value))
+                if (int.TryParse(query.First().Value, out var value))
                     return value;
             }
 
@@ -63,7 +63,7 @@ namespace ProteowizardWrapperUnitTests
 
             if (query.Count > 0)
             {
-                if (Double.TryParse(query.First().Value, out var value))
+                if (double.TryParse(query.First().Value, out var value))
                     return value;
             }
 
