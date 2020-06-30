@@ -34,10 +34,10 @@ namespace ProteowizardWrapperUnitTests
         /// <param name="instrumentDataFileOrDirectory">Output: matching instrument data file, or null if not found</param>
         /// <returns></returns>
         public static bool FindInstrumentData(
-        string fileOrDirectoryToFind,
-        bool isDirectory,
-        string remotePathToSearch,
-        out FileSystemInfo instrumentDataFileOrDirectory)
+            string fileOrDirectoryToFind,
+            bool isDirectory,
+            string remotePathToSearch,
+            out FileSystemInfo instrumentDataFileOrDirectory)
         {
             string datasetType;
             if (isDirectory)
