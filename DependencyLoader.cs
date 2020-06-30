@@ -233,9 +233,10 @@ namespace pwiz.ProteowizardWrapper
                 return pwizPath;
             }
 
-            // Look for Per-user and per-machine ProteoWizard installs; use whichever install is newer.
+            // Look for per-user and per-machine ProteoWizard installs; use whichever install is newer.
 
             var possibleInstallDirs = new List<DirectoryInfo>();
+
             // Per-User ProteoWizard install detection
             var localAppDataDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Apps"));
             if (localAppDataDir.Exists)
