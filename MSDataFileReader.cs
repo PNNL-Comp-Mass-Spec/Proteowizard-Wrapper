@@ -397,9 +397,13 @@ namespace pwiz.ProteowizardWrapper
         /// The first value is spectra processed; the second value is total spectra
         /// </param>
         /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
-        public void GetScanTimesAndMsLevels(out double[] times, out byte[] msLevels, Action<int, int> progressDelegate = null)
+        /// <param name="useAlternateMethod">
+        /// When false, use the default method for retrieving spectrum info; this could lead to an exception if the spectrum is empty (has no ions)
+        /// When true, use an alternate method to retrieve the spectrum info (DetailLevel.InstantMetadata)
+        /// </param>
+        public void GetScanTimesAndMsLevels(out double[] times, out byte[] msLevels, Action<int, int> progressDelegate = null, bool useAlternateMethod = false)
         {
-            mDataReader.GetScanTimesAndMsLevels(out times, out msLevels, progressDelegate);
+            mDataReader.GetScanTimesAndMsLevels(out times, out msLevels, progressDelegate, useAlternateMethod);
         }
 
         /// <summary>
@@ -414,13 +418,18 @@ namespace pwiz.ProteowizardWrapper
         /// Delegate method for reporting progress while iterating over the spectra;
         /// The first value is spectra processed; the second value is total spectra
         /// </param>
+        /// <param name="useAlternateMethod">
+        /// When false, use the default method for retrieving spectrum info; this could lead to an exception if the spectrum is empty (has no ions)
+        /// When true, use an alternate method to retrieve the spectrum info (DetailLevel.InstantMetadata)
+        /// </param>
         public void GetScanTimesAndMsLevels(
             CancellationToken cancellationToken,
             out double[] times,
             out byte[] msLevels,
-            Action<int, int> progressDelegate = null)
+            Action<int, int> progressDelegate = null,
+            bool useAlternateMethod = false)
         {
-            mDataReader.GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels, progressDelegate);
+            mDataReader.GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels, progressDelegate, useAlternateMethod);
         }
 
         /// <summary>

@@ -873,10 +873,14 @@ namespace pwiz.ProteowizardWrapper
         /// The first value is spectra processed; the second value is total spectra
         /// </param>
         /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
-        public void GetScanTimesAndMsLevels(out double[] times, out byte[] msLevels, Action<int, int> progressDelegate = null)
+        /// <param name="useAlternateMethod">
+        /// When false, use the default method for retrieving spectrum info; this could lead to an exception if the spectrum is empty (has no ions)
+        /// When true, use an alternate method to retrieve the spectrum info (DetailLevel.InstantMetadata)
+        /// </param>
+        public void GetScanTimesAndMsLevels(out double[] times, out byte[] msLevels, Action<int, int> progressDelegate = null, bool useAlternateMethod = false)
         {
             var cancellationToken = new CancellationToken();
-            GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels, progressDelegate);
+            GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels, progressDelegate, useAlternateMethod);
         }
 
         /// <summary>
@@ -891,11 +895,16 @@ namespace pwiz.ProteowizardWrapper
         /// Delegate method for reporting progress while iterating over the spectra;
         /// The first value is spectra processed; the second value is total spectra
         /// </param>
+        /// <param name="useAlternateMethod">
+        /// When false, use the default method for retrieving spectrum info; this could lead to an exception if the spectrum is empty (has no ions)
+        /// When true, use an alternate method to retrieve the spectrum info (DetailLevel.InstantMetadata)
+        /// </param>
         public void GetScanTimesAndMsLevels(
             CancellationToken cancellationToken,
             out double[] times,
             out byte[] msLevels,
-            Action<int, int> progressDelegate = null)
+            Action<int, int> progressDelegate = null,
+            bool useAlternateMethod = false)
         {
             // Assure that the progress delegate is not null
             if (progressDelegate == null)
@@ -907,10 +916,21 @@ namespace pwiz.ProteowizardWrapper
             for (var i = 0; i < spectrumCount; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                using (var spectrum = SpectrumList.spectrum(i, false))
+                if (useAlternateMethod)
                 {
-                    times[i] = spectrum.scanList.scans[0].cvParam(CVID.MS_scan_start_time).timeInSeconds();
-                    msLevels[i] = (byte)(int)spectrum.cvParam(CVID.MS_ms_level).value;
+                    using (var spectrum = SpectrumList.spectrum(i, DetailLevel.InstantMetadata))
+                    {
+                        times[i] = spectrum.scanList.scans[0].cvParam(CVID.MS_scan_start_time).timeInSeconds();
+                        msLevels[i] = (byte)(int)spectrum.cvParam(CVID.MS_ms_level).value;
+                    }
+                }
+                else
+                {
+                    using (var spectrum = SpectrumList.spectrum(i, false))
+                    {
+                        times[i] = spectrum.scanList.scans[0].cvParam(CVID.MS_scan_start_time).timeInSeconds();
+                        msLevels[i] = (byte)(int)spectrum.cvParam(CVID.MS_ms_level).value;
+                    }
                 }
 
                 progressDelegate(i, spectrumCount);
