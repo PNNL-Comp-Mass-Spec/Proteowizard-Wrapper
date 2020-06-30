@@ -420,6 +420,13 @@ namespace pwiz.ProteowizardWrapper
         static DependencyLoader()
         {
             PwizPath = FindPwizPath();
+
+#if DEBUG
+            if (!string.IsNullOrEmpty(PwizPath))
+            {
+                Console.WriteLine("Using ProteoWizard at " + PwizPath);
+            }
+#endif
             SetPwizPathFiles();
             AddAssemblyResolver();
         }
