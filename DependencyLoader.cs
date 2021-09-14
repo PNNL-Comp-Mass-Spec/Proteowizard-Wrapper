@@ -62,8 +62,6 @@ namespace pwiz.ProteowizardWrapper
 
         private static bool _resolverAdded;
 
-        #region AssemblyResolverHandler for finding ProteoWizard DLLs
-
         /// <summary>
         /// On a missing DLL event, searches a path specified by FindPwizPath for the ProteoWizard DLLs, and loads them
         /// </summary>
@@ -169,10 +167,6 @@ namespace pwiz.ProteowizardWrapper
             //Return the loaded assembly.
             return myAssembly;
         }
-
-        #endregion
-
-        #region Static stateful variable and populating functions
 
         /// <summary>
         /// Name of the DLL we are checking for
@@ -431,7 +425,5 @@ namespace pwiz.ProteowizardWrapper
             SetPwizPathFiles();
             AddAssemblyResolver();
         }
-
-        #endregion
     }
 }
