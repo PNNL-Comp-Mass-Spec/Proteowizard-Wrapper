@@ -43,169 +43,166 @@ namespace ProteowizardWrapperUnitTests
                     return;
                 }
 
-                using (var reader = new MSDataFileReader(instrumentDataFileOrDirectory.FullName))
+                using var reader = new MSDataFileReader(instrumentDataFileOrDirectory.FullName);
+
+                Console.WriteLine("Chromatogram count: " + reader.ChromatogramCount);
+                Console.WriteLine();
+
+                var ticIntensities = new Dictionary<int, float>();
+
+                for (var chromatogramIndex = 0; chromatogramIndex < reader.ChromatogramCount; chromatogramIndex++)
                 {
+                    // Note that even for a small .Wiff file (1.5 MB), obtaining the Chromatogram list will take some time (20 to 60 seconds)
+                    // The chromatogram at index 0 should be the TIC
+                    // The chromatogram at index >=1 will be each SRM
 
-                    Console.WriteLine("Chromatogram count: " + reader.ChromatogramCount);
-                    Console.WriteLine();
+                    reader.GetChromatogram(chromatogramIndex, out var chromatogramID, out var timeArray, out var intensityArray);
 
-                    var ticIntensities = new Dictionary<int, float>();
+                    // Determine the chromatogram type
 
-                    for (var chromatogramIndex = 0; chromatogramIndex < reader.ChromatogramCount; chromatogramIndex++)
+                    if (chromatogramID == null)
+                        chromatogramID = string.Empty;
+
+                    var cvParams = reader.GetChromatogramCVParams(chromatogramIndex);
+
+                    if (MSDataFileReader.TryGetCVParamDouble(cvParams, pwiz.CLI.cv.CVID.MS_TIC_chromatogram, out _))
                     {
-                        // Note that even for a small .Wiff file (1.5 MB), obtaining the Chromatogram list will take some time (20 to 60 seconds)
-                        // The chromatogram at index 0 should be the TIC
-                        // The chromatogram at index >=1 will be each SRM
+                        // This chromatogram is the TIC
+                        Console.WriteLine("TIC has id {0} and {1} data points", chromatogramID, timeArray.Length);
 
-                        reader.GetChromatogram(chromatogramIndex, out var chromatogramID, out var timeArray, out var intensityArray);
-
-                        // Determine the chromatogram type
-
-                        if (chromatogramID == null)
-                            chromatogramID = string.Empty;
-
-                        var cvParams = reader.GetChromatogramCVParams(chromatogramIndex);
-
-                        if (MSDataFileReader.TryGetCVParamDouble(cvParams, pwiz.CLI.cv.CVID.MS_TIC_chromatogram, out _))
+                        for (var i = 0; i < intensityArray.Length; i++)
                         {
-                            // This chromatogram is the TIC
-                            Console.WriteLine("TIC has id {0} and {1} data points", chromatogramID, timeArray.Length);
-
-                            for (var i = 0; i < intensityArray.Length; i++)
-                            {
-                                ticIntensities.Add(i, intensityArray[i]);
-                            }
+                            ticIntensities.Add(i, intensityArray[i]);
                         }
-
-                        if (MSDataFileReader.TryGetCVParamDouble(cvParams, pwiz.CLI.cv.CVID.MS_selected_reaction_monitoring_chromatogram, out _))
-                        {
-                            // This chromatogram is an SRM scan
-                            Console.WriteLine("SRM scan has id {0} and {1} data points", chromatogramID, timeArray.Length);
-                        }
-
                     }
 
-                    Console.WriteLine("Spectrum count: " + reader.SpectrumCount);
-
-                    var spectraLoaded = 0;
-                    long totalPointsRead = 0;
-                    double ticSumAllSpectra = 0;
-                    double bpiSumAllSpectra = 0;
-
-                    var spectrumIndex = 0;
-                    while (spectrumIndex < reader.SpectrumCount)
+                    if (MSDataFileReader.TryGetCVParamDouble(cvParams, pwiz.CLI.cv.CVID.MS_selected_reaction_monitoring_chromatogram, out _))
                     {
-                        var spectrum = reader.GetSpectrum(spectrumIndex, getBinaryData: true);
-                        spectraLoaded += 1;
-
-                        Console.WriteLine();
-                        Console.WriteLine("ScanIndex {0}, NativeId {1}, Elution Time {2:F2} minutes, MS Level {3}",
-                                          spectrumIndex, spectrum.NativeId, spectrum.RetentionTime, spectrum.Level);
-
-                        // Use the following to get the MZs and Intensities
-                        var mzList = spectrum.Mzs.ToList();
-                        var intensities = spectrum.Intensities.ToList();
-
-                        if (mzList.Count > 0)
-                        {
-
-                            Console.WriteLine("  Data count: " + mzList.Count);
-
-                            totalPointsRead += mzList.Count;
-
-                            double tic = 0;
-                            double bpi = 0;
-                            for (var index = 0; index <= mzList.Count - 1; index++)
-                            {
-                                tic += intensities[index];
-                                if (intensities[index] > bpi)
-                                    bpi = intensities[index];
-                            }
-
-                            ticSumAllSpectra += tic;
-                            bpiSumAllSpectra += bpi;
-
-                            if (!ticIntensities.TryGetValue(spectrumIndex, out var ticFromChromatogram))
-                            {
-                                ticFromChromatogram = -1;
-                            }
-
-                            var spectrumInfo = reader.GetSpectrumObject(spectrumIndex);
-
-                            if (MSDataFileReader.TryGetCVParamDouble(spectrumInfo.cvParams, pwiz.CLI.cv.CVID.MS_total_ion_current,
-                                                                     out var ticFromSpectrumObject))
-                            {
-                                if (ticFromChromatogram < 0)
-                                {
-                                    // ticIntensities did not have an entry for spectrumIndex
-                                    // This could be the case on a Waters Synapt instrument, where ticIntensities has one TIC per frame,
-                                    // while pWiz.GetSpectrum() returns individual mass spectra, of which there could be hundreds of spectra per frame
-                                    Console.WriteLine("  TIC from actual data is {0:E2} vs. {1:E2} from the spectrum object",
-                                                      tic, ticFromSpectrumObject);
-                                }
-                                else
-                                {
-
-                                    // Note: the TIC value from the CvParams has been seen to be drastically off from the manually computed value
-                                    Console.WriteLine(
-                                        "  TIC from actual data is {0:E2} vs. {1:E2} from the chromatogram and {2:E2} from the spectrum object",
-                                        tic, ticFromChromatogram, ticFromSpectrumObject);
-                                }
-                            }
-
-                            if (MSDataFileReader.TryGetCVParamDouble(spectrumInfo.cvParams, pwiz.CLI.cv.CVID.MS_base_peak_intensity,
-                                                                     out var bpiFromSpectrumObject))
-                            {
-                                if (MSDataFileReader.TryGetCVParamDouble(spectrumInfo.cvParams, pwiz.CLI.cv.CVID.MS_base_peak_m_z,
-                                                                         out var bpiMzFromSpectrumObject))
-                                {
-                                    // Note: the BPI intensity from the CvParams has been seen to be drastically off from the manually computed value
-                                    Console.WriteLine("  BPI from spectrum object is {0:E2} at {1:F3} m/z",
-                                                      bpiFromSpectrumObject, bpiMzFromSpectrumObject);
-                                }
-                            }
-                        }
-
-                        if (spectrumIndex < 25)
-                        {
-                            spectrumIndex += 1;
-                        }
-                        else if (spectrumIndex < 1250)
-                        {
-                            spectrumIndex += 50;
-                        }
-                        else
-                        {
-                            spectrumIndex += 500;
-                        }
-
+                        // This chromatogram is an SRM scan
+                        Console.WriteLine("SRM scan has id {0} and {1} data points", chromatogramID, timeArray.Length);
                     }
 
-                    if (spectraLoaded > 0)
-                    {
-                        var medianTIC = ticSumAllSpectra / spectraLoaded;
-                        var medianBPI = bpiSumAllSpectra / spectraLoaded;
-
-                        Console.WriteLine();
-                        Console.WriteLine("Read {0:N0} data points from {1} spectra in {2}",
-                                          totalPointsRead, spectraLoaded, Path.GetFileName(fileOrDirectoryName));
-
-                        Console.WriteLine("Median TIC: {0:E4}", medianTIC);
-                        Console.WriteLine("Median BPI: {0:E4}", medianBPI);
-
-                        Assert.AreEqual(expectedSpectraInFile, reader.SpectrumCount, "Total spectrum count mismatch");
-
-                        Assert.AreEqual(expectedSpectraLoaded, spectraLoaded, "Spectra loaded mismatch");
-
-                        Assert.AreEqual(expectedTotalDataPoints, totalPointsRead, "Spectra loaded mismatch");
-                        var ticComparisonTolerance = expectedMedianTIC * 0.01;
-                        var bpiComparisonTolerance = expectedMedianBPI * 0.01;
-
-                        Assert.AreEqual(expectedMedianTIC, medianTIC, ticComparisonTolerance, "Median TIC mismatch");
-                        Assert.AreEqual(expectedMedianBPI, medianBPI, bpiComparisonTolerance, "Median BPI mismatch");
-                    }
                 }
 
+                Console.WriteLine("Spectrum count: " + reader.SpectrumCount);
+
+                var spectraLoaded = 0;
+                long totalPointsRead = 0;
+                double ticSumAllSpectra = 0;
+                double bpiSumAllSpectra = 0;
+
+                var spectrumIndex = 0;
+                while (spectrumIndex < reader.SpectrumCount)
+                {
+                    var spectrum = reader.GetSpectrum(spectrumIndex, getBinaryData: true);
+                    spectraLoaded += 1;
+
+                    Console.WriteLine();
+                    Console.WriteLine("ScanIndex {0}, NativeId {1}, Elution Time {2:F2} minutes, MS Level {3}",
+                        spectrumIndex, spectrum.NativeId, spectrum.RetentionTime, spectrum.Level);
+
+                    // Use the following to get the MZs and Intensities
+                    var mzList = spectrum.Mzs.ToList();
+                    var intensities = spectrum.Intensities.ToList();
+
+                    if (mzList.Count > 0)
+                    {
+
+                        Console.WriteLine("  Data count: " + mzList.Count);
+
+                        totalPointsRead += mzList.Count;
+
+                        double tic = 0;
+                        double bpi = 0;
+                        for (var index = 0; index <= mzList.Count - 1; index++)
+                        {
+                            tic += intensities[index];
+                            if (intensities[index] > bpi)
+                                bpi = intensities[index];
+                        }
+
+                        ticSumAllSpectra += tic;
+                        bpiSumAllSpectra += bpi;
+
+                        if (!ticIntensities.TryGetValue(spectrumIndex, out var ticFromChromatogram))
+                        {
+                            ticFromChromatogram = -1;
+                        }
+
+                        var spectrumInfo = reader.GetSpectrumObject(spectrumIndex);
+
+                        if (MSDataFileReader.TryGetCVParamDouble(spectrumInfo.cvParams, pwiz.CLI.cv.CVID.MS_total_ion_current,
+                            out var ticFromSpectrumObject))
+                        {
+                            if (ticFromChromatogram < 0)
+                            {
+                                // ticIntensities did not have an entry for spectrumIndex
+                                // This could be the case on a Waters Synapt instrument, where ticIntensities has one TIC per frame,
+                                // while pWiz.GetSpectrum() returns individual mass spectra, of which there could be hundreds of spectra per frame
+                                Console.WriteLine("  TIC from actual data is {0:E2} vs. {1:E2} from the spectrum object",
+                                    tic, ticFromSpectrumObject);
+                            }
+                            else
+                            {
+
+                                // Note: the TIC value from the CvParams has been seen to be drastically off from the manually computed value
+                                Console.WriteLine(
+                                    "  TIC from actual data is {0:E2} vs. {1:E2} from the chromatogram and {2:E2} from the spectrum object",
+                                    tic, ticFromChromatogram, ticFromSpectrumObject);
+                            }
+                        }
+
+                        if (MSDataFileReader.TryGetCVParamDouble(spectrumInfo.cvParams, pwiz.CLI.cv.CVID.MS_base_peak_intensity,
+                            out var bpiFromSpectrumObject))
+                        {
+                            if (MSDataFileReader.TryGetCVParamDouble(spectrumInfo.cvParams, pwiz.CLI.cv.CVID.MS_base_peak_m_z,
+                                out var bpiMzFromSpectrumObject))
+                            {
+                                // Note: the BPI intensity from the CvParams has been seen to be drastically off from the manually computed value
+                                Console.WriteLine("  BPI from spectrum object is {0:E2} at {1:F3} m/z",
+                                    bpiFromSpectrumObject, bpiMzFromSpectrumObject);
+                            }
+                        }
+                    }
+
+                    if (spectrumIndex < 25)
+                    {
+                        spectrumIndex += 1;
+                    }
+                    else if (spectrumIndex < 1250)
+                    {
+                        spectrumIndex += 50;
+                    }
+                    else
+                    {
+                        spectrumIndex += 500;
+                    }
+
+                }
+
+                if (spectraLoaded > 0)
+                {
+                    var medianTIC = ticSumAllSpectra / spectraLoaded;
+                    var medianBPI = bpiSumAllSpectra / spectraLoaded;
+
+                    Console.WriteLine();
+                    Console.WriteLine("Read {0:N0} data points from {1} spectra in {2}",
+                        totalPointsRead, spectraLoaded, Path.GetFileName(fileOrDirectoryName));
+
+                    Console.WriteLine("Median TIC: {0:E4}", medianTIC);
+                    Console.WriteLine("Median BPI: {0:E4}", medianBPI);
+
+                    Assert.AreEqual(expectedSpectraInFile, reader.SpectrumCount, "Total spectrum count mismatch");
+
+                    Assert.AreEqual(expectedSpectraLoaded, spectraLoaded, "Spectra loaded mismatch");
+
+                    Assert.AreEqual(expectedTotalDataPoints, totalPointsRead, "Spectra loaded mismatch");
+                    var ticComparisonTolerance = expectedMedianTIC * 0.01;
+                    var bpiComparisonTolerance = expectedMedianBPI * 0.01;
+
+                    Assert.AreEqual(expectedMedianTIC, medianTIC, ticComparisonTolerance, "Median TIC mismatch");
+                    Assert.AreEqual(expectedMedianBPI, medianBPI, bpiComparisonTolerance, "Median BPI mismatch");
+                }
             }
             catch (Exception ex)
             {

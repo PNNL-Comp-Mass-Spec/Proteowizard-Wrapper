@@ -27,74 +27,72 @@ namespace ProteowizardWrapperUnitTests
 
             try
             {
-                using (var reader = new MSDataFileReader(dataFile.FullName))
+                using var reader = new MSDataFileReader(dataFile.FullName);
+
+                var scanCount = reader.SpectrumCount;
+                Console.WriteLine("Scan count for {0}: {1}", dataFile.Name, scanCount);
+
+                if (expectedMS1 + expectedMS2 == 0)
                 {
-
-                    var scanCount = reader.SpectrumCount;
-                    Console.WriteLine("Scan count for {0}: {1}", dataFile.Name, scanCount);
-
-                    if (expectedMS1 + expectedMS2 == 0)
-                    {
-                        Assert.IsTrue(scanCount == 0, "ScanCount is non-zero, while we expected it to be 0");
-                    }
-                    else
-                    {
-                        Assert.IsTrue(scanCount > 0, "ScanCount is zero, while we expected it to be > 0");
-                    }
-
-                    var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
-
-                    var scanCountMS1 = 0;
-                    var scanCountMS2 = 0;
-                    var scansWithData = 0;
-
-                    foreach (var frame in frameScanPairToIndexMap)
-                    {
-                        var frameNumber = frame.Key.Key;
-                        var scanNumber = frame.Key.Value;
-                        var spectrumIndex = frame.Value;
-
-                        if (frameNumber < frameStart || frameNumber > frameEnd)
-                        {
-                            continue;
-                        }
-
-                        try
-                        {
-                            var spectrum = reader.GetSpectrum(spectrumIndex, true);
-
-                            var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
-
-                            Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for frame {0}, scan {1} ", frameNumber, scanNumber);
-
-                            if (spectrum.Level > 1)
-                                scanCountMS2++;
-                            else
-                                scanCountMS1++;
-
-                            var dataPointCount = spectrum.Mzs.Length;
-                            if (dataPointCount > 0)
-                                scansWithData++;
-
-                            Assert.IsTrue(spectrum.Mzs.Length == spectrum.Intensities.Length, "Array length mismatch for m/z and intensity data for frame {0}, scan {1} ", frameNumber, scanNumber);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Exception reading scan {0}: {1}", scanNumber, ex.Message);
-                            Assert.Fail("Exception reading scan {0}", scanNumber);
-                        }
-                    }
-
-                    Console.WriteLine("scanCountMS1={0}", scanCountMS1);
-                    Console.WriteLine("scanCountMS2={0}", scanCountMS2);
-                    Console.WriteLine("scansWithData={0}", scansWithData);
-
-
-                    Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
-                    Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
-                    Assert.AreEqual(expectedScansWithData, scansWithData, "ScansWithData count mismatch");
+                    Assert.IsTrue(scanCount == 0, "ScanCount is non-zero, while we expected it to be 0");
                 }
+                else
+                {
+                    Assert.IsTrue(scanCount > 0, "ScanCount is zero, while we expected it to be > 0");
+                }
+
+                var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
+
+                var scanCountMS1 = 0;
+                var scanCountMS2 = 0;
+                var scansWithData = 0;
+
+                foreach (var frame in frameScanPairToIndexMap)
+                {
+                    var frameNumber = frame.Key.Key;
+                    var scanNumber = frame.Key.Value;
+                    var spectrumIndex = frame.Value;
+
+                    if (frameNumber < frameStart || frameNumber > frameEnd)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        var spectrum = reader.GetSpectrum(spectrumIndex, true);
+
+                        var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
+
+                        Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for frame {0}, scan {1} ", frameNumber, scanNumber);
+
+                        if (spectrum.Level > 1)
+                            scanCountMS2++;
+                        else
+                            scanCountMS1++;
+
+                        var dataPointCount = spectrum.Mzs.Length;
+                        if (dataPointCount > 0)
+                            scansWithData++;
+
+                        Assert.IsTrue(spectrum.Mzs.Length == spectrum.Intensities.Length, "Array length mismatch for m/z and intensity data for frame {0}, scan {1} ", frameNumber, scanNumber);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception reading scan {0}: {1}", scanNumber, ex.Message);
+                        Assert.Fail("Exception reading scan {0}", scanNumber);
+                    }
+                }
+
+                Console.WriteLine("scanCountMS1={0}", scanCountMS1);
+                Console.WriteLine("scanCountMS2={0}", scanCountMS2);
+                Console.WriteLine("scansWithData={0}", scansWithData);
+
+
+                Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
+                Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
+                Assert.AreEqual(expectedScansWithData, scansWithData, "ScansWithData count mismatch");
             }
             catch (Exception ex)
             {
@@ -127,46 +125,44 @@ namespace ProteowizardWrapperUnitTests
         {
             var dataFile = GetUimfDataFile(uimfFileName);
 
-            using (var reader = new MSDataFileReader(dataFile.FullName))
+            using var reader = new MSDataFileReader(dataFile.FullName);
+
+            Console.WriteLine("Parsing scan headers for {0}", dataFile.Name);
+
+            var scanCount = reader.SpectrumCount;
+            Console.WriteLine("Total scans: {0}", scanCount);
+            Assert.AreEqual(expectedTotalScanCount, scanCount, "Total scan count mismatch");
+            Console.WriteLine();
+
+            var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
+
+            var scanCountMS1 = 0;
+            var scanCountMS2 = 0;
+
+            foreach (var frame in frameScanPairToIndexMap)
             {
-                Console.WriteLine("Parsing scan headers for {0}", dataFile.Name);
+                var frameNumber = frame.Key.Key;
+                var scanNumber = frame.Key.Value;
+                var spectrumIndex = frame.Value;
 
-                var scanCount = reader.SpectrumCount;
-                Console.WriteLine("Total scans: {0}", scanCount);
-                Assert.AreEqual(expectedTotalScanCount, scanCount, "Total scan count mismatch");
-                Console.WriteLine();
-
-                var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
-
-                var scanCountMS1 = 0;
-                var scanCountMS2 = 0;
-
-                foreach (var frame in frameScanPairToIndexMap)
+                if (frameNumber < frameStart || frameNumber > frameEnd)
                 {
-                    var frameNumber = frame.Key.Key;
-                    var scanNumber = frame.Key.Value;
-                    var spectrumIndex = frame.Value;
-
-                    if (frameNumber < frameStart || frameNumber > frameEnd)
-                    {
-                        continue;
-                    }
-
-                    var spectrum = reader.GetSpectrum(spectrumIndex, false);
-
-                    if (spectrum.Level > 1)
-                        scanCountMS2++;
-                    else
-                        scanCountMS1++;
+                    continue;
                 }
 
-                Console.WriteLine("scanCountMS1={0}", scanCountMS1);
-                Console.WriteLine("scanCountMS2={0}", scanCountMS2);
+                var spectrum = reader.GetSpectrum(spectrumIndex, false);
 
-                Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
-                Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
-
+                if (spectrum.Level > 1)
+                    scanCountMS2++;
+                else
+                    scanCountMS1++;
             }
+
+            Console.WriteLine("scanCountMS1={0}", scanCountMS1);
+            Console.WriteLine("scanCountMS2={0}", scanCountMS2);
+
+            Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
+            Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
         }
 
         [Test]
@@ -264,136 +260,134 @@ namespace ProteowizardWrapperUnitTests
 
             var dataFile = GetUimfDataFile(uimfFileName);
 
-            using (var reader = new MSDataFileReader(dataFile.FullName))
+            using var reader = new MSDataFileReader(dataFile.FullName);
+
+            Console.WriteLine("Scan info for {0}", dataFile.Name);
+            Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} {17}",
+                "Frame", "Scan", "MSLevel",
+                "NumPeaks", "RetentionTime",
+                "ScanStartTime",
+                "DriftTimeMsec",
+                "IonMobilityDriftTime",
+                "LowMass", "HighMass", "TotalIonCurrent",
+                "BasePeakMZ", "BasePeakIntensity",
+                "ParentIonMZ", "ActivationType",
+                "IonMode", "IsCentroided",
+                "IsolationMZ");
+
+            var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
+
+            var scanCountMS1 = 0;
+            var scanCountMS2 = 0;
+
+            foreach (var frame in frameScanPairToIndexMap)
             {
-                Console.WriteLine("Scan info for {0}", dataFile.Name);
-                Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16} {17}",
-                                  "Frame", "Scan", "MSLevel",
-                                  "NumPeaks", "RetentionTime",
-                                  "ScanStartTime",
-                                  "DriftTimeMsec",
-                                  "IonMobilityDriftTime",
-                                  "LowMass", "HighMass", "TotalIonCurrent",
-                                  "BasePeakMZ", "BasePeakIntensity",
-                                  "ParentIonMZ", "ActivationType",
-                                  "IonMode", "IsCentroided",
-                                  "IsolationMZ");
+                var frameNumber = frame.Key.Key;
+                var scanNumber = frame.Key.Value;
+                var spectrumIndex = frame.Value;
 
-                var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
-
-                var scanCountMS1 = 0;
-                var scanCountMS2 = 0;
-
-                foreach (var frame in frameScanPairToIndexMap)
+                if (frameNumber < frameStart || frameNumber > frameEnd)
                 {
-                    var frameNumber = frame.Key.Key;
-                    var scanNumber = frame.Key.Value;
-                    var spectrumIndex = frame.Value;
-
-                    if (frameNumber < frameStart || frameNumber > frameEnd)
-                    {
-                        continue;
-                    }
-
-                    if (string.Equals(uimfFileName, "9pep_mix_1uM_4bit_50_3Jun16.uimf", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        if (!(scanNumber == 1 || scanNumber % 38 == 0))
-                            continue;
-                    }
-                    else
-                    {
-                        if (!(scanNumber == 1 || scanNumber % 100 == 0))
-                            continue;
-                    }
-
-                    var spectrum = reader.GetSpectrum(spectrumIndex, true);
-                    var spectrumParams = reader.GetSpectrumCVParamData(spectrumIndex);
-                    var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
-
-                    Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for frame {0}, scan {1} ", frameNumber, scanNumber);
-
-                    var totalIonCurrent = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_TIC);
-                    var basePeakMZ = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_m_z);
-                    var basePeakIntensity = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_intensity);
-
-                    double isolationMZ = 0;
-                    double parentIonMZ = 0;
-                    var activationType = string.Empty;
-
-                    if (spectrum.Precursors.Length > 0)
-                    {
-                        var precursor = spectrum.Precursors[0];
-
-                        isolationMZ = precursor.IsolationMz.GetValueOrDefault();
-                        parentIonMZ = precursor.PrecursorMz.GetValueOrDefault();
-
-                        if (precursor.ActivationTypes != null)
-                            activationType = string.Join(", ", precursor.ActivationTypes);
-                    }
-
-                    GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionMobilityDriftTime, out var lowMass, out var highMass);
-
-                    var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
-
-                    var numPeaks = spectrum.Mzs.Length;
-                    var ionMode = spectrum.NegativeCharge ? "negative" : "positive";
-
-                    var scanSummary =
-                        string.Format(
-                            "{0,4} {1,4} {2} {3,5} {4,6:0.00} {5,6:0.00} {6,8:0.00} {7,8:0.00} {8,3:0} {9,5:0} {10,6:0.0E+0} {11,8:0.000} {12,6:0.0E+0} {13,8:0.00} {14,-8} {15} {16,-5} {17,8:0.00}",
-                            frameNumber, scanNumber, spectrum.Level,
-                            numPeaks, retentionTime, scanStartTime,
-                            cvParamUtilities.CheckNull(spectrum.DriftTimeMsec),
-                            ionMobilityDriftTime,
-                            lowMass, highMass,
-                            totalIonCurrent, basePeakMZ, basePeakIntensity, parentIonMZ,
-                            activationType, ionMode,
-                            spectrum.Centroided, isolationMZ);
-
-                    Console.WriteLine(scanSummary);
-
-                    if (spectrum.Level > 1)
-                        scanCountMS2++;
-                    else
-                        scanCountMS1++;
-
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
-                    {
-                        Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
-                    }
-
-                    if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out var expectedScanSummary))
-                    {
-                        if (!string.Equals(expectedScanSummary, scanSummary))
-                        {
-                            Console.WriteLine(
-                                "{0,4} {1,4} {2} {3,5} {4,6} {5,6} {6,8} {7,8} {8,3} {9,5} {10,6} {11,8} {12,6} {13,8} {14,-8} {15} {16,-5} {17,8}",
-                                "Frame", "Scan", "MSLevel",
-                                "NumPeaks", "RetentionTime", "ScanStartTime",
-                                "DriftTimeMsec",
-                                "IonMobilityDriftTime",
-                                "LowMass", "HighMass",
-                                "TIC", "BasePeakMZ", "BPI", "ParentIonMZ",
-                                "ActivationType", "IonMode",
-                                "Centroided?", "IsolationMZ");
-
-                        }
-
-                        Assert.AreEqual(expectedScanSummary, scanSummary,
-                                        "Scan summary mismatch, scan " + scanNumber);
-                    }
-
-                    var expectedNativeId = string.Format("frame={0} scan={1} frameType=1", frameNumber, scanNumber);
-                    Assert.AreEqual(spectrum.NativeId, expectedNativeId, "NativeId is not in the expected format for frame {0}, scan {1} ", frameNumber, scanNumber);
+                    continue;
                 }
 
-                Console.WriteLine("scanCountMS1={0}", scanCountMS1);
-                Console.WriteLine("scanCountMS2={0}", scanCountMS2);
+                if (string.Equals(uimfFileName, "9pep_mix_1uM_4bit_50_3Jun16.uimf", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (!(scanNumber == 1 || scanNumber % 38 == 0))
+                        continue;
+                }
+                else
+                {
+                    if (!(scanNumber == 1 || scanNumber % 100 == 0))
+                        continue;
+                }
 
-                Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
-                Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
+                var spectrum = reader.GetSpectrum(spectrumIndex, true);
+                var spectrumParams = reader.GetSpectrumCVParamData(spectrumIndex);
+                var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
+
+                Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for frame {0}, scan {1} ", frameNumber, scanNumber);
+
+                var totalIonCurrent = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_TIC);
+                var basePeakMZ = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_m_z);
+                var basePeakIntensity = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_intensity);
+
+                double isolationMZ = 0;
+                double parentIonMZ = 0;
+                var activationType = string.Empty;
+
+                if (spectrum.Precursors.Length > 0)
+                {
+                    var precursor = spectrum.Precursors[0];
+
+                    isolationMZ = precursor.IsolationMz.GetValueOrDefault();
+                    parentIonMZ = precursor.PrecursorMz.GetValueOrDefault();
+
+                    if (precursor.ActivationTypes != null)
+                        activationType = string.Join(", ", precursor.ActivationTypes);
+                }
+
+                GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionMobilityDriftTime, out var lowMass, out var highMass);
+
+                var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
+
+                var numPeaks = spectrum.Mzs.Length;
+                var ionMode = spectrum.NegativeCharge ? "negative" : "positive";
+
+                var scanSummary =
+                    string.Format(
+                        "{0,4} {1,4} {2} {3,5} {4,6:0.00} {5,6:0.00} {6,8:0.00} {7,8:0.00} {8,3:0} {9,5:0} {10,6:0.0E+0} {11,8:0.000} {12,6:0.0E+0} {13,8:0.00} {14,-8} {15} {16,-5} {17,8:0.00}",
+                        frameNumber, scanNumber, spectrum.Level,
+                        numPeaks, retentionTime, scanStartTime,
+                        cvParamUtilities.CheckNull(spectrum.DriftTimeMsec),
+                        ionMobilityDriftTime,
+                        lowMass, highMass,
+                        totalIonCurrent, basePeakMZ, basePeakIntensity, parentIonMZ,
+                        activationType, ionMode,
+                        spectrum.Centroided, isolationMZ);
+
+                Console.WriteLine(scanSummary);
+
+                if (spectrum.Level > 1)
+                    scanCountMS2++;
+                else
+                    scanCountMS1++;
+
+                if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
+                {
+                    Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                }
+
+                if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out var expectedScanSummary))
+                {
+                    if (!string.Equals(expectedScanSummary, scanSummary))
+                    {
+                        Console.WriteLine(
+                            "{0,4} {1,4} {2} {3,5} {4,6} {5,6} {6,8} {7,8} {8,3} {9,5} {10,6} {11,8} {12,6} {13,8} {14,-8} {15} {16,-5} {17,8}",
+                            "Frame", "Scan", "MSLevel",
+                            "NumPeaks", "RetentionTime", "ScanStartTime",
+                            "DriftTimeMsec",
+                            "IonMobilityDriftTime",
+                            "LowMass", "HighMass",
+                            "TIC", "BasePeakMZ", "BPI", "ParentIonMZ",
+                            "ActivationType", "IonMode",
+                            "Centroided?", "IsolationMZ");
+
+                    }
+
+                    Assert.AreEqual(expectedScanSummary, scanSummary,
+                        "Scan summary mismatch, scan " + scanNumber);
+                }
+
+                var expectedNativeId = string.Format("frame={0} scan={1} frameType=1", frameNumber, scanNumber);
+                Assert.AreEqual(spectrum.NativeId, expectedNativeId, "NativeId is not in the expected format for frame {0}, scan {1} ", frameNumber, scanNumber);
             }
 
+            Console.WriteLine("scanCountMS1={0}", scanCountMS1);
+            Console.WriteLine("scanCountMS2={0}", scanCountMS2);
+
+            Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
+            Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
         }
 
 
@@ -453,66 +447,63 @@ namespace ProteowizardWrapperUnitTests
 
             var dataFile = GetUimfDataFile(uimfFileName);
 
-            using (var reader = new MSDataFileReader(dataFile.FullName))
+            using var reader = new MSDataFileReader(dataFile.FullName);
+
+            Console.WriteLine("Scan data for {0}", dataFile.Name);
+            Console.WriteLine("{0,4} {1,4} {2,-8} {3,-8} {4,-8} {5,-8} {6,-8} {7}",
+                "Frame", "Scan", "MzCount", "IntCount",
+                "FirstMz", "FirstInt", "MidMz", "MidInt");
+
+            var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
+
+            foreach (var frame in frameScanPairToIndexMap)
             {
+                var frameNumber = frame.Key.Key;
+                var scanNumber = frame.Key.Value;
+                var spectrumIndex = frame.Value;
 
-                Console.WriteLine("Scan data for {0}", dataFile.Name);
-                Console.WriteLine("{0,4} {1,4} {2,-8} {3,-8} {4,-8} {5,-8} {6,-8} {7}",
-                                    "Frame", "Scan", "MzCount", "IntCount",
-                                    "FirstMz", "FirstInt", "MidMz", "MidInt");
-
-                var frameScanPairToIndexMap = reader.GetUimfFrameScanPairToIndexMapping();
-
-                foreach (var frame in frameScanPairToIndexMap)
+                if (frameNumber < frameStart || frameNumber > frameEnd)
                 {
-                    var frameNumber = frame.Key.Key;
-                    var scanNumber = frame.Key.Value;
-                    var spectrumIndex = frame.Value;
-
-                    if (frameNumber < frameStart || frameNumber > frameEnd)
-                    {
-                        continue;
-                    }
-
-                    if (!(scanNumber == 1 || scanNumber % 45 == 0))
-                        continue;
-
-                    var spectrum = reader.GetSpectrum(spectrumIndex, true);
-
-                    var dataPointsRead = spectrum.Mzs.Length;
-
-                    if (dataPointsRead == 0)
-                    {
-                        Console.WriteLine("Frame {0}, scan {1} has no data; ignoring", frameNumber, scanNumber);
-                        continue;
-                    }
-
-                    var midPoint = (int)(spectrum.Intensities.Length / 2f);
-
-                    var scanSummary =
-                        string.Format(
-                            "{0,4} {1,4} {2,-8} {3,-8} {4,-8:0.000} {5,-8:0} {6,-8:0.000} {7:0}",
-                            frameNumber, scanNumber,
-                            spectrum.Mzs.Length, spectrum.Intensities.Length,
-                            spectrum.Mzs[0], spectrum.Intensities[0],
-                            spectrum.Mzs[midPoint], spectrum.Intensities[midPoint]);
-
-                    Console.WriteLine(scanSummary);
-
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
-                    {
-                        Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
-                    }
-
-                    if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out var expectedDataDetails))
-                    {
-                        Assert.AreEqual(expectedDataDetails, scanSummary,
-                                        "Scan details mismatch, scan " + scanNumber);
-                    }
-
+                    continue;
                 }
-            }
 
+                if (!(scanNumber == 1 || scanNumber % 45 == 0))
+                    continue;
+
+                var spectrum = reader.GetSpectrum(spectrumIndex, true);
+
+                var dataPointsRead = spectrum.Mzs.Length;
+
+                if (dataPointsRead == 0)
+                {
+                    Console.WriteLine("Frame {0}, scan {1} has no data; ignoring", frameNumber, scanNumber);
+                    continue;
+                }
+
+                var midPoint = (int)(spectrum.Intensities.Length / 2f);
+
+                var scanSummary =
+                    string.Format(
+                        "{0,4} {1,4} {2,-8} {3,-8} {4,-8:0.000} {5,-8:0} {6,-8:0.000} {7:0}",
+                        frameNumber, scanNumber,
+                        spectrum.Mzs.Length, spectrum.Intensities.Length,
+                        spectrum.Mzs[0], spectrum.Intensities[0],
+                        spectrum.Mzs[midPoint], spectrum.Intensities[midPoint]);
+
+                Console.WriteLine(scanSummary);
+
+                if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
+                {
+                    Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                }
+
+                if (expectedDataThisFile.TryGetValue(new KeyValuePair<int, int>(frameNumber, scanNumber), out var expectedDataDetails))
+                {
+                    Assert.AreEqual(expectedDataDetails, scanSummary,
+                        "Scan details mismatch, scan " + scanNumber);
+                }
+
+            }
         }
 
         /// <summary>
