@@ -11,7 +11,6 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class BrukerScanDataTests
     {
-
         [Test]
         [TestCase("MZ20160603PPS_edta_000004.d", 1, 1, 0, 1)]
         [TestCase("Blank-2_05May16_Leopard_Infuse_1_01_7976.d", 1, 1, 1, 0)]
@@ -70,7 +69,6 @@ namespace ProteowizardWrapperUnitTests
                         Assert.IsTrue(spectrum.Mzs.Length > 0, "m/z data is empty for scan {0}", scanNumber);
                         Assert.IsTrue(spectrum.Intensities.Length > 0, "Intensity data is empty for scan {0}", scanNumber);
                         Assert.IsTrue(spectrum.Mzs.Length == spectrum.Intensities.Length, "Array length mismatch for m/z and intensity data for scan {0}", scanNumber);
-
                     }
                     catch (Exception ex)
                     {
@@ -98,7 +96,6 @@ namespace ProteowizardWrapperUnitTests
                     Assert.Fail(msg);
                 }
             }
-
         }
 
         [Test]
@@ -194,7 +191,6 @@ namespace ProteowizardWrapperUnitTests
                 {1, "1 2 8214787   2.20 131.89 0 207 10000 6.0E+8    0.000 1.3E+7  1600.00 cid      negative False  1600.00"}
             };
             expectedData.Add("MZ20160603PPS_edta_000004", file4Data);
-
 
             var dataFolder = GetBrukerDataFolder(dotDFolderName);
 
@@ -364,7 +360,6 @@ namespace ProteowizardWrapperUnitTests
                     Assert.AreEqual(expectedDataDetails, scanSummary,
                         "Scan details mismatch, scan " + scanNumber);
                 }
-
             }
         }
 
@@ -407,8 +402,5 @@ namespace ProteowizardWrapperUnitTests
                 break;
             }
         }
-
     }
-
-
 }

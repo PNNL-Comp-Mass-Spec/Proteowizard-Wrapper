@@ -10,7 +10,6 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     class UimfScanDataTests
     {
-
         [Test]
         [TestCase("20160211_Agilent_tunemix_pos_0002.UIMF", 1, 20, 2809, 0, 2809)]
         [TestCase("QC_Shew_IMER_500ng_Run-1_4May16_Oak_15-01-16.UIMF", 50, 70, 2078, 0, 2078)]
@@ -76,7 +75,6 @@ namespace ProteowizardWrapperUnitTests
                             scansWithData++;
 
                         Assert.IsTrue(spectrum.Mzs.Length == spectrum.Intensities.Length, "Array length mismatch for m/z and intensity data for frame {0}, scan {1} ", frameNumber, scanNumber);
-
                     }
                     catch (Exception ex)
                     {
@@ -88,7 +86,6 @@ namespace ProteowizardWrapperUnitTests
                 Console.WriteLine("scanCountMS1={0}", scanCountMS1);
                 Console.WriteLine("scanCountMS2={0}", scanCountMS2);
                 Console.WriteLine("scansWithData={0}", scansWithData);
-
 
                 Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
                 Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
@@ -107,7 +104,6 @@ namespace ProteowizardWrapperUnitTests
                     Assert.Fail(msg);
                 }
             }
-
         }
 
         [Test]
@@ -257,7 +253,6 @@ namespace ProteowizardWrapperUnitTests
             };
             expectedData.Add("20160524_TuneMix_1574V_neg_001", file4Data);
 
-
             var dataFile = GetUimfDataFile(uimfFileName);
 
             using var reader = new MSDataFileReader(dataFile.FullName);
@@ -372,7 +367,6 @@ namespace ProteowizardWrapperUnitTests
                             "TIC", "BasePeakMZ", "BPI", "ParentIonMZ",
                             "ActivationType", "IonMode",
                             "Centroided?", "IsolationMZ");
-
                     }
 
                     Assert.AreEqual(expectedScanSummary, scanSummary,
@@ -389,7 +383,6 @@ namespace ProteowizardWrapperUnitTests
             Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
             Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
         }
-
 
         [Test]
         [TestCase("9_Peptide_Mix_16Oct14_Cedar_Infuse.UIMF", 21, 23)]
@@ -502,7 +495,6 @@ namespace ProteowizardWrapperUnitTests
                     Assert.AreEqual(expectedDataDetails, scanSummary,
                         "Scan details mismatch, scan " + scanNumber);
                 }
-
             }
         }
 
@@ -548,6 +540,5 @@ namespace ProteowizardWrapperUnitTests
                 break;
             }
         }
-
     }
 }

@@ -108,7 +108,6 @@ namespace ProteowizardWrapperUnitTests
             DirectoryInfo directoryToCheck,
             out FileSystemInfo instrumentDataFileOrDirectory)
         {
-
             if (isDirectory)
             {
                 var matchingDatasetDirectories = directoryToCheck.GetDirectories(fileOrDirectoryToFind);

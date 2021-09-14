@@ -69,6 +69,5 @@ namespace ProteowizardWrapperUnitTests
 
             return 0;
         }
-
     }
 }

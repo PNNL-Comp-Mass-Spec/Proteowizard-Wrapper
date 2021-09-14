@@ -18,7 +18,6 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     class ProteoWizardWrapperTests
     {
-
         [Test]
         [TestCase("Angiotensin_325-CID.raw", false, 10, 10, 26390, 1.4326E+008, 4.2483E+006)]
         [TestCase("Angiotensin_325-ETD.raw", false, 10, 10, 31505, 1.4025E+008, 2.6627E+006)]
@@ -81,7 +80,6 @@ namespace ProteowizardWrapperUnitTests
                         // This chromatogram is an SRM scan
                         Console.WriteLine("SRM scan has id {0} and {1} data points", chromatogramID, timeArray.Length);
                     }
-
                 }
 
                 Console.WriteLine("Spectrum count: " + reader.SpectrumCount);
@@ -107,7 +105,6 @@ namespace ProteowizardWrapperUnitTests
 
                     if (mzList.Count > 0)
                     {
-
                         Console.WriteLine("  Data count: " + mzList.Count);
 
                         totalPointsRead += mzList.Count;
@@ -144,7 +141,6 @@ namespace ProteowizardWrapperUnitTests
                             }
                             else
                             {
-
                                 // Note: the TIC value from the CvParams has been seen to be drastically off from the manually computed value
                                 Console.WriteLine(
                                     "  TIC from actual data is {0:E2} vs. {1:E2} from the chromatogram and {2:E2} from the spectrum object",
@@ -177,7 +173,6 @@ namespace ProteowizardWrapperUnitTests
                     {
                         spectrumIndex += 500;
                     }
-
                 }
 
                 if (spectraLoaded > 0)
@@ -209,6 +204,5 @@ namespace ProteowizardWrapperUnitTests
                 ConsoleMsgUtils.ShowError("Error using ProteoWizard reader", ex);
             }
         }
-
     }
 }

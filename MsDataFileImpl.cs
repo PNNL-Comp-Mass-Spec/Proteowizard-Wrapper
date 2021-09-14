@@ -419,7 +419,6 @@ namespace pwiz.ProteowizardWrapper
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions()]
         public void InitializeReader(string path, MSData msDataFile, int sampleIndex, ReaderConfig config)
         {
-
             try
             {
                 FULL_READER_LIST.read(path, msDataFile, sampleIndex, config);
@@ -1174,7 +1173,6 @@ namespace pwiz.ProteowizardWrapper
         /// For UIMF files use <see cref="GetUimfFrameScanPairToIndexMapping"/></remarks>
         public Dictionary<int, int> GetScanToIndexMapping()
         {
-
             // MGF, PKL, merged DTA files. Index is the spectrum number in the file, starting from 0.
             // index=5
             // This function is not appropriate for those files because ProteoWizard does not support extracting / reading actual scan numbers from those files
@@ -1538,9 +1536,7 @@ namespace pwiz.ProteowizardWrapper
                         activationTypes.Add("irmpd");
                         break;
                 }
-
             }
-
 
             return activationTypes;
         }

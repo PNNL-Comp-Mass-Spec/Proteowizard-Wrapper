@@ -12,7 +12,6 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class ThermoScanDataTests
     {
-
         [Test]
         [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW")]
         [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw")]
@@ -86,7 +85,6 @@ namespace ProteowizardWrapperUnitTests
 
             };
             expectedData.Add("MZ0210MnxEF889ETD", file4Data);
-
 
             var dataFile = GetRawDataFile(rawFileName);
 
@@ -199,7 +197,6 @@ namespace ProteowizardWrapperUnitTests
                     Console.WriteLine(msg);
                     Assert.AreEqual(expectedEnergies.Count, actualEnergiesOneScan.Value.Count, msg);
                 }
-
             }
         }
 
@@ -269,7 +266,6 @@ namespace ProteowizardWrapperUnitTests
                         Assert.IsTrue(spectrum.Mzs.Length > 0, "m/z data is empty for scan {0}", scanNumber);
                         Assert.IsTrue(spectrum.Intensities.Length > 0, "Intensity data is empty for scan {0}", scanNumber);
                         Assert.IsTrue(spectrum.Mzs.Length == spectrum.Intensities.Length, "Array length mismatch for m/z and intensity data for scan {0}", scanNumber);
-
                     }
                     catch (Exception ex)
                     {
@@ -297,7 +293,6 @@ namespace ProteowizardWrapperUnitTests
                     Assert.Fail(msg);
                 }
             }
-
         }
 
         [Test]
@@ -407,7 +402,6 @@ namespace ProteowizardWrapperUnitTests
             AddExpectedTupleAndCount(expectedData, file12, "HCD-HMSn", "FTMS + c ESI d Full ms2 0@hcd35.00", 8);
 
             AddExpectedTupleAndCount(expectedData, "IPA-blank-07_25Oct13_Gimli", "Zoom-MS", "ITMS + p NSI Z ms", 101);
-
 
             var dataFile = GetRawDataFile(rawFileName);
             var errorCount = 0;
@@ -710,7 +704,6 @@ namespace ProteowizardWrapperUnitTests
 
             expectedData.Add("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20", file1Data);
 
-
             var file2Data = new Dictionary<int, Dictionary<string, string>>
             {
                 {16121, new Dictionary<string, string>()},
@@ -802,10 +795,8 @@ namespace ProteowizardWrapperUnitTests
                                 "Scan details mismatch, scan " + scanNumber + ", keySpec " + keySpec);
                         }
                     }
-
                 }
             }
-
         }
 
         private void AddExpectedTupleAndCount(
@@ -875,7 +866,6 @@ namespace ProteowizardWrapperUnitTests
 
                 break;
             }
-
         }
     }
 }
