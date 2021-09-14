@@ -29,6 +29,9 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public class MSDataFileReader : IDisposable
     {
+        // Ignore Spelling: centroided, centroiding, lockmass, structs
+        // Ignore Spelling: Bruker, Sciex, Shimadzu
+
         /// <summary>
         /// This static constructor ensures that the Assembly Resolver is added prior to actually using this class.
         /// </summary>
@@ -708,8 +711,12 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// The filepath of the currently loaded file
+        /// The file path of the currently loaded file
         /// </summary>
+        /// <remarks>
+        /// This is the path provided by the calling class when <see cref="MsDataFileImpl"/> was instantiated
+        /// It is thus not necessarily a full path
+        /// </remarks>
         public string FilePath => mDataReader.FilePath;
     }
 }

@@ -43,6 +43,10 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     internal class MsDataFileImpl : IDisposable
     {
+        // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, lockmass, pre, pwiz, snr, structs, wiff
+        // Ignore Spelling: Biotech, Bruker, Shimadzu
+        // Ignore Spelling: cid, ecd, etd, hcd, irmpd, mpd, pqd, sid
+
         #region PNNL Added functions
 
         /// <summary>
@@ -253,6 +257,7 @@ namespace pwiz.ProteowizardWrapper
             }
             _msDataFile.run.spectrumList = _spectrumListBase;
         }
+
         #endregion
 
         private static readonly ReaderList FULL_READER_LIST = ReaderList.FullReaderList;

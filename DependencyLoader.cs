@@ -10,9 +10,15 @@ namespace pwiz.ProteowizardWrapper
     /// <summary>
     /// ProteoWizard Dependency Loader
     /// </summary>
-    /// <remarks>This class provides a custom AssemblyResolver to find an installation of ProteoWizard, specified in ProteoWizardReaderImplementation.
+    /// <remarks>
+    /// <para>
+    /// This class provides a custom AssemblyResolver to find an installation of ProteoWizard, specified in ProteoWizardReaderImplementation.
+    /// </para>
+    /// <para>
     /// This class is a wrapper around ProteoWizardReaderImplementation to encapsulate the usage of the custom AssemblyResolver, which must be
-    /// added to the AppDomain.CurrentDomain.AssemblyResolve event before the class is instantiated.</remarks>
+    /// added to the AppDomain.CurrentDomain.AssemblyResolve event before the class is instantiated.
+    /// </para>
+    /// </remarks>
     public static class DependencyLoader
     {
         /// <summary>
@@ -95,7 +101,7 @@ namespace pwiz.ProteowizardWrapper
                 if (!found)
                 {
                     return Assembly.LoadFrom(""); // We are not interested in searching for anything else - resolving pwiz_bindings_cli provides the hint for all of its dependencies.
-                    // This will actually trigger an exception, which is handled in the system code, and the dll search goes on down the chain.
+                    // This will actually trigger an exception, which is handled in the system code, and the DLL search goes on down the chain.
                     // returning null results in this code being called multiple times, for the same dependency.
                 }
             }
