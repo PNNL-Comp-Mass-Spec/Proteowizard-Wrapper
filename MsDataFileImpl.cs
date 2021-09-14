@@ -181,7 +181,7 @@ namespace pwiz.ProteowizardWrapper
         /// List of MSConvert-style filter strings to apply to the spectrum list.
         /// </summary>
         /// <remarks>If the filter count is greater than 0, the default handling of the spectrumList using the optional constructor parameters is disabled.</remarks>
-        public readonly List<string> Filters = new List<string>();
+        public readonly List<string> Filters = new();
 
         /// <summary>
         /// Uses the centroiding/peak picking algorithm that the vendor libraries provide, if available; otherwise uses a low-quality centroiding algorithm.
@@ -1188,23 +1188,23 @@ namespace pwiz.ProteowizardWrapper
             var reNativeIdMatchers = new List<Regex> {
                 // Thermo .raw files
                 // controllerType=0 controllerNumber=1 scan=15
-                new Regex(@"controllerType=(?<ControllerType>\d+) controllerNumber=(?<ControllerNumber>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+                new(@"controllerType=(?<ControllerType>\d+) controllerNumber=(?<ControllerNumber>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
                 // Waters .raw folders
                 // function=5 process=2 scan=15
-                new Regex(@"function=(?<Function>\d+) process=(?<Process>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+                new(@"function=(?<Function>\d+) process=(?<Process>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
                 // Bruker/Agilent YEP; Bruker BAF; Bruker U2; scan number only nativeID format
                 // scan=1
-                new Regex(@"scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+                new(@"scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
                 // Agilent MassHunter
                 // scanId=2110
-                new Regex(@"scanId=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+                new(@"scanId=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
                 // Shimadzu Biotech
                 // start=34 end=35
-                new Regex(@"start=(?<ScanNumber>\d+) end=(?<ScanNumberEnd>\d+)", RegexOptions.Compiled),
+                new(@"start=(?<ScanNumber>\d+) end=(?<ScanNumberEnd>\d+)", RegexOptions.Compiled),
 
                 // Not supported: SCIEX TOF/TOF
                 // @"jobRun=\d+ spotLabel=[^ ]+ spectrum=(?<Spectrum>\d+)"
@@ -1636,7 +1636,7 @@ namespace pwiz.ProteowizardWrapper
         public static readonly double LOCKMASS_TOLERANCE_MAX = 10.0;
         public static readonly double LOCKMASS_TOLERANCE_MIN = 0;
 
-        public static readonly LockMassParameters EMPTY = new LockMassParameters(null, null, null);
+        public static readonly LockMassParameters EMPTY = new(null, null, null);
 
         public bool IsEmpty =>
             Math.Abs(LockmassNegative ?? 0) < float.Epsilon &&
@@ -1820,9 +1820,9 @@ namespace pwiz.ProteowizardWrapper
             _mz = mz.HasValue ? Math.Abs(mz.Value) : (double?)null;
         }
 
-        public static readonly SignedMz EMPTY = new SignedMz(null, false);
+        public static readonly SignedMz EMPTY = new(null, false);
 
-        public static readonly SignedMz ZERO = new SignedMz(0);
+        public static readonly SignedMz ZERO = new(0);
 
         // ReSharper disable once PossibleInvalidOperationException
         public double Value => _mz.Value;
@@ -2054,7 +2054,7 @@ namespace pwiz.ProteowizardWrapper
         public string Analyzer { get; }
         public string Detector { get; }
 
-        public static readonly MsInstrumentConfigInfo EMPTY = new MsInstrumentConfigInfo(null, null, null, null);
+        public static readonly MsInstrumentConfigInfo EMPTY = new(null, null, null, null);
 
         public MsInstrumentConfigInfo(string model, string ionization,
                                       string analyzer, string detector)
