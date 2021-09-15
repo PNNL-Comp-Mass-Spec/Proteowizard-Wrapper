@@ -141,7 +141,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
 
         public eIonMobilityUnits Units { get; }
 
-        public bool HasValue { get { return Mobility.HasValue; } }
+        public bool HasValue => Mobility.HasValue;
 
         public static string GetUnitsString(eIonMobilityUnits units)
         {
@@ -156,10 +156,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             };
         }
 
-        public string UnitsString
-        {
-            get { return GetUnitsString(Units); }
-        }
+        public string UnitsString => GetUnitsString(Units);
 
         public override bool Equals(object obj)
         {

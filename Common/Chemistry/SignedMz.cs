@@ -54,23 +54,14 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         /// Returns the mz value, which is normally a positive number even for negative ion mode
         /// (Check the IsNegative flag to know the ion mode, or use RawValue for a value that is negative if ion is negative)
         /// </summary>
-        public double Value
-        {
-            get { return Math.Abs(_mz); }
-        }
+        public double Value => Math.Abs(_mz);
 
         /// <summary>
         /// For serialization etc - returns a negative number if IsNegative is true
         /// </summary>
-        public double RawValue
-        {
-            get { return _mz;  }
-        }
+        public double RawValue => _mz;
 
-        public bool IsNegative
-        {
-            get { return _mz < 0; }
-        }
+        public bool IsNegative => _mz < 0;
 
         public static implicit operator double(SignedMz mz)
         {

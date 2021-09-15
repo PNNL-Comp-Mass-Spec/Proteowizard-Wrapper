@@ -814,27 +814,15 @@ namespace pwiz.ProteowizardWrapper
             fileFormatAccession = CV.cvTermInfo(firstSource.cvParamChild(CVID.MS_file_format).cvid).id;
         }
 
-        public bool IsABFile
-        {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_ABI_WIFF_format)); }
-        }
+        public bool IsABFile => _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_ABI_WIFF_format));
 
         public bool IsMzWiffXml => IsProcessedBy("mzWiff");
 
-        public bool IsAgilentFile
-        {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Agilent_MassHunter_format)); }
-        }
+        public bool IsAgilentFile => _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Agilent_MassHunter_format));
 
-        public bool IsThermoFile
-        {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Thermo_RAW_format)); }
-        }
+        public bool IsThermoFile => _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Thermo_RAW_format));
 
-        public bool IsWatersFile
-        {
-            get { return _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Waters_raw_format)); }
-        }
+        public bool IsWatersFile => _msDataFile.fileDescription.sourceFiles.Any(source => source.hasCVParam(CVID.MS_Waters_raw_format));
 
         public bool IsWatersLockmassCorrectionCandidate
         {
@@ -858,10 +846,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
-        public bool IsShimadzuFile
-        {
-            get { return _msDataFile.softwareList.Any(software => software.hasCVParamChild(CVID.MS_Shimadzu_Corporation_software)); }
-        }
+        public bool IsShimadzuFile => _msDataFile.softwareList.Any(software => software.hasCVParamChild(CVID.MS_Shimadzu_Corporation_software));
 
         public bool ProvidesCollisionalCrossSectionConverter => SpectrumList != null && _providesConversionCCStoIonMobility; // Checking SpectrumList provokes initialization of ionMobility info
 
@@ -877,29 +862,17 @@ namespace pwiz.ProteowizardWrapper
             return ionMobilityValue.Mobility.HasValue ? IonMobilitySpectrumList.ionMobilityToCCS(ionMobilityValue.Mobility.Value, mz, charge) : 0;
         }
 
-        public eIonMobilityUnits IonMobilityUnits
+        public eIonMobilityUnits IonMobilityUnits => _ionMobilityUnits switch
         {
-            get
-            {
-                return _ionMobilityUnits switch
-                {
-                    SpectrumList_IonMobility.IonMobilityUnits.none => eIonMobilityUnits.none,
-                    SpectrumList_IonMobility.IonMobilityUnits.drift_time_msec => eIonMobilityUnits.drift_time_msec,
-                    SpectrumList_IonMobility.IonMobilityUnits.inverse_reduced_ion_mobility_Vsec_per_cm2 => eIonMobilityUnits.inverse_K0_Vsec_per_cm2,
-                    SpectrumList_IonMobility.IonMobilityUnits.compensation_V => eIonMobilityUnits.compensation_V,
-                    SpectrumList_IonMobility.IonMobilityUnits.waters_sonar => eIonMobilityUnits.waters_sonar,   // Not really ion mobility, but uses IMS hardware to filter precursor m/z
-                    _ => throw new InvalidDataException(string.Format("unknown ion mobility type {0}", _ionMobilityUnits))
-                };
-            }
-        }
+            SpectrumList_IonMobility.IonMobilityUnits.none => eIonMobilityUnits.none,
+            SpectrumList_IonMobility.IonMobilityUnits.drift_time_msec => eIonMobilityUnits.drift_time_msec,
+            SpectrumList_IonMobility.IonMobilityUnits.inverse_reduced_ion_mobility_Vsec_per_cm2 => eIonMobilityUnits.inverse_K0_Vsec_per_cm2,
+            SpectrumList_IonMobility.IonMobilityUnits.compensation_V => eIonMobilityUnits.compensation_V,
+            SpectrumList_IonMobility.IonMobilityUnits.waters_sonar => eIonMobilityUnits.waters_sonar,   // Not really ion mobility, but uses IMS hardware to filter precursor m/z
+            _ => throw new InvalidDataException(string.Format("unknown ion mobility type {0}", _ionMobilityUnits))
+        };
 
-        private ChromatogramList ChromatogramList
-        {
-            get
-            {
-                return _chromatogramList ??= _msDataFile.run.chromatogramList;
-            }
-        }
+        private ChromatogramList ChromatogramList => _chromatogramList ??= _msDataFile.run.chromatogramList;
 
         private SpectrumList SpectrumList
         {
