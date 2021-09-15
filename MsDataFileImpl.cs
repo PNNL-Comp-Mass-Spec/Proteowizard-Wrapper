@@ -2884,6 +2884,10 @@ namespace pwiz.ProteowizardWrapper
         {
             if (PrecursorsByMsLevel == null || level > PrecursorsByMsLevel.Count)
                 return ImmutableList<MsPrecursor>.EMPTY;
+
+            if (level < 1)
+                level = 1;
+
             return PrecursorsByMsLevel[level - 1];
         }
 
