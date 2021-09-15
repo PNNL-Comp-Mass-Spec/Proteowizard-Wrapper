@@ -203,9 +203,9 @@ namespace ProteowizardWrapperUnitTests
         }
 
         [Test]
-        [TestCase("blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", 1500, 1900, 190, 211, 0, 0)]
-        [TestCase("Corrupt_Qc_Shew_13_04_pt1_a_5Sep13_Cougar_13-06-14.raw", 500, 600, 0, 0, 500, 600)]
-        [TestCase("Corrupt_QC_Shew_07_03_pt25_e_6Apr08_Falcon_Fst-75-1.raw", 500, 600, 0, 0, 500, 600)]
+        [TestCase("blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", 1500, 1900, 190, 211)]
+        [TestCase("Corrupt_Qc_Shew_13_04_pt1_a_5Sep13_Cougar_13-06-14.raw", 500, 600, 0, 0)]
+        [TestCase("Corrupt_QC_Shew_07_03_pt25_e_6Apr08_Falcon_Fst-75-1.raw", 500, 600, 0, 0)]
         // This file causes .NET to become unstable and aborts the unit tests
         // [TestCase("Corrupt_Scans6920-7021_AID_STM_013_101104_06_LTQ_16Nov04_Earth_0904-8.raw", 6900, 7050, 10, 40, 6920, 7021)]
         public void TestCorruptDataHandling(
@@ -213,9 +213,7 @@ namespace ProteowizardWrapperUnitTests
             int scanStart,
             int scanEnd,
             int expectedMS1,
-            int expectedMS2,
-            int corruptScanStart,
-            int corruptScanEnd)
+            int expectedMS2)
         {
             var dataFile = GetRawDataFile(rawFileName);
 
