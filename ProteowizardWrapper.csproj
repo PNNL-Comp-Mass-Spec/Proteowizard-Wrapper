@@ -61,18 +61,13 @@
     <Compile Include="Common\Collections\ImmutableDictionary.cs" />
     <Compile Include="Common\Collections\ImmutableList.cs" />
     <Compile Include="Common\Collections\Range.cs" />
-    <Compile Include="Common\SystemUtil\Immutable.cs" />
     <Compile Include="DependencyLoader.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MsDataFileImpl.cs" />
     <Compile Include="MSDataFileReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations">
-      <Version>2021.2.0</Version>
-    </PackageReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if exist "$(TargetDir)pwiz_bindings_cli.dll" del "$(TargetDir)pwiz_bindings_cli.dll"</PostBuildEvent>
