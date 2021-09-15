@@ -36,7 +36,6 @@ using pwiz.ProteowizardWrapper.Common.Collections;
 
 namespace pwiz.ProteowizardWrapper
 {
-#pragma warning disable 1591
     /// <summary>
     /// <para>
     /// This is our wrapper class for ProteoWizard's MSData file reader interface.
@@ -3182,5 +3181,4 @@ namespace pwiz.ProteowizardWrapper
             DisposeNativeSpectra();
         }
     }
-#pragma warning restore 1591
 }

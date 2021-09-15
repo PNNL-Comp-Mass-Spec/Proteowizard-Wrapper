@@ -63,6 +63,7 @@
     <Compile Include="Common\Collections\Range.cs" />
     <Compile Include="Common\SystemUtil\Immutable.cs" />
     <Compile Include="DependencyLoader.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MsDataFileImpl.cs" />
     <Compile Include="MSDataFileReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
