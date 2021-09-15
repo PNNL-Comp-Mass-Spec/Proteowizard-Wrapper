@@ -98,15 +98,19 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
         }
 
         /// <summary>
+        /// <para>
         /// Delegate usually provided through a lambda expression in conjunction with
         /// <see cref="Immutable.ChangeProp{T,TValue}"/> to create public single-line,
         /// single-property change methods for <see cref="Immutable"/> objects,
         /// where all property setters must be private, and changing a property requires
         /// cloning the original object.
-        ///
+        /// </para>
+        /// <para>
         /// The expressions take the following form:
-        ///
+        /// </para>
+        /// <para>
         /// (im, v) => im.Name = v
+        /// </para>
         /// </summary>
         /// <typeparam name="TIm">Type of the node being changed</typeparam>
         /// <typeparam name="TProp">Type of the property to set</typeparam>
@@ -115,20 +119,25 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
         protected delegate void SetProperty<in TIm, in TProp>(TIm immutable, TProp value);
 
         /// <summary>
+        /// <para>
         /// Use to create concise single-property change methods for
         /// <see cref="Immutable"/> objects, where all property setters must be private,
         /// and changing a property requires cloning the original object.
-        ///
+        /// </para>
+        /// <para>
         /// These expressions take the form:
-        ///
+        /// </para>
+        /// <para>
         /// public PeptideGroupDocNode ChangeName(string name)
         /// {
         ///     return ChangeProp(ImClone(this), (im, v) => im.Name = v, name);
         /// }
-        ///
+        /// </para>
+        /// <para>
         /// This took some playing to get right, since the value must be set on
         /// the clone, and not the this object on which the function is called.
         /// And getting rid of all type casting was tricky.
+        /// </para>
         /// </summary>
         /// <typeparam name="TIm">Type of the node being changed</typeparam>
         /// <typeparam name="TProp">Type of the property to set</typeparam>
@@ -158,39 +167,51 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
         }
 
         /// <summary>
+        /// <para>
         /// Delegate provided through a lambda expression in conjunction with
         /// <see cref="Immutable.ChangeProp{T}"/> to create public single-line,
         /// single-property change methods for <see cref="Immutable"/> objects,
         /// where all property setters must be private, and changing a property requires
         /// cloning the original object.
-        ///
+        /// </para>
+        /// <para>
         /// The expressions take the following form:
-        ///
+        /// </para>
+        /// <para>
         /// im => im.Name = prop
-        ///
+        /// </para>
+        /// <para>
         /// Where prop is a captured local variable in the surrounding function.
-        ///
-        /// This simpler version suggested by Nick Shulman.
+        /// </para>
+        /// <para>
+        /// This simpler version was suggested by Nick Shulman.
+        /// </para>
         /// </summary>
         /// <typeparam name="TIm">Type of the node being changed</typeparam>
         /// <param name="immutable">The node instance to change</param>
         protected delegate void SetLambda<in TIm>(TIm immutable);
 
         /// <summary>
+        /// <para>
         /// Use to create more concise single-property change methods for
         /// <see cref="Immutable"/> objects, where all property setters must be private,
         /// and changing a property requires cloning the original object.
-        ///
+        /// </para>
+        /// <para>
         /// These expressions take the form:
-        ///
+        /// </para>
+        /// <para>
         /// public PeptideGroupDocNode ChangeName(string name)
         /// {
         ///     return ChangeProp(ImClone(this), im => im.Name = name);
         /// }
-        ///
+        /// </para>
+        /// <para>
         /// Where prop is a captured local variable in the surrounding function.
-        ///
-        /// This simpler version suggested by Nick Shulman.
+        /// </para>
+        /// <para>
+        /// This simpler version was suggested by Nick Shulman.
+        /// </para>
         /// </summary>
         /// <typeparam name="TIm">Type of the node being changed</typeparam>
         /// <param name="immutable">A cloned node on which to set the property</param>
