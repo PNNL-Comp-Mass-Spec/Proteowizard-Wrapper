@@ -2200,7 +2200,6 @@ namespace pwiz.ProteowizardWrapper
         /// Construct a list of precursor activation types used (user-friendly abbreviations)
         /// </summary>
         /// <param name="precursor"></param>
-        [Obsolete("Deprecated")]
         private static List<string> GetPrecursorActivationList(Precursor precursor)
         {
             var activationTypes = new List<string>();
@@ -2327,6 +2326,7 @@ namespace pwiz.ProteowizardWrapper
                         negativePolarity),
                 IsolationWindowLower = GetIsolationWindowValue(p, CVID.MS_isolation_window_lower_offset),
                 IsolationWindowUpper = GetIsolationWindowValue(p, CVID.MS_isolation_window_upper_offset),
+                ActivationTypes = GetPrecursorActivationList(p)
             };
         }
 
