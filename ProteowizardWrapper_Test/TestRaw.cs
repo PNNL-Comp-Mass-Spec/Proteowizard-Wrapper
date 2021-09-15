@@ -8,7 +8,7 @@ namespace ProteowizardWrapper_Test
         {
             try
             {
-                var dataFilePath = @"\\proto-6\12T_FTICR_B\2014_4\2014_09_30_Stegen_ALK-3_ACN_Core05-org-1_000001\2014_09_30_Stegen_ALK-3_ACN_Core05-org-1_000001.d";
+                const string dataFilePath = @"\\proto-6\12T_FTICR_B\2014_4\2014_09_30_Stegen_ALK-3_ACN_Core05-org-1_000001\2014_09_30_Stegen_ALK-3_ACN_Core05-org-1_000001.d";
 
                 var reader = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFilePath);
 
@@ -33,7 +33,7 @@ namespace ProteowizardWrapper_Test
         {
             try
             {
-                var dataFilePath = @"..\..\..\UnitTests\Data\Angiotensin_AllScans.raw";
+                const string dataFilePath = @"..\..\..\UnitTests\Data\Angiotensin_AllScans.raw";
 
                 var reader = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFilePath);
 
