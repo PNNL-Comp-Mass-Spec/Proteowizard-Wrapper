@@ -25,7 +25,6 @@ namespace ProteowizardWrapper_Test
 
             Console.WriteLine("Done");
             System.Threading.Thread.Sleep(1000);
-
         }
     }
 }

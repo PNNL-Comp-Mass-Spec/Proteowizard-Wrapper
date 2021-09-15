@@ -33,7 +33,7 @@ namespace ProteowizardWrapper_Test
         {
             try
             {
-                var dataFilePath = @"..\..\Data\Angiotensin_AllScans.raw";
+                var dataFilePath = @"..\..\..\UnitTests\Data\Angiotensin_AllScans.raw";
 
                 var reader = new pwiz.ProteowizardWrapper.MSDataFileReader(dataFilePath);
 
