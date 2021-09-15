@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="BrukerScanDataTests.cs" />
     <Compile Include="cvParamUtilities.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="InstrumentDataUtilities.cs" />
     <Compile Include="ProteowizardSetup.cs" />
     <Compile Include="ProteowizardWrapperTests.cs" />

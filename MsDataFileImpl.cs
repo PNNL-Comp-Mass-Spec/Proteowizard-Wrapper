@@ -32,6 +32,7 @@ using pwiz.CLI.util;
 using pwiz.ProteowizardWrapper.Common.Chemistry;
 using pwiz.ProteowizardWrapper.Common.Collections;
 
+// ReSharper disable ConvertToUsingDeclaration
 // ReSharper disable UnusedMember.Global
 
 namespace pwiz.ProteowizardWrapper

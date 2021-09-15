@@ -20,6 +20,8 @@
 using System;
 using System.Globalization;
 
+// ReSharper disable UnusedMember.Global
+
 namespace pwiz.ProteowizardWrapper.Common.Chemistry
 {
     /// <summary>
@@ -59,6 +61,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         /// <summary>
         /// For serialization etc - returns a negative number if IsNegative is true
         /// </summary>
+        // ReSharper disable once ConvertToAutoPropertyWhenPossible
         public double RawValue => _mz;
 
         public bool IsNegative => _mz < 0;
