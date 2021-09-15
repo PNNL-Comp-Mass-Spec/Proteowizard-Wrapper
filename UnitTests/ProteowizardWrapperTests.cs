@@ -59,8 +59,7 @@ namespace ProteowizardWrapperUnitTests
 
                     // Determine the chromatogram type
 
-                    if (chromatogramID == null)
-                        chromatogramID = string.Empty;
+                    chromatogramID ??= string.Empty;
 
                     var cvParams = reader.GetChromatogramCVParams(chromatogramIndex);
 

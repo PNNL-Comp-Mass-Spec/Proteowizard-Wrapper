@@ -159,7 +159,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != typeof(IonMobilityValue)) return false;
             return Equals((IonMobilityValue)obj);
@@ -167,7 +167,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
 
         public bool Equals(IonMobilityValue other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.Units, Units) &&
                    Equals(other.Mobility, Mobility);
@@ -191,7 +191,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         public int CompareTo(IonMobilityValue other)
         {
             if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
+            if (other is null) return 1;
             var valueComparison = Nullable.Compare(Mobility, other.Mobility);
             if (valueComparison != 0) return valueComparison;
             return Units.CompareTo(other.Units);
@@ -199,7 +199,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
 
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)) return 1;
+            if (obj is null) return 1;
             if (ReferenceEquals(this, obj)) return 0;
             if (!(obj is IonMobilityValue)) throw new ArgumentException(@"Object must be of type IonMobilityValue");
             return CompareTo((IonMobilityValue) obj);
