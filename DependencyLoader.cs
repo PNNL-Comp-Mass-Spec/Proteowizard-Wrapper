@@ -82,7 +82,7 @@ namespace pwiz.ProteowizardWrapper
             //Console.WriteLine("Wanted by: " + args.RequestingAssembly);
 #endif
 
-            if (!args.Name.ToLower().StartsWith("pwiz_bindings_cli"))
+            if (!args.Name.StartsWith("pwiz_bindings_cli", StringComparison.InvariantCultureIgnoreCase))
             {
                 // Check names from other primary assemblies in the ProteoWizard directory
                 var found = false;

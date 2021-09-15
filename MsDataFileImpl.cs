@@ -796,7 +796,7 @@ namespace pwiz.ProteowizardWrapper
         private static bool HasInfo(UserParam uParam)
         {
             return !uParam.empty() && !String.IsNullOrEmpty(uParam.value) &&
-                   !String.Equals("unknown", uParam.value.ToString().ToLowerInvariant());
+                   !string.Equals("unknown", uParam.value.ToString(), StringComparison.InvariantCultureIgnoreCase);
         }
 
         public static string GetCvParamName(string cvParamAccession)
@@ -842,7 +842,7 @@ namespace pwiz.ProteowizardWrapper
                 try
                 {
                     // Has to be a .raw file, not just an mzML translation of one
-                    return (FilePath.ToLowerInvariant().EndsWith(".raw")) &&
+                    return FilePath.EndsWith(".raw", StringComparison.InvariantCultureIgnoreCase) &&
                         IsWatersFile &&
                         _msDataFile.run.spectrumList != null &&
                         !_msDataFile.run.spectrumList.empty() &&
