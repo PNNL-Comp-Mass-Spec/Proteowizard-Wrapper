@@ -16,7 +16,7 @@ namespace ProteowizardWrapperUnitTests
     /// SetUpFixture ProteoWizardSetup looks for ProteoWizard prior to this class loading
     /// </remarks>
     [TestFixture]
-    class ProteoWizardWrapperTests
+    public class ProteoWizardWrapperTests
     {
         [Test]
         [TestCase("Angiotensin_325-CID.raw", false, 10, 10, 26390, 1.4326E+008, 4.2483E+006)]

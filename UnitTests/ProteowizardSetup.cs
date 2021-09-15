@@ -3,7 +3,7 @@
 namespace ProteowizardWrapperUnitTests
 {
     [SetUpFixture]
-    class ProteowizardSetup
+    internal class ProteowizardSetup
     {
         [OneTimeSetUp]
         public void Setup()

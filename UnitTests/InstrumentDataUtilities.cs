@@ -4,7 +4,7 @@ using PRISM;
 
 namespace ProteowizardWrapperUnitTests
 {
-    class InstrumentDataUtilities
+    internal static class InstrumentDataUtilities
     {
         private const string UNIT_TEST_SHARE_PATH = @"\\proto-2\UnitTest_Files\ProteowizardWrapper";
 

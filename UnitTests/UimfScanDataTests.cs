@@ -8,7 +8,7 @@ using pwiz.ProteowizardWrapper;
 namespace ProteowizardWrapperUnitTests
 {
     [TestFixture]
-    class UimfScanDataTests
+    public class UimfScanDataTests
     {
         [Test]
         [TestCase("20160211_Agilent_tunemix_pos_0002.UIMF", 1, 20, 2809, 0, 2809)]
