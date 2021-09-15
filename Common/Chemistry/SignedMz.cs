@@ -50,7 +50,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             _mz = mz;
         }
 
-        public static readonly SignedMz ZERO = new SignedMz(0);
+        public static readonly SignedMz ZERO = new(0);
 
         /// <summary>
         /// Returns the mz value, which is normally a positive number even for negative ion mode

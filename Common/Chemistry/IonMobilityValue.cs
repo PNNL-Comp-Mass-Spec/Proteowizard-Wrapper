@@ -40,7 +40,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         // Ignore Spelling: deserialization, pwiz
         // Ignore Spelling: \analysis, \src
 
-        public static IonMobilityValue EMPTY = new IonMobilityValue(null, eIonMobilityUnits.none);
+        public static IonMobilityValue EMPTY = new(null, eIonMobilityUnits.none);
 
         public static bool IsNullOrEmpty(IonMobilityValue val) { return val == null || Equals(val, EMPTY); }
 
