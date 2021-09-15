@@ -54,6 +54,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Centroider.cs" />
+    <Compile Include="Common\Chemistry\IonMobilityValue.cs" />
+    <Compile Include="Common\Chemistry\SignedMz.cs" />
+    <Compile Include="Common\Collections\CollectionUtil.cs" />
+    <Compile Include="Common\Collections\ImmutableCollection.cs" />
+    <Compile Include="Common\Collections\ImmutableDictionary.cs" />
+    <Compile Include="Common\Collections\ImmutableList.cs" />
+    <Compile Include="Common\Collections\Range.cs" />
+    <Compile Include="Common\SystemUtil\Immutable.cs" />
     <Compile Include="DependencyLoader.cs" />
     <Compile Include="MsDataFileImpl.cs" />
     <Compile Include="MSDataFileReader.cs" />
