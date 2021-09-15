@@ -729,7 +729,7 @@ namespace ProteowizardWrapperUnitTests
             file2Data[16133].Add("False", " 280      280      260.118  2.3E+1   663.160  7.7E+0    ITMS + c NSI r d sa Full ms2 421.2619@etd120.55@cid20.00 [120.0000-853.0000]");
             file2Data[16141].Add("False", " 240      240      304.425  1.3E+1   1447.649 3.0E+1    ITMS + c NSI r d sa Full ms2 874.8397@etd120.55@hcd20.00 [120.0000-1760.0000]");
 
-            file2Data[16121].Add("True", " 833      833      351.231  2.9E+5   712.813  2.9E+5    FTMS + p NSI Full ms [350.0000-1550.0000]");
+            file2Data[16121].Add("True", " 844      844      351.231  2.9E+5   712.813  2.9E+5    FTMS + p NSI Full ms [350.0000-1550.0000]");
             file2Data[16122].Add("True", " 490      490      116.232  7.0E+1   403.932  1.1E+3    ITMS + c NSI r d Full ms2 403.2206@cid30.00 [106.0000-817.0000]");
             file2Data[16126].Add("True", " 753      753      231.045  1.1E+1   1004.586 2.0E+1    ITMS + c NSI r d sa Full ms2 538.8400@etd53.58@cid20.00 [120.0000-1627.0000]");
             file2Data[16131].Add("True", " 29       29       984.504  9.5E+3   1931.917 2.4E+1    ITMS + c NSI r d Full ms2 987.8934@etd120.55 [120.0000-1986.0000]");
