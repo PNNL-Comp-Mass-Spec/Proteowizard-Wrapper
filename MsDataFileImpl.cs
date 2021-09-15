@@ -1384,7 +1384,7 @@ namespace pwiz.ProteowizardWrapper
                 // Check the scan for this cache
                 var success = _scanCache.TryGetSpectrum(spectrumIndex, out MsDataSpectrum returnSpectrum);
 
-                if (!success || (!returnSpectrum.BinaryDataLoaded && getBinaryData))
+                if (!success || !returnSpectrum.BinaryDataLoaded && getBinaryData)
                 {
                     // Spectrum not in the cache (or is in the cache but does not have binary data)
                     // Pull it from the file
@@ -1434,7 +1434,7 @@ namespace pwiz.ProteowizardWrapper
             {
                 var success2 = _scanCache.TryGetSpectrum(spectrumIndex, out Spectrum spectrum);
 
-                if (!success2 || (spectrum.binaryDataArrays.Count <= 1 && getBinaryData))
+                if (!success2 || spectrum.binaryDataArrays.Count <= 1 && getBinaryData)
                 {
                     spectrum = SpectrumList.spectrum(spectrumIndex, getBinaryData);
                     _scanCache.Add(spectrumIndex, spectrum);
