@@ -1693,7 +1693,7 @@ namespace pwiz.ProteowizardWrapper
         /// Return a mapping from scan number to spectrumIndex
         /// </summary>
         /// <remarks>
-        /// Works for Thermo .raw files, Bruker .D folders, Bruker/Agilent .yep files, Agilent MassHunter data, Waters .raw folders, and Shimadzu data
+        /// Works for Thermo .raw files, Bruker .D directories, Bruker/Agilent .yep files, Agilent MassHunter data, Waters .raw directories, and Shimadzu data
         /// For UIMF files use <see cref="GetUimfFrameScanPairToIndexMapping"/></remarks>
         /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
         public Dictionary<int, int> GetScanToIndexMapping()
@@ -1715,7 +1715,7 @@ namespace pwiz.ProteowizardWrapper
                 // controllerType=0 controllerNumber=1 scan=15
                 new(@"controllerType=(?<ControllerType>\d+) controllerNumber=(?<ControllerNumber>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
-                // Waters .raw folders
+                // Waters .raw directories
                 // function=5 process=2 scan=15
                 new(@"function=(?<Function>\d+) process=(?<Process>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 

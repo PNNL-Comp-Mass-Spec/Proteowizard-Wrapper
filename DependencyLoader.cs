@@ -245,8 +245,8 @@ namespace pwiz.ProteowizardWrapper
                 possibleInstallDirs.AddRange(localAppDataDir.EnumerateDirectories($"ProteoWizard*{bitness}-bit"));
             }
 
-            // NOTE: This call returns the 32-bit Program Files folder if the running process is 32-bit
-            // or the 64-bit Program Files folder if the running process is 64-bit
+            // NOTE: This call returns the 32-bit Program Files directory if the running process is 32-bit
+            // or the 64-bit Program Files directory if the running process is 64-bit
             var programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
             if (string.IsNullOrWhiteSpace(programFiles))
             {
@@ -255,43 +255,44 @@ namespace pwiz.ProteowizardWrapper
 
             // Construct a path of the form "C:\Program Files\ProteoWizard" or "C:\Program Files (x86)\ProteoWizard"
             var programFilesPwiz = Path.Combine(programFiles, "ProteoWizard");
-            var pwizFolder = new DirectoryInfo(programFilesPwiz);
-            if (pwizFolder.Exists)
+            var pwizDirectory = new DirectoryInfo(programFilesPwiz);
+            if (pwizDirectory.Exists)
             {
-                if (pwizFolder.GetFiles(TargetDllName).Length > 0)
+                if (pwizDirectory.GetFiles(TargetDllName).Length > 0)
                 {
                     return programFilesPwiz;
                 }
             }
             else
             {
-                // Update pwizFolder to be "C:\Program Files" or "C:\Program Files (x86)"
-                pwizFolder = new DirectoryInfo(programFiles);
-                if (!pwizFolder.Exists)
+                // Update pwizDirectory to be "C:\Program Files" or "C:\Program Files (x86)"
+                pwizDirectory = new DirectoryInfo(programFiles);
+                if (!pwizDirectory.Exists)
                 {
                     return null;
                 }
             }
 
-            // Look for subfolders whose names start with ProteoWizard, for example "ProteoWizard 3.0.9490"
-            possibleInstallDirs.AddRange(pwizFolder.EnumerateDirectories("ProteoWizard*"));
+            // Look for subdirectories whose names start with ProteoWizard, for example "ProteoWizard 3.0.9490"
+            possibleInstallDirs.AddRange(pwizDirectory.EnumerateDirectories("ProteoWizard*"));
 
-            if (possibleInstallDirs.Count <= 0)
+            if (possibleInstallDirs.Count == 0)
             {
                 return null;
             }
 
             // Try to sort by version, it properly handles the version rolling over powers of 10 (but string sorting does not)
             var byVersion = new List<Tuple<System.Version, DirectoryInfo>>();
-            foreach (var folder in possibleInstallDirs)
+            foreach (var directory in possibleInstallDirs)
             {
                 try
                 {
                     // Just ignoring the directory here if it has no version
-                    var versionString = folder.Name.Trim().Split(' ').Last();
-                    if (folder.Name.EndsWith("-bit", StringComparison.OrdinalIgnoreCase))
+                    var versionString = directory.Name.Trim().Split(' ').Last();
+
+                    if (directory.Name.EndsWith("-bit", StringComparison.OrdinalIgnoreCase))
                     {
-                        var split = folder.Name.Trim().Split(' ');
+                        var split = directory.Name.Trim().Split(' ');
                         versionString = split[split.Length - 2];
                     }
 
@@ -305,12 +306,12 @@ namespace pwiz.ProteowizardWrapper
                     if (System.Version.TryParse(versionString, out var version))
                     {
                         // Old pre-Git SCM conversion install - only has 3 components
-                        byVersion.Add(new Tuple<System.Version, DirectoryInfo>(version, folder));
+                        byVersion.Add(new Tuple<System.Version, DirectoryInfo>(version, directory));
                     }
                     else if (versionSplit.Length > 3 && System.Version.TryParse(string.Join(".", versionSplit.Take(versionSplit.Length - 1)), out var version2))
                     {
                         // Post-Git SCM conversion install - last section of the version is a Git hash, and will not parse
-                        byVersion.Add(new Tuple<System.Version, DirectoryInfo>(version2, folder));
+                        byVersion.Add(new Tuple<System.Version, DirectoryInfo>(version2, directory));
                     }
                 }
                 catch (Exception)
@@ -322,14 +323,17 @@ namespace pwiz.ProteowizardWrapper
             {
                 // Reverse sort the list
                 byVersion.Sort((x, y) => y.Item1.CompareTo(x.Item1));
-                var subFoldersOrig = possibleInstallDirs.ToArray();
+
+                var subdirectoriesOriginal = possibleInstallDirs.ToArray();
+
                 possibleInstallDirs = byVersion.Select(x => x.Item2).ToList();
-                // Guarantee that any folder where we couldn't parse a version is in the list, but at the end.
-                foreach (var folder in subFoldersOrig)
+
+                // Guarantee that any directory where we couldn't parse a version is in the list, but at the end.
+                foreach (var directory in subdirectoriesOriginal)
                 {
-                    if (!possibleInstallDirs.Contains(folder))
+                    if (!possibleInstallDirs.Contains(directory))
                     {
-                        possibleInstallDirs.Add(folder);
+                        possibleInstallDirs.Add(directory);
                     }
                 }
             }
@@ -340,11 +344,11 @@ namespace pwiz.ProteowizardWrapper
                 possibleInstallDirs.Sort((x, y) => string.Compare(y.FullName, x.FullName, StringComparison.Ordinal));
             }
 
-            foreach (var folder in possibleInstallDirs)
+            foreach (var directory in possibleInstallDirs)
             {
-                if (folder.GetFiles(TargetDllName).Length > 0 && File.Exists(Path.Combine(folder.FullName, "pwiz_bindings_cli.dll")))
+                if (directory.GetFiles(TargetDllName).Length > 0 && File.Exists(Path.Combine(directory.FullName, "pwiz_bindings_cli.dll")))
                 {
-                    return folder.FullName;
+                    return directory.FullName;
                 }
             }
             // If the above failed, return the highest version installed
