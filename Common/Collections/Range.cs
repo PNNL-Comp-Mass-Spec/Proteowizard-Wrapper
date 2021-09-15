@@ -25,8 +25,11 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             Start = start;
             End = end;
         }
+
         public int Start { get; }
+
         public int End { get; }
+
         public int Length => End - Start;
     }
 }

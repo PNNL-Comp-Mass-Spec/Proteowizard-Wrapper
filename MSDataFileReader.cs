@@ -496,7 +496,7 @@ namespace pwiz.ProteowizardWrapper
             return mDataReader.GetSpectrumIdList();
         }
 
-         /// <summary>
+        /// <summary>
         /// Return the typical NativeId for a scan number in a thermo .raw file
         /// </summary>
         /// <param name="scanNumber"></param>

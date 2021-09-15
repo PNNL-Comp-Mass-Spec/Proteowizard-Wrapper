@@ -50,12 +50,15 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             {
                 return ImmutableList<T>.EMPTY;
             }
+
             return ValueOf(values);
         }
+
         public static ImmutableList<T> Empty<T>()
         {
             return ImmutableList<T>.EMPTY;
         }
+
         public static ImmutableList<T> Singleton<T>(T value)
         {
             return ImmutableList<T>.Singleton(value);
@@ -76,6 +79,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
     public abstract class ImmutableList<T> : IReadOnlyList<T>, IList<T>
     {
         public static readonly ImmutableList<T> EMPTY = new Impl(new T[0]);
+
         public static ImmutableList<T> ValueOf(IEnumerable<T> values)
         {
             if (values == null)
@@ -104,6 +108,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             {
                 return Singleton(elements[0]);
             }
+
             return new Impl(arrayCopy ?? elements.ToArray());
         }
 
@@ -120,11 +125,13 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                 {
                     throw new ArgumentException();
                 }
+
                 return EMPTY;
             }
 
             var array = new T[expectedCount];
             var index = 0;
+
             foreach (var value in values)
             {
                 array[index++] = value;
@@ -133,10 +140,12 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             {
                 throw new ArgumentException();
             }
+
             if (array.Length == 1)
             {
                 return Singleton(array[0]);
             }
+
             return new Impl(array);
         }
 
@@ -163,15 +172,19 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             {
                 return false;
             }
+
             if (o == this)
             {
                 return true;
             }
+
             var that = o as ImmutableList<T>;
+
             if (null == that)
             {
                 return false;
             }
+
             return this.SequenceEqual(that);
         }
 
@@ -212,9 +225,11 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
         public abstract IEnumerator<T> GetEnumerator();
 
         public abstract bool Contains(T item);
+
         public abstract void CopyTo(T[] array, int arrayIndex);
 
         public abstract int IndexOf(T item);
+
         public abstract T this[int index] { get; }
 
         T IList<T>.this[int index]
@@ -263,8 +278,10 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                 {
                     throw new IndexOutOfRangeException();
                 }
+
                 var newArray = (T[])_items.Clone();
                 newArray[index] = value;
+
                 return new Impl(newArray);
             }
         }
@@ -272,6 +289,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
         private class SingletonImpl : ImmutableList<T>
         {
             private readonly T _item;
+
             public SingletonImpl(T item)
             {
                 _item = item;
@@ -291,7 +309,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
 
             public override void CopyTo(T[] array, int arrayIndex)
             {
-                new[] {_item}.CopyTo(array, arrayIndex);
+                new[] { _item }.CopyTo(array, arrayIndex);
             }
 
             public override int IndexOf(T item)
@@ -307,6 +325,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                     {
                         throw new IndexOutOfRangeException();
                     }
+
                     return _item;
                 }
             }
@@ -317,6 +336,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                 {
                     throw new IndexOutOfRangeException();
                 }
+
                 return new SingletonImpl(value);
             }
         }

@@ -39,7 +39,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             }
         }
 
-        public static bool EqualsDeep<TKey,TValue>(IDictionary <TKey,TValue> dict1, IDictionary<TKey,TValue> dict2)
+        public static bool EqualsDeep<TKey, TValue>(IDictionary<TKey, TValue> dict1, IDictionary<TKey, TValue> dict2)
         {
             if (dict1.Count != dict2.Count)
             {
@@ -52,41 +52,50 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                 {
                     return false;
                 }
+
                 if (!Equals(entry.Value, value2))
                 {
                     return false;
                 }
             }
+
             return true;
         }
+
         public static int GetHashCodeDeep<TKey, TValue>(IDictionary<TKey, TValue> dict)
         {
             return dict.Aggregate(0,
                 (seed, keyValuePair) => seed ^ keyValuePair.GetHashCode()
             );
         }
+
         public static bool EqualsDeep<TValue>(IList<TValue> list1, IList<TValue> list2)
         {
             if (list1 == null || list2 == null)
             {
                 return (list2 == null) == (list1 == null);
             }
+
             return list1.SequenceEqual(list2);
         }
+
         public static int GetHashCodeDeep<T>(IList<T> list)
         {
-            return list.Aggregate(0, (seed, item) => seed*397 + SafeGetHashCode(item));
+            return list.Aggregate(0, (seed, item) => seed * 397 + SafeGetHashCode(item));
         }
+
         public static int SafeGetHashCode<T>(T item)
         {
             return Equals(null, item) ? 0 : item.GetHashCode();
         }
+
         private class ListContentsEqualityComparer<T> : IEqualityComparer<IList<T>>
         {
             public bool Equals(IList<T> x, IList<T> y)
             {
                 if (x == null || y == null)
                     return ReferenceEquals(x, y);
+
                 return x.SequenceEqual(y);
             }
 
@@ -95,19 +104,23 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                 return GetHashCodeDeep(obj);
             }
         }
+
         public static IEqualityComparer<IList<T>> GetListContentsEqualityComparer<T>()
         {
             return new ListContentsEqualityComparer<T>();
         }
-        public static IDictionary<TKey,TValue> SingletonDictionary<TKey, TValue>(TKey key, TValue value)
+
+        public static IDictionary<TKey, TValue> SingletonDictionary<TKey, TValue>(TKey key, TValue value)
         {
             // TODO: if performance becomes an issue, change this
-            return new ImmutableDictionary<TKey, TValue>(new Dictionary<TKey, TValue> {{key, value}});
+            return new ImmutableDictionary<TKey, TValue>(new Dictionary<TKey, TValue> { { key, value } });
         }
-        public static IDictionary<TKey,TValue> EmptyDictionary<TKey,TValue>()
+
+        public static IDictionary<TKey, TValue> EmptyDictionary<TKey, TValue>()
         {
             return new ImmutableDictionary<TKey, TValue>(new Dictionary<TKey, TValue>());
         }
+
         /// <summary>
         /// Performs a binary search in a list of items.  The list is assumed to be sorted with respect to
         /// <paramref name="compareFunc" /> such that those items for which compareFunc returns a negative
@@ -120,12 +133,15 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
         public static int BinarySearch<TItem>(IList<TItem> items, Func<TItem, int> compareFunc, bool firstIndex)
         {
             var range = BinarySearch(items, compareFunc);
+
             if (range.Length == 0)
             {
                 return ~range.Start;
             }
+
             return firstIndex ? range.Start : range.End - 1;
         }
+
         public static Range BinarySearch<TItem>(IList<TItem> items, Func<TItem, int> compareFunc)
         {
             var result = new Range(0, items.Count);
@@ -140,6 +156,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                     var mid = (lo + hi) / 2;
 
                     var c = compareFunc(items[mid]);
+
                     if (c == 0)
                     {
                         if (firstIndex)
@@ -163,21 +180,23 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                     }
                 }
             }
+
             return result;
         }
 
         public static int BinarySearch<TItem>(IList<TItem> items, TItem key) where TItem : IComparable
         {
             var range = BinarySearch(items, item => item.CompareTo(key));
+
             if (range.Length == 0)
             {
                 return ~range.Start;
             }
+
             return range.Start;
         }
 
-        public static void Copy<T>(IList<T> sourceList, int sourceIndex, IList<T> destinationList, int destinationIndex,
-            int length)
+        public static void Copy<T>(IList<T> sourceList, int sourceIndex, IList<T> destinationList, int destinationIndex, int length)
         {
             for (var i = 0; i < length; i++)
             {
@@ -197,18 +216,22 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             {
                 return 0;
             }
+
             if (o1 is IComparable || o2 is IComparable)
             {
                 return Comparer.Default.Compare(o1, o2);
             }
+
             if (o1 == null)
             {
                 return -1;
             }
+
             if (o2 == null)
             {
                 return 1;
             }
+
             return Comparer.Default.Compare(o1.ToString(), o2.ToString());
         }
 
@@ -217,6 +240,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
         public static Dictionary<TKey, TValue> SafeToDictionary<TKey, TValue>(IEnumerable<KeyValuePair<TKey, TValue>> entries)
         {
             var dictionary = new Dictionary<TKey, TValue>();
+
             foreach (var entry in entries)
             {
                 if (!dictionary.ContainsKey(entry.Key))

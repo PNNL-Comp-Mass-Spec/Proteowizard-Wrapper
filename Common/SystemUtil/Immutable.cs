@@ -70,7 +70,7 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
         /// <typeparam name="TValue">Type of the dictionary values</typeparam>
         /// <param name="dict">The original dictionary</param>
         /// <returns>A read-only dictionary</returns>
-        protected static ImmutableDictionary<TKey,TValue> MakeReadOnly<TKey,TValue>(IDictionary<TKey, TValue> dict)
+        protected static ImmutableDictionary<TKey, TValue> MakeReadOnly<TKey, TValue>(IDictionary<TKey, TValue> dict)
         {
             return dict as ImmutableDictionary<TKey, TValue> ?? new ImmutableDictionary<TKey, TValue>(dict);
         }
@@ -139,19 +139,24 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
         protected static TIm ChangeProp<TIm, TProp>(TIm immutable, SetProperty<TIm, TProp> set, TProp value)
             where TIm : Immutable
         {
-// ReSharper disable SuspiciousTypeConversion.Global
-// ReSharper disable ConditionIsAlwaysTrueOrFalse
-// ReSharper disable ExpressionIsAlwaysNull
-// ReSharper disable HeuristicUnreachableCode
+            // ReSharper disable SuspiciousTypeConversion.Global
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
+            // ReSharper disable ExpressionIsAlwaysNull
+            // ReSharper disable HeuristicUnreachableCode
+
             set(immutable, value);
+
             var validating = immutable as IValidating;
+
             if (validating != null)
                 validating.Validate();
+
             return immutable;
-// ReSharper restore HeuristicUnreachableCode
-// ReSharper restore ExpressionIsAlwaysNull
-// ReSharper restore ConditionIsAlwaysTrueOrFalse
-// ReSharper restore SuspiciousTypeConversion.Global
+
+            // ReSharper restore HeuristicUnreachableCode
+            // ReSharper restore ExpressionIsAlwaysNull
+            // ReSharper restore ConditionIsAlwaysTrueOrFalse
+            // ReSharper restore SuspiciousTypeConversion.Global
         }
 
         /// <summary>
@@ -200,11 +205,16 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
             // ReSharper disable ConditionIsAlwaysTrueOrFalse
             // ReSharper disable ExpressionIsAlwaysNull
             // ReSharper disable HeuristicUnreachableCode
+
             set(immutable);
+
             var validating = immutable as IValidating;
+
             if (validating != null)
                 (validating).Validate();
+
             return immutable;
+
             // ReSharper restore HeuristicUnreachableCode
             // ReSharper restore ExpressionIsAlwaysNull
             // ReSharper restore ConditionIsAlwaysTrueOrFalse

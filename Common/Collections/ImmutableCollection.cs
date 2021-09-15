@@ -26,10 +26,12 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
     public class ImmutableCollection<T> : ICollection<T>
     {
         private ICollection<T> _collection;
+
         public ImmutableCollection(ICollection<T> collection)
         {
             Collection = collection;
         }
+
         protected ImmutableCollection()
         {
         }
@@ -37,7 +39,8 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
         protected ICollection<T> Collection
         {
             get => _collection;
-            set {
+            set
+            {
                 if (_collection != null)
                 {
                     throw new InvalidOperationException();

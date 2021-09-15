@@ -3,7 +3,7 @@
  *                  MacCoss Lab, Department of Genome Sciences, UW
  *
  * Copyright 2017 University of Washington - Seattle, WA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,7 +58,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         }
 
         /// <summary>
-        /// For serialization etc - returns a negative number if IsNegative is true 
+        /// For serialization etc - returns a negative number if IsNegative is true
         /// </summary>
         public double RawValue
         {
@@ -85,6 +85,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             // Extra care necessary to deal with zero correctly
             if (mz.IsNegative != step.IsNegative && mz.Value != 0 && step.Value != 0)
                 throw new InvalidOperationException(@"polarity mismatch");
+
             return new SignedMz(mz.Value + step.Value, mz.IsNegative || step.IsNegative);
         }
 
@@ -107,6 +108,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             // Extra care necessary to deal with zero correctly
             if (mz.IsNegative != step.IsNegative && mz.Value != 0 && step.Value != 0)
                 throw new InvalidOperationException(@"polarity mismatch");
+
             return new SignedMz(mz.Value - step.Value, mz.IsNegative || step.IsNegative);
         }
 
@@ -170,8 +172,10 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         {
             if (_mz >= 0 && other._mz >= 0)
                 return _mz.CompareTo(other._mz);
+
             if (_mz < 0 && other._mz < 0)
                 return Value.CompareTo(other.Value);
+
             return _mz < 0 ? -1 : 1;
         }
 
@@ -181,9 +185,11 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             {
                 return IsNegative ? -1 : 1; // Not interested in tolerance when signs disagree
             }
+
             // Same sign
             if (Math.Abs(Value - other.Value) <= tolerance)
                 return 0;
+
             return CompareTo(other);
         }
 

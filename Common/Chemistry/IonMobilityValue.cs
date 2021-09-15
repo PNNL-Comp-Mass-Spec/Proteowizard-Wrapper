@@ -72,20 +72,25 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             {
                 return true; // Anything orders after nothing
             }
+
             if (left.Units == eIonMobilityUnits.inverse_K0_Vsec_per_cm2)
             {
                 return (right.Mobility??0) < (left.Mobility??0);
             }
+
             return (left.Mobility??0) < (right.Mobility??0);
         }
+
         public IonMobilityValue ChangeIonMobility(double? value, eIonMobilityUnits units)
         {
             return value == Mobility && units == Units ? this : GetIonMobilityValue(value, units);
         }
+
         public IonMobilityValue ChangeIonMobility(double? value)
         {
             return value == Mobility ? this : GetIonMobilityValue(value, Units);
         }
+
         //public IonMobilityValue ChangeIonMobilityUnits(eIonMobilityUnits units)
         //{
         //    if (Equals(units, Units))
@@ -125,11 +130,14 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             {
                 val = val.ChangeIonMobility(other.Mobility);
             }
+
             return val;
         }
 
-        public double? Mobility { get; private set; }
-        public eIonMobilityUnits Units { get; private set; }
+        public double? Mobility { get; }
+
+        public eIonMobilityUnits Units { get; }
+
         public bool HasValue { get { return Mobility.HasValue; } }
 
         public static string GetUnitsString(eIonMobilityUnits units)
@@ -149,6 +157,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
             }
             return @"unknown ion mobility type";
         }
+
         public string UnitsString
         {
             get { return GetUnitsString(Units); }
@@ -179,6 +188,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
                 return result;
             }
         }
+
         public override string ToString()
         {
             return Mobility+UnitsString;

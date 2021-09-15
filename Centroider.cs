@@ -32,6 +32,7 @@ namespace pwiz.ProteowizardWrapper
         }
 
         public IList<double> Mzs { get; }
+
         public IList<double> Intensities { get; }
 
         public void GetCentroidedData(out double[] centroidedMzs, out double[] centroidedIntensities)
@@ -47,6 +48,7 @@ namespace pwiz.ProteowizardWrapper
             for (var i = 0; i < Mzs.Count; i++)
             {
                 var intensity = Intensities[i];
+
                 if (intensity < lastIntensity)
                 {
                     increasing = false;
@@ -64,7 +66,9 @@ namespace pwiz.ProteowizardWrapper
                     }
                     increasing = true;
                 }
+
                 var nextIntensity = currentIntensity + intensity;
+
                 if (nextIntensity > 0)
                 {
                     var mz = Mzs[i];
@@ -73,6 +77,7 @@ namespace pwiz.ProteowizardWrapper
                 }
                 lastIntensity = intensity;
             }
+
             if (currentIntensity > 0)
             {
                 centroidedMzsList.Add(currentMz);

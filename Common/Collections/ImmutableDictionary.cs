@@ -23,16 +23,19 @@ using System.Collections.Generic;
 
 namespace pwiz.ProteowizardWrapper.Common.Collections
 {
-    public class ImmutableDictionary<TKey,TValue> : ImmutableCollection<KeyValuePair<TKey,TValue>>, IDictionary<TKey,TValue>
+    public class ImmutableDictionary<TKey, TValue> : ImmutableCollection<KeyValuePair<TKey, TValue>>, IDictionary<TKey, TValue>
     {
-        public ImmutableDictionary(IDictionary<TKey,TValue> dict) : base(dict)
+        public ImmutableDictionary(IDictionary<TKey, TValue> dict) : base(dict)
         {
         }
+
         protected ImmutableDictionary()
         {
         }
 
-        protected IDictionary<TKey, TValue> Dictionary { get => (IDictionary<TKey, TValue>) Collection;
+        protected IDictionary<TKey, TValue> Dictionary
+        {
+            get => (IDictionary<TKey, TValue>)Collection;
             set => Collection = value;
         }
 
