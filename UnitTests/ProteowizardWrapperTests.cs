@@ -93,7 +93,7 @@ namespace ProteowizardWrapperUnitTests
                 while (spectrumIndex < reader.SpectrumCount)
                 {
                     var spectrum = reader.GetSpectrum(spectrumIndex, getBinaryData: true);
-                    spectraLoaded += 1;
+                    spectraLoaded++;
 
                     Console.WriteLine();
                     Console.WriteLine("ScanIndex {0}, NativeId {1}, Elution Time {2:F2} minutes, MS Level {3}",
@@ -163,7 +163,7 @@ namespace ProteowizardWrapperUnitTests
 
                     if (spectrumIndex < 25)
                     {
-                        spectrumIndex += 1;
+                        spectrumIndex++;
                     }
                     else if (spectrumIndex < 1250)
                     {

@@ -438,8 +438,8 @@ namespace ProteowizardWrapperUnitTests
                 if (filterText == null)
                 {
                     Console.WriteLine("No filter string for scan {0}", scanNumber);
-                    errorCount += 1;
 
+                    errorCount++;
                     if (errorCount > 25)
                         return;
 

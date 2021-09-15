@@ -393,7 +393,8 @@ namespace pwiz.ProteowizardWrapper
         public static bool SupportsMultipleSamples(string path)
         {
             path = path.ToLowerInvariant();
-            return path.EndsWith(@".wiff") || path.EndsWith(@".wiff2");
+
+            return path.EndsWith(".wiff") || path.EndsWith(".wiff2");
         }
 
         public const string PREFIX_TOTAL = "SRM TIC ";
@@ -938,7 +939,7 @@ namespace pwiz.ProteowizardWrapper
                                 centroidLevel.Add(2);
                         }
 
-                        if (centroidLevel.Any() && _spectrumList != null)
+                        if (centroidLevel.Count > 0 && _spectrumList != null)
                         {
                             _spectrumList = new SpectrumList_PeakPicker(_spectrumList,
                                 new VendorOnlyPeakDetector(),
