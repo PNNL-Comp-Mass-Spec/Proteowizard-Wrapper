@@ -2774,7 +2774,7 @@ namespace pwiz.ProteowizardWrapper
                 // If the isolation window is not centered around the target m/z, return a
                 // m/z value that is centered in the isolation window.
                 if (targetMz.HasValue && IsolationWindowUpper.HasValue && IsolationWindowLower.HasValue &&
-                    IsolationWindowUpper.Value != IsolationWindowLower.Value)
+                    Math.Abs(IsolationWindowUpper.Value - IsolationWindowLower.Value) > float.Epsilon)
                 {
                     return new SignedMz((targetMz.Value * 2 + IsolationWindowUpper.Value - IsolationWindowLower.Value) / 2.0, targetMz.Value.IsNegative);
                 }
