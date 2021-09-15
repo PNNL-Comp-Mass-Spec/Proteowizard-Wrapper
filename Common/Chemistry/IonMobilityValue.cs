@@ -58,7 +58,6 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
                 : new IonMobilityValue(mobility, units);
         }
 
-
         public static IonMobilityValue GetIonMobilityValue(double? value, eIonMobilityUnits units)
         {
             return (units == eIonMobilityUnits.none || !value.HasValue)
