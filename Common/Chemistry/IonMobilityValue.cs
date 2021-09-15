@@ -37,6 +37,9 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
 
     public sealed class IonMobilityValue : IComparable<IonMobilityValue>
     {
+        // Ignore Spelling: deserialization, pwiz
+        // Ignore Spelling: \analysis, \src
+
         public static IonMobilityValue EMPTY = new IonMobilityValue(null, eIonMobilityUnits.none);
 
         public static bool IsNullOrEmpty(IonMobilityValue val) { return val == null || Equals(val, EMPTY); }
@@ -101,7 +104,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         //    {
         //        return EMPTY;
         //    }
-        //    return ChangeProp(ImClone(this), im => im.Units = units);
+        //    return ChangeProp(ImClone(this), item => item.Units = units);
         //}
 
         /// <summary>

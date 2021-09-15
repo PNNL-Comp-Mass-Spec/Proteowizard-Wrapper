@@ -33,6 +33,8 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
     /// </summary>
     public readonly struct SignedMz : IComparable, IEquatable<SignedMz>, IFormattable
     {
+        // Ignore Spelling: deserialization
+
         private readonly double _mz;
 
         public SignedMz(double mz, bool isNegative)

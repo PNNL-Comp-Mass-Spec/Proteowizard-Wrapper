@@ -15,7 +15,6 @@ namespace ProteowizardWrapperUnitTests
         /// <param name="fileOrDirectoryToFind"></param>
         /// <param name="isDirectory">True if looking for a directory, false if a file</param>
         /// <param name="instrumentDataFileOrDirectory">Output: matching instrument data file, or null if not found</param>
-        /// <returns></returns>
         public static bool FindInstrumentData(
             string fileOrDirectoryToFind,
             bool isDirectory,
@@ -32,7 +31,6 @@ namespace ProteowizardWrapperUnitTests
         /// <param name="isDirectory">True if looking for a directory, false if a file</param>
         /// <param name="remotePathToSearch">Remote directory to check if fileOrDirectoryToFind is not found locally</param>
         /// <param name="instrumentDataFileOrDirectory">Output: matching instrument data file, or null if not found</param>
-        /// <returns></returns>
         public static bool FindInstrumentData(
             string fileOrDirectoryToFind,
             bool isDirectory,
@@ -101,7 +99,6 @@ namespace ProteowizardWrapperUnitTests
         /// <param name="isDirectory">True if looking for a directory, false if a file</param>
         /// <param name="directoryToCheck">Directory to search in</param>
         /// <param name="instrumentDataFileOrDirectory">Output: matching instrument data file, or null if not found</param>
-        /// <returns></returns>
         private static bool FindInstrumentData(
             string fileOrDirectoryToFind,
             bool isDirectory,

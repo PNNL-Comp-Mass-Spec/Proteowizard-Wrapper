@@ -21,6 +21,8 @@ namespace pwiz.ProteowizardWrapper
     /// </remarks>
     public static class DependencyLoader
     {
+        // Ignore Spelling: apps, pre
+
         /// <summary>
         /// Add the Assembly Resolver to the system assembly resolver chain
         /// </summary>
@@ -73,7 +75,6 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        /// <returns></returns>
         private static Assembly ProteoWizardAssemblyResolver(object sender, ResolveEventArgs args)
         {
 #if DEBUG
@@ -191,7 +192,6 @@ namespace pwiz.ProteowizardWrapper
         /// Finds the path to the most recent 64-bit ProteoWizard install
         /// PwizPath is populated from this, but only causes a single search.
         /// </summary>
-        /// <returns></returns>
         /// <remarks>Paths searched, in order:
         /// "%ProteoWizard%" or "%ProteoWizard%_x86" environment variable data,
         /// "C:\DMS_Programs\ProteoWizard" or "C:\DMS_Programs\ProteoWizard_x86",
@@ -315,7 +315,7 @@ namespace pwiz.ProteowizardWrapper
                 }
                 catch (Exception)
                 {
-                    // Do nothing...
+                    // Ignore errors here
                 }
             }
             if (byVersion.Count > 0)

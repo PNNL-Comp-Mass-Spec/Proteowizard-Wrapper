@@ -56,7 +56,7 @@ namespace pwiz.ProteowizardWrapper
     /// </remarks>
     internal class MsDataFileImpl : IDisposable
     {
-        // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, lockmass, pre, pwiz, snr, structs, wiff
+        // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, idx, lockmass, mslevel, pre, pwiz, readonly, snr, structs, wiff
         // Ignore Spelling: Biotech, Bruker, Shimadzu
         // Ignore Spelling: cid, ecd, etd, hcd, irmpd, mpd, pqd, sid
 
@@ -74,9 +74,8 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get the list of CVParams for the specified chromatogram
         /// </summary>
-        /// <param name="chromIndex"></param>
-        /// <returns></returns>
         /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
+        /// <param name="chromIndex"></param>
         public CVParamList GetChromatogramCVParams(int chromIndex)
         {
             return ChromatogramList.chromatogram(chromIndex).cvParams;
@@ -85,9 +84,8 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get the ProteoWizard native chromatogram object for the specified spectrum
         /// </summary>
-        /// <param name="chromIndex"></param>
-        /// <returns></returns>
         /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
+        /// <param name="chromIndex"></param>
         public Chromatogram GetChromatogramObject(int chromIndex)
         {
             return ChromatogramList.chromatogram(chromIndex, true);
@@ -96,12 +94,11 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get the list of CVParams for the specified spectrum
         /// </summary>
-        /// <param name="scanIndex"></param>
-        /// <returns></returns>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
         /// Alternatively, use <see cref="GetSpectrumCVParamData"/>
         /// </remarks>
+        /// <param name="scanIndex"></param>
         public CVParamList GetSpectrumCVParams(int scanIndex)
         {
             return GetPwizSpectrum(scanIndex, false).cvParams;
@@ -122,9 +119,9 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get a container describing the scan (or scans) associated with the given spectrum
         /// </summary>
+        /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
         /// <param name="scanIndex"></param>
         /// <returns>Scan info container</returns>
-        /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
         public SpectrumScanContainer GetSpectrumScanInfo(int scanIndex)
         {
             var spec = GetPwizSpectrum(scanIndex, false);
@@ -187,9 +184,8 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get the ProteoWizard native spectrum object for the specified spectrum.
         /// </summary>
-        /// <param name="scanIndex"></param>
-        /// <returns></returns>
         /// <remarks>Use of this method requires the calling project to reference pwiz_bindings_cli.dll</remarks>
+        /// <param name="scanIndex"></param>
         public Spectrum GetSpectrumObject(int scanIndex)
         {
             return GetPwizSpectrum(scanIndex, getBinaryData: true);
@@ -296,7 +292,7 @@ namespace pwiz.ProteowizardWrapper
         private readonly ReaderConfig _config;
         private SpectrumList _spectrumList;
 
-        // PNNL Update:
+        // PNNL Specific
         // For storing the unwrapped spectrumList, in case modification/unwrapping is needed
         private SpectrumList _spectrumListBase;
 
@@ -311,7 +307,7 @@ namespace pwiz.ProteowizardWrapper
         private readonly LockMassParameters _lockmassParameters; // For Waters lockmass correction
         private int? _lockmassFunction;  // For Waters lockmass correction
 
-        // PNNL Update:
+        // PNNL Specific
         private readonly MethodInfo _binaryDataArrayGetData;
 
         private readonly bool _requireVendorCentroidedMS1;
@@ -393,7 +389,6 @@ namespace pwiz.ProteowizardWrapper
         /// Returns the file id of the specified file (as an array, which typically only has one item)
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
         public static string[] ReadIds(string path)
         {
             return FULL_READER_LIST.readIds(path);
@@ -417,7 +412,6 @@ namespace pwiz.ProteowizardWrapper
         /// Otherwise, return null
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         public static bool? IsNegativeChargeIdNullable(string id)
         {
             if (id.StartsWith("+ "))
@@ -433,7 +427,6 @@ namespace pwiz.ProteowizardWrapper
         /// Return true if the id starts with "SRM SIC" or "SIM SIC"
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         public static bool IsSingleIonCurrentId(string id)
         {
             if (IsNegativeChargeIdNullable(id).HasValue)
@@ -540,10 +533,12 @@ namespace pwiz.ProteowizardWrapper
         {
             if (cacheSize == null || cacheSize.Value <= 0)
             {
+                // Enable caching using the default cache size (100 spectra)
                 _scanCache = new MsDataScanCache();
             }
             else
             {
+                // Enable caching using the user-specified cache size
                 _scanCache = new MsDataScanCache(cacheSize.Value);
             }
         }
@@ -716,7 +711,6 @@ namespace pwiz.ProteowizardWrapper
         /// Check if the file has be processed by the specified software
         /// </summary>
         /// <param name="softwareName"></param>
-        /// <returns></returns>
         public bool IsProcessedBy(string softwareName)
         {
             foreach (var softwareApp in _msDataFile.softwareList)
@@ -732,7 +726,6 @@ namespace pwiz.ProteowizardWrapper
         /// If the spectrum is a Waters Lockmass spectrum
         /// </summary>
         /// <param name="s"></param>
-        /// <returns></returns>
         public bool IsWatersLockmassSpectrum(MsDataSpectrum s)
         {
             return _lockmassFunction.HasValue &&
@@ -1278,13 +1271,13 @@ namespace pwiz.ProteowizardWrapper
         /// Some data files do not have any chromatograms in them, so GetScanTimes
         /// cannot be used.
         /// </summary>
+        /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
         /// <param name="times">Output: scan times (in minutes)</param>
         /// <param name="msLevels">Output: MS Levels (1 for MS1, 2 for MS/MS, etc.)</param>
         /// <param name="progressDelegate">
         /// Delegate method for reporting progress while iterating over the spectra;
         /// The first value is spectra processed; the second value is total spectra
         /// </param>
-        /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
         /// <param name="useAlternateMethod">
         /// When false, use the default method for retrieving spectrum info; this could lead to an exception if the spectrum is empty (has no ions)
         /// When true, use an alternate method to retrieve the spectrum info (DetailLevel.InstantMetadata)
@@ -1385,12 +1378,11 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Returns an MsDataSpectrum object representing the spectrum requested.
         /// </summary>
-        /// <param name="spectrumIndex"></param>
-        /// <param name="getBinaryData"></param>
-        /// <returns></returns>
         /// <remarks>
         /// If you need direct access to CVParams, and are using MSDataFileReader, try using "GetSpectrumObject" instead.
         /// </remarks>
+        /// <param name="spectrumIndex"></param>
+        /// <param name="getBinaryData"></param>
         public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
             // Several PNNL Updates here
@@ -1441,9 +1433,9 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Read the native ProteoWizard spectrum, using caching if enabled, and enabling a 1-spectrum cache if the number of sequential duplicate reads passes a certain threshold.
         /// </summary>
+        /// <remarks>PNNL specific</remarks>
         /// <param name="spectrumIndex"></param>
         /// <param name="getBinaryData"></param>
-        /// <remarks>PNNL specific</remarks>
         private Spectrum GetPwizSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
             if (_scanCache != null)
@@ -1645,6 +1637,7 @@ namespace pwiz.ProteowizardWrapper
                 }
                 catch (NullReferenceException)
                 {
+                    // Ignore errors here
                 }
             }
 
@@ -1676,7 +1669,6 @@ namespace pwiz.ProteowizardWrapper
         /// Return the typical NativeId for a scan number in a thermo .raw file
         /// </summary>
         /// <param name="scanNumber"></param>
-        /// <returns></returns>
         public string GetThermoNativeId(int scanNumber)
         {
             // PNNL Update:
@@ -1720,10 +1712,10 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Return a mapping from scan number to spectrumIndex
         /// </summary>
-        /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
         /// <remarks>
         /// Works for Thermo .raw files, Bruker .D folders, Bruker/Agilent .yep files, Agilent MassHunter data, Waters .raw folders, and Shimadzu data
         /// For UIMF files use <see cref="GetUimfFrameScanPairToIndexMapping"/></remarks>
+        /// <returns>Dictionary where keys are scan number and values are the spectrumIndex for each scan</returns>
         public Dictionary<int, int> GetScanToIndexMapping()
         {
             // PNNL Update:
@@ -2248,7 +2240,6 @@ namespace pwiz.ProteowizardWrapper
         /// Construct a list of precursor activation types used (user-friendly abbreviations)
         /// </summary>
         /// <param name="precursor"></param>
-        /// <returns></returns>
         [Obsolete("Deprecated")]
         private static List<string> GetPrecursorActivationList(Precursor precursor)
         {
@@ -2302,6 +2293,12 @@ namespace pwiz.ProteowizardWrapper
             return activationTypes;
         }
 
+        /// <summary>
+        /// Get the precursor ion (or ions) for the spectrum at the given index
+        /// </summary>
+        /// <remarks>MS1 spectra will always return an empty list</remarks>
+        /// <param name="scanIndex"></param>
+        /// <param name="level"></param>
         public IList<MsPrecursor> GetPrecursors(int scanIndex, int level)
         {
             if (GetMsLevel(scanIndex) < 2)
@@ -2488,12 +2485,18 @@ namespace pwiz.ProteowizardWrapper
             _msDataFile = null;
         }
 
+        /// <summary>
+        /// Path to the file provided to the constructor for this class
+        /// </summary>
         public string FilePath { get; }
 
+        /// <summary>
+        /// Sample index, typically 0
+        /// </summary>
         public int SampleIndex { get; }
 
         /// <summary>
-        /// Returns true iff MsDataFileImpl's reader list can read the file path.
+        /// Returns true if MsDataFileImpl's reader list can read the file path.
         /// </summary>
         public static bool IsValidFile(string filepath)
         {
@@ -2649,7 +2652,6 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Summary of CVParam - name and value
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return Name + ": " + Value;
@@ -2721,27 +2723,65 @@ namespace pwiz.ProteowizardWrapper
         }
     }
 
+    /// <summary>
+    /// Information about a precursor ion or isolation window
+    /// </summary>
     public struct MsPrecursor
     {
+        /// <summary>
+        /// Precursor m/z
+        /// </summary>
         public SignedMz? PrecursorMz { get; set; }
+
+        /// <summary>
+        /// Charge state
+        /// </summary>
+        /// <remarks>Null if unknown</remarks>
         public int? ChargeState { get; set; }
+
+        /// <summary>
+        /// Drift time, in msec
+        /// </summary>
+        /// <remarks>Null if unknown</remarks>
         public double? PrecursorDriftTimeMsec { get; set; }
+
+        /// <summary>
+        /// Collision energy
+        /// </summary>
+        /// <remarks>Null if unknown</remarks>
         public double? PrecursorCollisionEnergy { get; set; }
+
+        /// <summary>
+        /// Central m/z of the isolation window for MS/MS spectra
+        /// </summary>
+        /// <remarks>Null if unknown or not applicable</remarks>
         public SignedMz? IsolationWindowTargetMz { get; set; }
-        public double? IsolationWindowUpper { get; set; } // Add this to IsolationWindowTargetMz to get window upper bound
-        public double? IsolationWindowLower { get; set; } // Subtract this from IsolationWindowTargetMz to get window lower bound
+
+        /// <summary>
+        /// Add this to IsolationWindowTargetMz to get window upper bound
+        /// </summary>
+        public double? IsolationWindowUpper { get; set; }
+
+        /// <summary>
+        /// Subtract this from IsolationWindowTargetMz to get window lower bound
+        /// </summary>
+        public double? IsolationWindowLower { get; set; }
 
         /// <summary>
         /// Activation types, like cid, etc, hcd, etc.
         /// </summary>
         public List<string> ActivationTypes { get; set; }
 
+        /// <summary>
+        /// Returns IsolationWindowTargetMz if not null, otherwise PrecursorMz
+        /// </summary>
         public SignedMz? IsolationMz
         {
             get
             {
                 var targetMz = IsolationWindowTargetMz ?? PrecursorMz;
-                // If the isolation window is not centered around the target m/z, then return a
+
+                // If the isolation window is not centered around the target m/z, return a
                 // m/z value that is centered in the isolation window.
                 if (targetMz.HasValue && IsolationWindowUpper.HasValue && IsolationWindowLower.HasValue &&
                     IsolationWindowUpper.Value != IsolationWindowLower.Value)
@@ -2753,6 +2793,10 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        /// <summary>
+        /// Returns the isolation width if <see cref="IsolationWindowUpper"/> and <see cref="IsolationWindowLower"/> have values and are not equal
+        /// Otherwise, returns null
+        /// </summary>
         public double? IsolationWidth
         {
             get
@@ -2777,18 +2821,48 @@ namespace pwiz.ProteowizardWrapper
         public MsPrecursor[] Precursors { get; set; }
     }
 
+    /// <summary>
+    /// Information about a mass spectrum
+    /// </summary>
     public sealed class MsDataSpectrum
     {
         private IonMobilityValue _ionMobility;
+
+        /// <summary>
+        /// Spectrum Id
+        /// </summary>
+        /// <remarks>
+        /// For Thermo .raw files, the first spectrum has Id = 0.1.1 and Index = 0
+        /// </remarks>
         public string Id { get; set; }
 
+        /// <summary>
+        /// Spectrum Native Id
+        /// </summary>
         [Obsolete("Superseded by Id")]
         public string NativeId { get; set; }
 
+        /// <summary>
+        /// 1 if MS, 2 if MS/MS, etc.
+        /// </summary>
         public int Level { get; set; }
-        public int Index { get; set; } // index into parent file, if any
+
+        /// <summary>
+        /// Index into parent file, if any
+        /// </summary>
+        /// <remarks>
+        /// The first spectrum has Index = 0
+        /// </remarks>
+        public int Index { get; set; }
+
+        /// <summary>
+        /// Retention time, aka elution time
+        /// </summary>
         public double? RetentionTime { get; set; }
 
+        /// <summary>
+        /// Ion mobility drift time, in msec
+        /// </summary>
         [Obsolete("Deprecated")]
         public double? DriftTimeMsec { get; set; }
 
@@ -2802,11 +2876,20 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// The range of ion mobilities that were scanned (for zero vs missing value determination)
+        /// Minimum of the range of ion mobilities that were scanned (for zero vs missing value determination)
         /// </summary>
         public double? IonMobilityMeasurementRangeLow { get; set; }
+
+        /// <summary>
+        /// Maximum of the range of ion mobilities that were scanned (for zero vs missing value determination)
+        /// </summary>
         public double? IonMobilityMeasurementRangeHigh { get; set; }
 
+        /// <summary>
+        /// Get the precursors for spectra at the given level
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns>List of precursor values</returns>
         public ImmutableList<MsPrecursor> GetPrecursorsByMsLevel(int level)
         {
             if (PrecursorsByMsLevel == null || level > PrecursorsByMsLevel.Count)
@@ -2814,8 +2897,26 @@ namespace pwiz.ProteowizardWrapper
             return PrecursorsByMsLevel[level - 1];
         }
 
+        /// <summary>
+        /// <para>
+        /// Tracks precursors, by MS Level
+        /// </para>
+        /// <para>
+        /// MS1 spectra are at PrecursorsByMsLevel[0]
+        /// MS2 spectra are at PrecursorsByMsLevel[1]
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// The precursor of an MS1 spectrum is the central m/z value of the entire mass spectrum
+        /// </remarks>
         public ImmutableList<ImmutableList<MsPrecursor>> PrecursorsByMsLevel { get; set; }
 
+        /// <summary>
+        /// List of precursors for this spectrum
+        /// </summary>
+        /// <remarks>
+        /// The precursor of an MS1 spectrum is the central m/z value of the entire mass spectrum
+        /// </remarks>
         public ImmutableList<MsPrecursor> Precursors
         {
             get
@@ -2828,29 +2929,85 @@ namespace pwiz.ProteowizardWrapper
             set => PrecursorsByMsLevel = ImmutableList.Singleton(ImmutableList.ValueOf(value));
         }
 
+        /// <summary>
+        /// True if the m/z values have been centroided (peak-picked)
+        /// </summary>
         public bool Centroided { get; set; }
-        public bool NegativeCharge { get; set; } // True if negative ion mode
-        public double[] Mzs { get; set; }
-        public double[] Intensities { get; set; }
-        public double[] IonMobilities { get; set; } // for combined-mode IMS (may be null)
-        public double? MinIonMobility { get; set; }
-        public double? MaxIonMobility { get; set; }
-        public int WindowGroup { get; set; } // For Bruker diaPASEF
 
-        // PNNL Update:
+        /// <summary>
+        /// True if negative ion mode
+        /// </summary>
+        public bool NegativeCharge { get; set; }
+
+        /// <summary>
+        /// List of m/z values
+        /// </summary>
+        public double[] Mzs { get; set; }
+
+        /// <summary>
+        /// List of intensity values
+        /// </summary>
+        public double[] Intensities { get; set; }
+
+        /// <summary>
+        /// For combined-mode IMS (may be null)
+        /// </summary>
+        public double[] IonMobilities { get; set; }
+
+        /// <summary>
+        /// Minimum ion mobility, or null if not applicable
+        /// </summary>
+        public double? MinIonMobility { get; set; }
+
+        /// <summary>
+        /// Maximum ion mobility, or null if not applicable
+        /// </summary>
+        public double? MaxIonMobility { get; set; }
+
+        /// <summary>
+        /// For Bruker diaPASEF
+        /// </summary>
+        public int WindowGroup { get; set; }
+
+        /// <summary>
+        /// True if the spectrum includes binary data
+        /// </summary>
+        /// <remarks>PNNL Specific</remarks>
         public bool BinaryDataLoaded { get; set; }
 
+        /// <summary>
+        /// Scan description
+        /// </summary>
+        /// <remarks>Null for Thermo .raw files</remarks>
         public string ScanDescription { get; set; }
 
+        /// <summary>
+        /// For a Waters dataset, determine the function number from the spectrum Id
+        /// </summary>
+        /// <remarks>
+        /// Throws an exception if the id is not in the form 1.1.1
+        /// </remarks>
+        /// <param name="id">Spectrum Id, in dotted format</param>
+        /// <param name="isCombinedIonMobility">
+        /// If false, assume the first integer in Id is the function number
+        /// Otherwise, assumes the second integer is the function number
+        /// </param>
+        /// <returns>Function number</returns>
         public static int WatersFunctionNumberFromId(string id, bool isCombinedIonMobility)
         {
-            return int.Parse(id.Split('.')[isCombinedIonMobility ? 1 : 0]); // Yes, this will throw if it's not in dotted format - and that's good
+            return int.Parse(id.Split('.')[isCombinedIonMobility ? 1 : 0]);
         }
 
+        /// <summary>
+        /// For a Waters dataset, determine the function number from the spectrum Id, assuming the file does not include combined ion mobility values
+        /// </summary>
         [Obsolete("Deprecated")]
         public int WatersFunctionNumber => WatersFunctionNumberFromId(Id, false);
 
-        public override string ToString() // For debugging convenience, not user-facing
+        /// <summary>
+        /// Description of the spectrum, for debugging purposes
+        /// </summary>
+        public override string ToString()
         {
             return $"id={Id} idx={Index} mslevel={Level} rt={RetentionTime}";
         }
@@ -2985,6 +3142,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        // PNNL Specific
         public void Add(int scanNum, Spectrum s)
         {
             if (_scanNativeStack.Count() >= Capacity)
@@ -3006,6 +3164,7 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+        // PNNL Specific
         public bool TryGetSpectrum(int scanNum, out Spectrum spectrum)
         {
             return _cacheNative.TryGetValue(scanNum, out spectrum);
@@ -3023,6 +3182,7 @@ namespace pwiz.ProteowizardWrapper
             DisposeNativeSpectra();
         }
 
+        // PNNL Specific
         private void DisposeNativeSpectra()
         {
             foreach (var spectrum in _cacheNative)
