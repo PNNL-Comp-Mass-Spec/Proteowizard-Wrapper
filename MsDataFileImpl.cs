@@ -359,6 +359,7 @@ namespace pwiz.ProteowizardWrapper
             return result;
         }
 
+        [Obsolete("Unused")]
         private float[] ToFloatArray(BinaryDataArray binaryDataArray)
         {
             // PNNL Update:
@@ -1961,6 +1962,7 @@ namespace pwiz.ProteowizardWrapper
             return _lastSpectrum;
         }
 
+        [Obsolete("Unused")]
         private Spectrum GetCachedSpectrum(int scanIndex, bool getBinaryData)
         {
             return GetCachedSpectrum(scanIndex, getBinaryData ? DetailLevel.FullData : DetailLevel.FullMetadata);
@@ -2370,6 +2372,7 @@ namespace pwiz.ProteowizardWrapper
             return msLevelParam.empty() ? 1 : (int)msLevelParam.value;
         }
 
+        [Obsolete("Unused")]
         private static int? GetChargeStateValue(Precursor precursor)
         {
             if (precursor.selectedIons == null || precursor.selectedIons.Count == 0)
