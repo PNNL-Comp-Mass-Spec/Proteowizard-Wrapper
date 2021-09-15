@@ -33,14 +33,22 @@ namespace pwiz.ProteowizardWrapper
 {
 #pragma warning disable 1591
     /// <summary>
+    /// <para>
     /// This is our wrapper class for ProteoWizard's MSData file reader interface.
-    ///
+    /// </para>
+    /// <para>
     /// Performance measurements can be made here, see notes below on enabling that.
-    ///
+    /// </para>
+    /// <para>
     /// When performance measurement is enabled, the GetLog() method can be called
     /// after read operations have been completed. This returns a handy CSV-formatted
     /// report on file read performance.
+    /// </para>
     /// </summary>
+    /// <remarks>
+    /// This class has been customized by PNNL
+    /// The original copy is at https://github.com/ProteoWizard/pwiz/tree/master/pwiz_tools/Shared/ProteowizardWrapper
+    /// </remarks>
     internal class MsDataFileImpl : IDisposable
     {
         // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, lockmass, pre, pwiz, snr, structs, wiff
@@ -251,6 +259,8 @@ namespace pwiz.ProteowizardWrapper
         public void RedoFilters()
         {
             _spectrumList = null;
+
+            // PNNL Update:
             if (_spectrumListBase == null)
             {
                 _spectrumListBase = _msDataFile.run.spectrumList;
@@ -266,12 +276,16 @@ namespace pwiz.ProteowizardWrapper
         private MSData _msDataFile;
         private readonly ReaderConfig _config;
         private SpectrumList _spectrumList;
+
+        // PNNL Update:
         // For storing the unwrapped spectrumList, in case modification/unwrapping is needed
         private SpectrumList _spectrumListBase;
         private ChromatogramList _chromatogramList;
         private MsDataScanCache _scanCache;
         private readonly LockMassParameters _lockmassParameters; // For Waters lockmass correction
         private int? _lockmassFunction;  // For Waters lockmass correction
+
+        // PNNL Update:
         private readonly MethodInfo _binaryDataArrayGetData;
 
         private readonly bool _requireVendorCentroidedMS1;
@@ -283,8 +297,11 @@ namespace pwiz.ProteowizardWrapper
 
         private DetailLevel _detailDriftTime = DetailLevel.InstantMetadata;
 
+
         private double[] ToArray(BinaryDataArray binaryDataArray)
         {
+            // PNNL Update:
+
             // Original code
             //return binaryDataArray.data.ToArray();
 
@@ -315,6 +332,8 @@ namespace pwiz.ProteowizardWrapper
 
         private float[] ToFloatArray(BinaryDataArray binaryDataArray)
         {
+            // PNNL Update:
+
             // BinaryDataArray.get_data() problem fix
             // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.msdata.BinaryData, is a semi-automatic wrapper for a C++ vector, which implements IList<double>
             // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.util.BinaryData implements IList<double>, but also provides other optimization functions
@@ -399,10 +418,13 @@ namespace pwiz.ProteowizardWrapper
             _msDataFile = new MSData();
             _config = new ReaderConfig { simAsSpectra = simAsSpectra, srmAsSpectra = srmAsSpectra, acceptZeroLengthSpectra = acceptZeroLengthSpectra };
             _lockmassParameters = lockmassParameters;
+
+            // PNNL Update:
             InitializeReader(path, _msDataFile, sampleIndex, _config);
             _requireVendorCentroidedMS1 = requireVendorCentroidedMS1;
             _requireVendorCentroidedMS2 = requireVendorCentroidedMS2;
 
+            // PNNL Update:
             // BinaryDataArray.get_data() problem fix
             // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: bda.data returns pwiz.CLI.msdata.BinaryData,  is a semi-automatic wrapper for a C++ vector, which implements IList<double>
             // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: bda.data returns pwiz.CLI.util.BinaryData implements IList<double>, but also provides other optimization functions
@@ -424,6 +446,7 @@ namespace pwiz.ProteowizardWrapper
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions()]
         public void InitializeReader(string path, MSData msDataFile, int sampleIndex, ReaderConfig config)
         {
+            // PNNL Update:
             try
             {
                 FULL_READER_LIST.read(path, msDataFile, sampleIndex, config);
@@ -495,24 +518,26 @@ namespace pwiz.ProteowizardWrapper
                     GetInstrumentConfig(ic, out var instrumentIonSource, out var instrumentAnalyzer, out var instrumentDetector);
 
                     if (ionSource.Length > 0)
-                        ionSource += ", "; // Not L10N
+                        ionSource += ", ";
                     ionSource += instrumentIonSource;
 
                     if (analyzer.Length > 0)
-                        analyzer += ", "; // Not L10N
+                        analyzer += ", ";
                     analyzer += instrumentAnalyzer;
 
                     if (detector.Length > 0)
-                        detector += ", "; // Not L10N
+                        detector += ", ";
                     detector += instrumentDetector;
                 }
 
                 var contentTypeSet = new HashSet<string>();
                 foreach (var term in _msDataFile.fileDescription.fileContent.cvParams)
                     contentTypeSet.Add(term.name);
+                }
+
                 var contentTypes = contentTypeSet.ToArray();
                 Array.Sort(contentTypes);
-                var contentType = String.Join(", ", contentTypes); // Not L10N
+                var contentType = String.Join(", ", contentTypes);
 
                 return new MsDataConfigInfo
                 {
@@ -545,7 +570,7 @@ namespace pwiz.ProteowizardWrapper
                         else
                         {
                             // If we did not find the ion source in a CVParam it may be in a UserParam
-                            var uParam = c.userParam("msIonisation"); // Not L10N
+                            var uParam = c.userParam("msIonisation");
                             if (HasInfo(uParam))
                             {
                                 ionSources.Add(c.order, uParam.value);
@@ -559,7 +584,7 @@ namespace pwiz.ProteowizardWrapper
                         else
                         {
                             // If we did not find the analyzer in a CVParam it may be in a UserParam
-                            var uParam = c.userParam("msMassAnalyzer"); // Not L10N
+                            var uParam = c.userParam("msMassAnalyzer");
                             if (HasInfo(uParam))
                             {
                                 analyzers.Add(c.order, uParam.value);
@@ -573,7 +598,7 @@ namespace pwiz.ProteowizardWrapper
                         else
                         {
                             // If we did not find the detector in a CVParam it may be in a UserParam
-                            var uParam = c.userParam("msDetector"); // Not L10N
+                            var uParam = c.userParam("msDetector");
                             if (HasInfo(uParam))
                             {
                                 detectors.Add(c.order, uParam.value);
@@ -583,11 +608,11 @@ namespace pwiz.ProteowizardWrapper
                 }
             }
 
-            ionSource = String.Join("/", new List<string>(ionSources.Values).ToArray()); // Not L10N
+            ionSource = String.Join("/", new List<string>(ionSources.Values).ToArray());
 
-            analyzer = String.Join("/", new List<string>(analyzers.Values).ToArray()); // Not L10N
+            analyzer = String.Join("/", new List<string>(analyzers.Values).ToArray());
 
-            detector = String.Join("/", new List<string>(detectors.Values).ToArray()); // Not L10N
+            detector = String.Join("/", new List<string>(detectors.Values).ToArray());
         }
 
         /// <summary>
@@ -723,11 +748,13 @@ namespace pwiz.ProteowizardWrapper
             {
                 if (_spectrumList == null)
                 {
+                    // PNNL Update:
                     if (_spectrumListBase == null)
                     {
                         _spectrumListBase = _msDataFile.run.spectrumList;
                     }
 
+                    // PNNL Update:
                     if (Filters.Count == 0)
                     {
                         // CONSIDER(bspratt): there is no acceptable wrapping order when both centroiding and lockmass are needed at the same time
@@ -804,6 +831,8 @@ namespace pwiz.ProteowizardWrapper
             using (var chrom = ChromatogramList.chromatogram(chromIndex, true))
             {
                 id = chrom.id;
+
+                // PNNL Update:
 
                 // Original code
                 //timeArray = ToFloatArray(chrom.binaryDataArrays[0].data);
@@ -981,6 +1010,8 @@ namespace pwiz.ProteowizardWrapper
         /// </remarks>
         public MsDataSpectrum GetSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
+            // Several PNNL Updates here
+
             if (_scanCache != null)
             {
                 // Check the scan for this cache
@@ -996,6 +1027,8 @@ namespace pwiz.ProteowizardWrapper
                 }
                 return returnSpectrum;
             }
+
+            // PNNL Update
             using (var spectrum = GetPwizSpectrum(spectrumIndex, getBinaryData))
             {
                 return GetSpectrum(spectrum, spectrumIndex);
@@ -1005,16 +1038,19 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// The last read spectrum index
         /// </summary>
+        /// <remarks>PNNL specific</remarks>
         private int _lastRetrievedSpectrumIndex = -1;
 
         /// <summary>
         /// How many times a single spectrum has been read twice in a row
         /// </summary>
+        /// <remarks>PNNL specific</remarks>
         private int _sequentialDuplicateSpectrumReadCount;
 
         /// <summary>
         /// The maximum number of time a single spectrum can be read twice in a row before we enable a cache for sanity.
         /// </summary>
+        /// <remarks>PNNL specific</remarks>
         private const int DuplicateSpectrumReadThreshold = 10;
 
         /// <summary>
@@ -1022,7 +1058,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="spectrumIndex"></param>
         /// <param name="getBinaryData"></param>
-        /// <returns></returns>
+        /// <remarks>PNNL specific</remarks>
         private Spectrum GetPwizSpectrum(int spectrumIndex, bool getBinaryData = true)
         {
             if (_scanCache != null)
@@ -1114,6 +1150,8 @@ namespace pwiz.ProteowizardWrapper
         /// <returns>List of NativeIds</returns>
         public List<string> GetSpectrumIdList()
         {
+            // PNNL Update:
+
             var spectrumIDs = new List<string>();
 
             var spectrumCount = SpectrumList.size();
@@ -1134,6 +1172,7 @@ namespace pwiz.ProteowizardWrapper
         /// <returns></returns>
         public string GetThermoNativeId(int scanNumber)
         {
+            // PNNL Update:
             return string.Format("controllerType=0 controllerNumber=1 scan={0}", scanNumber);
         }
 
@@ -1143,6 +1182,8 @@ namespace pwiz.ProteowizardWrapper
         /// <returns>Dictionary where keys are KeyValuePairs of Frame,Scan and values are the spectrumIndex for each scan</returns>
         public Dictionary<KeyValuePair<int, int>, int> GetUimfFrameScanPairToIndexMapping()
         {
+            // PNNL Update:
+
             // frame=1 scan=1 frameType=1
             var reNativeIdMatcher = new Regex(@"frame=(?<FrameNumber>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled);
 
@@ -1178,6 +1219,8 @@ namespace pwiz.ProteowizardWrapper
         /// For UIMF files use <see cref="GetUimfFrameScanPairToIndexMapping"/></remarks>
         public Dictionary<int, int> GetScanToIndexMapping()
         {
+            // PNNL Update:
+
             // MGF, PKL, merged DTA files. Index is the spectrum number in the file, starting from 0.
             // index=5
             // This function is not appropriate for those files because ProteoWizard does not support extracting / reading actual scan numbers from those files
@@ -1317,19 +1360,23 @@ namespace pwiz.ProteowizardWrapper
             }
         }
 
+
         public MsDataSpectrum GetSrmSpectrum(int scanIndex)
         {
+            // PNNL Update:
             var spectrum = GetPwizSpectrum(scanIndex, getBinaryData: true);
             return GetSpectrum(IsSrmSpectrum(spectrum) ? spectrum : null, scanIndex);
         }
 
         public string GetSpectrumId(int scanIndex)
         {
+            // PNNL Update:
             return GetPwizSpectrum(scanIndex, false).id;
         }
 
         public bool IsCentroided(int scanIndex)
         {
+            // PNNL Update:
             return IsCentroided(GetPwizSpectrum(scanIndex, false));
         }
 
@@ -1350,6 +1397,7 @@ namespace pwiz.ProteowizardWrapper
 
         public bool IsSrmSpectrum(int scanIndex)
         {
+            // PNNL Update:
             return IsSrmSpectrum(GetPwizSpectrum(scanIndex, false));
         }
 
@@ -1695,6 +1743,8 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public struct CVParamData
     {
+        // PNNL Update:
+
         /// <summary>
         /// CV id, e.g. 1000504
         /// </summary>
@@ -1740,6 +1790,8 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public class SpectrumScanData
     {
+        // PNNL Update:
+
         /// <summary>
         /// CVParams for this scan
         /// </summary>
@@ -1774,6 +1826,8 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public class SpectrumScanContainer
     {
+        // PNNL Update:
+
         /// <summary>
         /// CVParams for this spectrum
         /// </summary>
@@ -1862,6 +1916,7 @@ namespace pwiz.ProteowizardWrapper
         public double[] Mzs { get; set; }
         public double[] Intensities { get; set; }
 
+        // PNNL Update:
         public bool BinaryDataLoaded { get; set; }
 
         public static int WatersFunctionNumberFromId(string id)
@@ -1938,15 +1993,21 @@ namespace pwiz.ProteowizardWrapper
     public class MsDataScanCache : IDisposable
     {
         private readonly Dictionary<int, MsDataSpectrum> _cache;
+
+        // PNNL Specific
         private readonly Dictionary<int, Spectrum> _cacheNative;
 
         /// <summary>
         /// queue to keep track of order in which scans were added
         /// </summary>
         private readonly Queue<int> _scanStack;
+
+        // PNNL Specific
         private readonly Queue<int> _scanNativeStack;
         public int Capacity { get; }
         public int Size => _scanStack.Count;
+
+        // PNNL Specific
         public int SizeNative => _scanNativeStack.Count;
 
         public MsDataScanCache()
@@ -1968,6 +2029,7 @@ namespace pwiz.ProteowizardWrapper
             return _cache.ContainsKey(scanNum);
         }
 
+        // PNNL Specific
         public bool HasScanNative(int scanNum)
         {
             return _cacheNative.ContainsKey(scanNum);
@@ -1980,6 +2042,7 @@ namespace pwiz.ProteowizardWrapper
                 _cache.Remove(_scanStack.Dequeue());
             }
 
+            // PNNL Update
             if (_cache.ContainsKey(scanNum))
             {
                 _cache[scanNum] = s;
