@@ -882,26 +882,15 @@ namespace pwiz.ProteowizardWrapper
         {
             get
             {
-                switch (_ionMobilityUnits)
+                return _ionMobilityUnits switch
                 {
-                    case SpectrumList_IonMobility.IonMobilityUnits.none:
-                        return eIonMobilityUnits.none;
-
-                    case SpectrumList_IonMobility.IonMobilityUnits.drift_time_msec:
-                        return eIonMobilityUnits.drift_time_msec;
-
-                    case SpectrumList_IonMobility.IonMobilityUnits.inverse_reduced_ion_mobility_Vsec_per_cm2:
-                        return eIonMobilityUnits.inverse_K0_Vsec_per_cm2;
-
-                    case SpectrumList_IonMobility.IonMobilityUnits.compensation_V:
-                        return eIonMobilityUnits.compensation_V;
-
-                    case SpectrumList_IonMobility.IonMobilityUnits.waters_sonar: // Not really ion mobility, but uses IMS hardware to filter precursor m/z
-                        return eIonMobilityUnits.waters_sonar;
-
-                    default:
-                        throw new InvalidDataException(string.Format("unknown ion mobility type {0}", _ionMobilityUnits));
-                }
+                    SpectrumList_IonMobility.IonMobilityUnits.none => eIonMobilityUnits.none,
+                    SpectrumList_IonMobility.IonMobilityUnits.drift_time_msec => eIonMobilityUnits.drift_time_msec,
+                    SpectrumList_IonMobility.IonMobilityUnits.inverse_reduced_ion_mobility_Vsec_per_cm2 => eIonMobilityUnits.inverse_K0_Vsec_per_cm2,
+                    SpectrumList_IonMobility.IonMobilityUnits.compensation_V => eIonMobilityUnits.compensation_V,
+                    SpectrumList_IonMobility.IonMobilityUnits.waters_sonar => eIonMobilityUnits.waters_sonar,   // Not really ion mobility, but uses IMS hardware to filter precursor m/z
+                    _ => throw new InvalidDataException(string.Format("unknown ion mobility type {0}", _ionMobilityUnits))
+                };
             }
         }
 
@@ -1063,19 +1052,17 @@ namespace pwiz.ProteowizardWrapper
 
                 // convert time to minutes
                 var timeArrayParam = chrom.getTimeArray().cvParamChild(CVID.MS_binary_data_array);
-                float timeUnitMultiple;
-                switch (timeArrayParam.units)
-                {
-                    case CVID.UO_nanosecond: timeUnitMultiple = 60 * 1e9f; break;
-                    case CVID.UO_microsecond: timeUnitMultiple = 60 * 1e6f; break;
-                    case CVID.UO_millisecond: timeUnitMultiple = 60 * 1e3f; break;
-                    case CVID.UO_second: timeUnitMultiple = 60; break;
-                    case CVID.UO_minute: timeUnitMultiple = 1; break;
-                    case CVID.UO_hour: timeUnitMultiple = 1f / 60; break;
 
-                    default:
-                        throw new InvalidDataException($"unsupported time unit in chromatogram: {timeArrayParam.unitsName}");
-                }
+                var timeUnitMultiple = timeArrayParam.units switch
+                {
+                    CVID.UO_nanosecond => 60 * 1e9f,
+                    CVID.UO_microsecond => 60 * 1e6f,
+                    CVID.UO_millisecond => 60 * 1e3f,
+                    CVID.UO_second => 60,
+                    CVID.UO_minute => 1,
+                    CVID.UO_hour => 1f / 60,
+                    _ => throw new InvalidDataException($"unsupported time unit in chromatogram: {timeArrayParam.unitsName}")
+                };
 
                 timeUnitMultiple = 1 / timeUnitMultiple;
 

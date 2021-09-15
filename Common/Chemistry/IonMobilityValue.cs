@@ -145,26 +145,15 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
 
         public static string GetUnitsString(eIonMobilityUnits units)
         {
-            switch (units)
+            return units switch
             {
-                case eIonMobilityUnits.none:
-                    return "#N/A";
-
-                case eIonMobilityUnits.drift_time_msec:
-                    return "msec";
-
-                case eIonMobilityUnits.inverse_K0_Vsec_per_cm2:
-                    return "Vs/cm^2";
-
-                case eIonMobilityUnits.compensation_V:
-                    return "V";
-
-                case eIonMobilityUnits.waters_sonar:
-                    return "m/z";
-
-                default:
-                    return "unknown ion mobility type";
-            }
+                eIonMobilityUnits.none => "#N/A",
+                eIonMobilityUnits.drift_time_msec => "msec",
+                eIonMobilityUnits.inverse_K0_Vsec_per_cm2 => "Vs/cm^2",
+                eIonMobilityUnits.compensation_V => "V",
+                eIonMobilityUnits.waters_sonar => "m/z",
+                _ => "unknown ion mobility type",
+            };
         }
 
         public string UnitsString
