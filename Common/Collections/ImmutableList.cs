@@ -178,14 +178,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
                 return true;
             }
 
-            var that = o as ImmutableList<T>;
-
-            if (null == that)
-            {
-                return false;
-            }
-
-            return this.SequenceEqual(that);
+            return o is ImmutableList<T> that && this.SequenceEqual(that);
         }
 
         public abstract int Count { get; }

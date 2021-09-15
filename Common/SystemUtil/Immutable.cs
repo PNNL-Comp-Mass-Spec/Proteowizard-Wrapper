@@ -146,9 +146,7 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
 
             set(immutable, value);
 
-            var validating = immutable as IValidating;
-
-            if (validating != null)
+            if (immutable is IValidating validating)
                 validating.Validate();
 
             return immutable;
@@ -208,9 +206,7 @@ namespace pwiz.ProteowizardWrapper.Common.SystemUtil
 
             set(immutable);
 
-            var validating = immutable as IValidating;
-
-            if (validating != null)
+            if (immutable is IValidating validating)
                 (validating).Validate();
 
             return immutable;
