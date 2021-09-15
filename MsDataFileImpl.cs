@@ -56,9 +56,13 @@ namespace pwiz.ProteowizardWrapper
     /// </remarks>
     internal class MsDataFileImpl : IDisposable
     {
+        // ReSharper disable CommentTypo
+
         // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, idx, lockmass, mslevel, pre, pwiz, readonly, snr, structs, wiff
         // Ignore Spelling: Biotech, Bruker, Shimadzu
-        // Ignore Spelling: cid, ecd, etd, hcd, irmpd, mpd, pqd, sid
+        // Ignore Spelling: cid, ecd, etd, ethcd, hcd, irmpd, mpd, pqd, sid
+
+        // ReSharper restore CommentTypo
 
         #region PNNL Added functions
 
@@ -2227,6 +2231,10 @@ namespace pwiz.ProteowizardWrapper
                         activationTypes.Add("hcd");
                         break;
 
+                    case CVID.MS_PD:        // Aka MS_plasma_desorption
+                        activationTypes.Add("pd");
+                        break;
+
                     case CVID.MS_PQD:       // Aka MS_pulsed_q_dissociation
                         activationTypes.Add("pqd");
                         break;
@@ -2246,6 +2254,15 @@ namespace pwiz.ProteowizardWrapper
                     case CVID.MS_IRMPD:       // Aka MS_infrared_multiphoton_dissociation
                         activationTypes.Add("irmpd");
                         break;
+
+                    case CVID.MS_EThcD:
+                        activationTypes.Add("ethcd");
+                        break;
+
+                        // Future:
+                        // case CVID.MS_ETciD:    // Corresponds to MS:1003182
+                        //    activationTypes.Add("ETciD");
+                        //    break;
                 }
             }
 
