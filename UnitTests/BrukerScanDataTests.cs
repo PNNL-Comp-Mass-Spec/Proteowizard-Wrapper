@@ -11,6 +11,8 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class BrukerScanDataTests
     {
+        // Ignore Spelling: Bruker, cid
+
         [Test]
         [TestCase("MZ20160603PPS_edta_000004.d", 1, 1, 0, 1)]
         [TestCase("Blank-2_05May16_Leopard_Infuse_1_01_7976.d", 1, 1, 1, 0)]

@@ -18,6 +18,8 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class ProteoWizardWrapperTests
     {
+        // Ignore Spelling: Synapt
+
         [Test]
         [TestCase("Angiotensin_325-CID.raw", false, 10, 10, 26390, 1.4326E+008, 4.2483E+006)]
         [TestCase("Angiotensin_325-ETD.raw", false, 10, 10, 31505, 1.4025E+008, 2.6627E+006)]

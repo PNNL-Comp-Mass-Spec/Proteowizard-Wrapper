@@ -12,6 +12,8 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class ThermoScanDataTests
     {
+        // Ignore Spelling: cid, etd, hcd, sa
+
         [Test]
         [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW")]
         [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw")]
@@ -55,7 +57,7 @@ namespace ProteowizardWrapperUnitTests
                 {39004, ce30},
                 {39005, ce30},
                 {39006, etdScanBuggyResults},   // This is an ETD scan with collision energy 120.55
-                {39007, ce120},                 // Actually has two collision energies (120.55 and 20.00) but Proteowizard only reports 120.55
+                {39007, ce120},                 // Actually has two collision energies (120.55 and 20.00) but ProteoWizard only reports 120.55
                 {39008, ce120},
                 {39009, ce30},
                 {39010, ce30}
@@ -166,7 +168,7 @@ namespace ProteowizardWrapperUnitTests
 
                         if (activationTypes.Contains("etd"))
                         {
-                            // Proteowizard has a bug where the collision energy is not reported correctly for etd spectra
+                            // ProteoWizard has a bug where the collision energy is not reported correctly for etd spectra
                             // Thus, skip the assertion
                         }
                         else

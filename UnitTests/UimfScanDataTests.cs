@@ -10,6 +10,8 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class UimfScanDataTests
     {
+        // Ignore Spelling: Centroided
+
         [Test]
         [TestCase("20160211_Agilent_tunemix_pos_0002.UIMF", 1, 20, 2809, 0, 2809)]
         [TestCase("QC_Shew_IMER_500ng_Run-1_4May16_Oak_15-01-16.UIMF", 50, 70, 2078, 0, 2078)]
