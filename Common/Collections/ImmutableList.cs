@@ -112,7 +112,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             return new Impl(arrayCopy ?? elements.ToArray());
         }
 
-        public static ImmutableList<T> ValueOf(T[] values, bool takeBuffer)
+        public static ImmutableList<T> ValueOf(T[] values)
         {
             return new Impl(values);
         }
