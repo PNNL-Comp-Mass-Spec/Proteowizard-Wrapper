@@ -80,7 +80,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         {
             // Extra care necessary to deal with zero correctly
             if (mz.IsNegative != step.IsNegative && mz.Value != 0 && step.Value != 0)
-                throw new InvalidOperationException(@"polarity mismatch");
+                throw new InvalidOperationException("polarity mismatch");
 
             return new SignedMz(mz.Value + step.Value, mz.IsNegative || step.IsNegative);
         }
@@ -103,7 +103,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         {
             // Extra care necessary to deal with zero correctly
             if (mz.IsNegative != step.IsNegative && mz.Value != 0 && step.Value != 0)
-                throw new InvalidOperationException(@"polarity mismatch");
+                throw new InvalidOperationException("polarity mismatch");
 
             return new SignedMz(mz.Value - step.Value, mz.IsNegative || step.IsNegative);
         }
