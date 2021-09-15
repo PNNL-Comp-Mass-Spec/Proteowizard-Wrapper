@@ -46,7 +46,7 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
         /// </summary>
         public static ImmutableList<T> ValueOfOrEmpty<T>(IEnumerable<T> values)
         {
-            if (null == values)
+            if (values == null)
             {
                 return ImmutableList<T>.EMPTY;
             }
