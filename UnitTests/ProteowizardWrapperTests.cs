@@ -97,7 +97,7 @@ namespace ProteowizardWrapperUnitTests
 
                     Console.WriteLine();
                     Console.WriteLine("ScanIndex {0}, NativeId {1}, Elution Time {2:F2} minutes, MS Level {3}",
-                        spectrumIndex, spectrum.NativeId, spectrum.RetentionTime, spectrum.Level);
+                        spectrumIndex, spectrum.Id, spectrum.RetentionTime, spectrum.Level);
 
                     // Use the following to get the MZs and Intensities
                     var mzList = spectrum.Mzs.ToList();
