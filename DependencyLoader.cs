@@ -326,7 +326,7 @@ namespace pwiz.ProteowizardWrapper
 
                 var subdirectoriesOriginal = possibleInstallDirs.ToArray();
 
-                possibleInstallDirs = byVersion.Select(x => x.Item2).ToList();
+                possibleInstallDirs = byVersion.ConvertAll(x => x.Item2);
 
                 // Guarantee that any directory where we couldn't parse a version is in the list, but at the end.
                 foreach (var directory in subdirectoriesOriginal)
@@ -341,7 +341,7 @@ namespace pwiz.ProteowizardWrapper
             {
                 // Sorting by version failed, try the old method.
                 // reverse the sort order - this should give us the highest installed version of ProteoWizard first
-                possibleInstallDirs.Sort((x, y) => string.Compare(y.FullName, x.FullName, StringComparison.Ordinal));
+                possibleInstallDirs.Sort((x, y) => string.CompareOrdinal(y.FullName, x.FullName));
             }
 
             foreach (var directory in possibleInstallDirs)
