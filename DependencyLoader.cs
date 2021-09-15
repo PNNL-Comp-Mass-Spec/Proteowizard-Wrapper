@@ -241,8 +241,8 @@ namespace pwiz.ProteowizardWrapper
             var localAppDataDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Apps"));
             if (localAppDataDir.Exists)
             {
-                var bitness = Environment.Is64BitProcess ? 64 : 32;
-                possibleInstallDirs.AddRange(localAppDataDir.EnumerateDirectories($"ProteoWizard*{bitness}-bit"));
+                var bits = Environment.Is64BitProcess ? 64 : 32;
+                possibleInstallDirs.AddRange(localAppDataDir.EnumerateDirectories($"ProteoWizard*{bits}-bit"));
             }
 
             // NOTE: This call returns the 32-bit Program Files directory if the running process is 32-bit
