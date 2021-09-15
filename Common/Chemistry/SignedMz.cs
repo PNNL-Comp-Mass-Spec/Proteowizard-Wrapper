@@ -39,7 +39,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
 
         public SignedMz(double mz, bool isNegative)
         {
-            bool isNegativeMz = mz < 0;
+            var isNegativeMz = mz < 0;
             _mz = isNegative != isNegativeMz ? -mz : mz;
         }
 

@@ -192,7 +192,7 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         {
             unchecked
             {
-                int result = Mobility.GetHashCode();
+                var result = Mobility.GetHashCode();
                 result = (result * 397) ^ Units.GetHashCode();
                 return result;
             }
