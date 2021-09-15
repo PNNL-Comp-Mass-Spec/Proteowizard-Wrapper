@@ -307,9 +307,6 @@ namespace pwiz.ProteowizardWrapper
         // PNNL Specific
         private readonly MethodInfo _binaryDataArrayGetData;
 
-        private readonly bool _requireVendorCentroidedMS1;
-        private readonly bool _requireVendorCentroidedMS2;
-
         private readonly bool _trimNativeID;
 
         private DetailLevel _detailMsLevel = DetailLevel.InstantMetadata;
@@ -487,8 +484,8 @@ namespace pwiz.ProteowizardWrapper
             // PNNL Update:
             InitializeReader(path, _msDataFile, sampleIndex, _config);
 
-            _requireVendorCentroidedMS1 = requireVendorCentroidedMS1;
-            _requireVendorCentroidedMS2 = requireVendorCentroidedMS2;
+            RequireVendorCentroidedMs1 = requireVendorCentroidedMS1;
+            RequireVendorCentroidedMs2 = requireVendorCentroidedMS2;
             _trimNativeID = trimNativeId;
 
             // PNNL Update:
@@ -556,8 +553,9 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public string RunId => _msDataFile.run.id;
 
-        public bool RequireVendorCentroidedMs1 => _requireVendorCentroidedMS1;
-        public bool RequireVendorCentroidedMs2 => _requireVendorCentroidedMS2;
+        public bool RequireVendorCentroidedMs1 { get; }
+
+        public bool RequireVendorCentroidedMs2 { get; }
 
         /// <summary>
         /// The run start time
@@ -933,10 +931,10 @@ namespace pwiz.ProteowizardWrapper
 
                         if (!hasSrmSpectra)
                         {
-                            if (_requireVendorCentroidedMS1)
+                            if (RequireVendorCentroidedMs1)
                                 centroidLevel.Add(1);
 
-                            if (_requireVendorCentroidedMS2)
+                            if (RequireVendorCentroidedMs2)
                                 centroidLevel.Add(2);
                         }
 
@@ -3069,7 +3067,6 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public class MsDataScanCache : IDisposable
     {
-        private readonly int _cacheSize;
         private readonly Dictionary<int, MsDataSpectrum> _cache;
 
         // PNNL Specific
@@ -3083,7 +3080,8 @@ namespace pwiz.ProteowizardWrapper
         // PNNL Specific
         private readonly Queue<int> _scanNativeStack;
 
-        public int Capacity => _cacheSize;
+        public int Capacity { get; }
+
         public int Size => _scanStack.Count;
 
         // PNNL Specific
@@ -3096,9 +3094,9 @@ namespace pwiz.ProteowizardWrapper
 
         public MsDataScanCache(int cacheSize)
         {
-            _cacheSize = cacheSize;
-            _cache = new Dictionary<int, MsDataSpectrum>(_cacheSize);
-            _cacheNative = new Dictionary<int, Spectrum>(_cacheSize);
+            Capacity = cacheSize;
+            _cache = new Dictionary<int, MsDataSpectrum>(Capacity);
+            _cacheNative = new Dictionary<int, Spectrum>(Capacity);
             _scanStack = new Queue<int>();
             _scanNativeStack = new Queue<int>();
         }
@@ -3116,7 +3114,7 @@ namespace pwiz.ProteowizardWrapper
 
         public void Add(int scanNum, MsDataSpectrum s)
         {
-            if (_scanStack.Count >= _cacheSize)
+            if (_scanStack.Count >= Capacity)
             {
                 _cache.Remove(_scanStack.Dequeue());
             }
