@@ -44,10 +44,12 @@ namespace ProteowizardWrapper_Test
                 Console.WriteLine(System.IO.Path.GetFileName(dataFilePath) + " IsABSciexFile: " + isABSciexFile);
                 Console.WriteLine(System.IO.Path.GetFileName(dataFilePath) + " IsThermoFile: " + isThermoFile);
 
-                for (var targetIndex = 1; targetIndex < reader.SpectrumCount; targetIndex *= 2)
+                for (var targetIndex = 0; targetIndex < reader.SpectrumCount; targetIndex *= 2)
                 {
                     var spectrum = reader.GetSpectrum(targetIndex);
                     Console.WriteLine("Spectrum at index {0,-4} is scan {1,-45} with {2,4} points", targetIndex, spectrum.NativeId, spectrum.Mzs.Length);
+                    if (targetIndex == 0)
+                        targetIndex = 1;
                 }
             }
             catch (Exception ex)
