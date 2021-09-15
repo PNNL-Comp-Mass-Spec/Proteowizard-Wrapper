@@ -263,10 +263,7 @@ namespace pwiz.ProteowizardWrapper
             _spectrumList = null;
 
             // PNNL Update:
-            if (_spectrumListBase == null)
-            {
-                _spectrumListBase = _msDataFile.run.spectrumList;
-            }
+            _spectrumListBase ??= _msDataFile.run.spectrumList;
             _msDataFile.run.spectrumList = _spectrumListBase;
         }
 
@@ -345,7 +342,8 @@ namespace pwiz.ProteowizardWrapper
 
             // Call via reflection to avoid issues of the ProteoWizardWrapper compiled reference vs. the ProteoWizard compiled DLL
             var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
-            if (dataObj != null && dataObj is IEnumerable<double> data)
+
+            if (dataObj is IEnumerable<double> data)
             {
                 return data.ToArray();
             }
@@ -377,7 +375,8 @@ namespace pwiz.ProteowizardWrapper
 
             // Call via reflection to avoid issues of the ProteoWizardWrapper compiled reference vs. the ProteoWizard compiled DLL
             var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
-            if (dataObj != null && dataObj is IList<double> data)
+
+            if (dataObj is IList<double> data)
             {
                 return ToFloatArray(data);
             }
@@ -910,8 +909,7 @@ namespace pwiz.ProteowizardWrapper
         {
             get
             {
-                return _chromatogramList = _chromatogramList ??
-                    _msDataFile.run.chromatogramList;
+                return _chromatogramList ??= _msDataFile.run.chromatogramList;
             }
         }
 
@@ -922,10 +920,7 @@ namespace pwiz.ProteowizardWrapper
                 if (_spectrumList == null)
                 {
                     // PNNL Update:
-                    if (_spectrumListBase == null)
-                    {
-                        _spectrumListBase = _msDataFile.run.spectrumList;
-                    }
+                    _spectrumListBase ??= _msDataFile.run.spectrumList;
 
                     // PNNL Update:
                     if (Filters.Count == 0)
@@ -1312,8 +1307,7 @@ namespace pwiz.ProteowizardWrapper
             bool useAlternateMethod = false)
         {
             // Assure that the progress delegate is not null
-            if (progressDelegate == null)
-                progressDelegate = delegate { };
+            progressDelegate ??= delegate { };
 
             var spectrumCount = SpectrumCount;
             times = new double[spectrumCount];
@@ -1496,10 +1490,10 @@ namespace pwiz.ProteowizardWrapper
                             }
                         }
                         break;
+
                     case eIonMobilityUnits.inverse_K0_Vsec_per_cm2:
-                        data = TryGetIonMobilityData(s, CVID.MS_mean_inverse_reduced_ion_mobility_array, ref _cvidIonMobility);
-                        if (data == null)
-                            data = TryGetIonMobilityData(s, CVID.MS_raw_inverse_reduced_ion_mobility_array, ref _cvidIonMobility);
+                        data = TryGetIonMobilityData(s, CVID.MS_mean_inverse_reduced_ion_mobility_array, ref _cvidIonMobility) ??
+                               TryGetIonMobilityData(s, CVID.MS_raw_inverse_reduced_ion_mobility_array, ref _cvidIonMobility);
                         break;
 
                         // default:
@@ -1885,10 +1879,7 @@ namespace pwiz.ProteowizardWrapper
         {
             int low = -1, high = -1;
 
-            if (IonMobilitySpectrumList != null)
-            {
-                IonMobilitySpectrumList.sonarMzToBinRange(mz, tolerance, ref low, ref high);
-            }
+            IonMobilitySpectrumList?.sonarMzToBinRange(mz, tolerance, ref low, ref high);
 
             return new Tuple<int, int>(low, high);
         }
@@ -3061,10 +3052,10 @@ namespace pwiz.ProteowizardWrapper
         {
             unchecked
             {
-                var result = Model != null ? Model.GetHashCode() : 0; // N.B. generated code starts with result = 0, which causes an inspection warning
-                result = (result * 397) ^ (Ionization != null ? Ionization.GetHashCode() : 0);
-                result = (result * 397) ^ (Analyzer != null ? Analyzer.GetHashCode() : 0);
-                result = (result * 397) ^ (Detector != null ? Detector.GetHashCode() : 0);
+                var result = Model?.GetHashCode() ?? 0; // N.B. generated code starts with result = 0, which causes an inspection warning
+                result = (result * 397) ^ (Ionization?.GetHashCode() ?? 0);
+                result = (result * 397) ^ (Analyzer?.GetHashCode() ?? 0);
+                result = (result * 397) ^ (Detector?.GetHashCode() ?? 0);
 
                 return result;
             }
