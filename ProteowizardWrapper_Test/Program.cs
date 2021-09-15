@@ -1,13 +1,12 @@
 ﻿using System;
 
-
 namespace ProteowizardWrapper_Test
 {
-    class Program
+    internal static class Program
     {
         // Ignore Spelling: uncheck
 
-        static void Main(string[] args)
+        private static void Main()
         {
             // Note: when compiling as AnyCPU, uncheck option "Prefer 32-bit" to assure that ProteoWizard loads from
             //       C:\DMS_Programs\ProteoWizard  or  C:\Program Files\ProteoWizard

@@ -5,7 +5,7 @@ using pwiz.ProteowizardWrapper;
 
 namespace ProteowizardWrapperUnitTests
 {
-    internal class cvParamUtilities
+    internal static class cvParamUtilities
     {
         /// <summary>
         /// CVIDs used by the unit tests

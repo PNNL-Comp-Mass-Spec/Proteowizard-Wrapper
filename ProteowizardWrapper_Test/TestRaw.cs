@@ -2,7 +2,7 @@
 
 namespace ProteowizardWrapper_Test
 {
-    public class TestRaw
+    internal static class TestRaw
     {
         public static void TestReadBruker()
         {
