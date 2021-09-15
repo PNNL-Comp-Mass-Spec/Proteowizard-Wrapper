@@ -328,24 +328,28 @@ namespace pwiz.ProteowizardWrapper
             // PNNL Update:
 
             // Original code
-            //return binaryDataArray.data.ToArray();
+            // return binaryDataArray.data.ToArray();
 
             // BinaryDataArray.get_data() problem fix
             // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.msdata.BinaryData, is a semi-automatic wrapper for a C++ vector, which implements IList<double>
             // Pre-Nov. 7th, 2018 pwiz_binding_cli.dll: binaryDataArray.data returns pwiz.CLI.util.BinaryData implements IList<double>, but also provides other optimization functions
             // The best way to access this before was binaryDataArray.data.ToArray()
-            // In the future, this could be changed to binaryDataArray.data.Storage.ToArray(), but that may lead to more data copying than just using the IEnumerable<double> interface
-            // Both versions implement IList<double>, so I can get the object via reflection and cast it to an IList<double> (or IEnumerable<double>).
 
-            // Call via reflection to avoid issues of the ProteoWizardWrapper compiled reference vs. the ProteoWizard compiled DLL
-            var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
+            // Between 2019 and 2021 we used reflection to avoid issues of the ProteoWizardWrapper compiled reference vs. the ProteoWizard compiled DLL
 
-            if (dataObj is IEnumerable<double> data)
-            {
-                return data.ToArray();
-            }
+            // var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
+            // if (dataObj is IEnumerable<double> data)
+            // {
+            //     return data.ToArray();
+            // }
+            // return new double[0];
 
-            return new double[0];
+            // However, with the update to ProteoWizard v3.0.21257 the method shown above using .Invoke() followed by .ToArray()
+            // results in corrupt arrays being returned (with lots of zeros).
+
+            // Instead, use .Storage().ToArray()
+
+            return binaryDataArray.data.Storage().ToArray();
         }
 
         private static float[] ToFloatArray(IList<double> list)
@@ -371,15 +375,19 @@ namespace pwiz.ProteowizardWrapper
             // In the future, this could be changed to binaryDataArray.data.Storage.ToArray(), but that may lead to more data copying than just using the IEnumerable<double> interface
             // Both versions implement IList<double>, so I can get the object via reflection and cast it to an IList<double> (or IEnumerable<double>).
 
+            // Old method:
             // Call via reflection to avoid issues of the ProteoWizardWrapper compiled reference vs. the ProteoWizard compiled DLL
-            var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
+            // var dataObj = _binaryDataArrayGetData?.Invoke(binaryDataArray, null);
 
-            if (dataObj is IList<double> data)
-            {
-                return ToFloatArray(data);
-            }
+            // if (dataObj is IList<double> data)
+            // {
+            //     return ToFloatArray(data);
+            // }
 
-            return new float[0];
+            // return new float[0];
+
+            // Use .Storage().ToArray()
+            return ToFloatArray(binaryDataArray.data.Storage());
         }
 
         /// <summary>
