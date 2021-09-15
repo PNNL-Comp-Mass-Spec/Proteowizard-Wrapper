@@ -21,6 +21,7 @@ using pwiz.CLI.data;
 using pwiz.CLI.msdata;
 
 // ReSharper disable UnusedMember.Global
+
 namespace pwiz.ProteowizardWrapper
 {
     /// <summary>
@@ -534,6 +535,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Check if the file has drift time spectra
         /// </summary>
+        [Obsolete("Use HasIonMobilitySpectra")]
         public bool HasDriftTimeSpectra => mDataReader.HasDriftTimeSpectra;
 
         /// <summary>
@@ -596,6 +598,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
+        [Obsolete("Use GetIonMobility")]
         public double? GetDriftTimeMsec(int scanIndex)
         {
             return mDataReader.GetDriftTimeMsec(scanIndex);
@@ -616,6 +619,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
+        [Obsolete("Deprecated")]
         public MsTimeAndPrecursors GetInstantTimeAndPrecursors(int scanIndex)
         {
             return mDataReader.GetInstantTimeAndPrecursors(scanIndex);
@@ -626,9 +630,9 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <param name="scanIndex"></param>
         /// <returns></returns>
-        public MsPrecursor[] GetPrecursors(int scanIndex)
+        public IList<MsPrecursor> GetPrecursors(int scanIndex)
         {
-            return mDataReader.GetPrecursors(scanIndex);
+            return mDataReader.GetPrecursors(scanIndex, 1);
         }
 
         /// <summary>

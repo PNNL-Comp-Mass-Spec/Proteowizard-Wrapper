@@ -19,6 +19,7 @@
 using System.Collections.Generic;
 
 // ReSharper disable UnusedMember.Global
+
 namespace pwiz.ProteowizardWrapper
 {
 #pragma warning disable 1591
