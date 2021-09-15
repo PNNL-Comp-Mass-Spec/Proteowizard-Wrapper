@@ -22,6 +22,12 @@ namespace ProteowizardWrapper_Test
                 const int targetIndex = 0;
                 var spectrum = reader.GetSpectrum(targetIndex);
                 Console.WriteLine("Spectrum at index {0} is scan {1} with {2} points", targetIndex, spectrum.Id, spectrum.Mzs.Length);
+
+                var precursors = reader.GetPrecursors(targetIndex);
+                foreach (var item in precursors)
+                {
+                    Console.WriteLine("  Precursor: {0:F2} m/z", item.IsolationMz);
+                }
             }
             catch (Exception ex)
             {
@@ -48,6 +54,13 @@ namespace ProteowizardWrapper_Test
                 {
                     var spectrum = reader.GetSpectrum(targetIndex);
                     Console.WriteLine("Spectrum at index {0,-4} is scan {1,-45} with {2,4} points", targetIndex, spectrum.Id, spectrum.Mzs.Length);
+
+                    var precursors = reader.GetPrecursors(targetIndex);
+                    foreach (var item in precursors)
+                    {
+                        Console.WriteLine("  Precursor: {0:F2} m/z", item.IsolationMz);
+                    }
+
                     if (targetIndex == 0)
                         targetIndex = 1;
                 }
