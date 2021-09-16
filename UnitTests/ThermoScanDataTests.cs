@@ -669,6 +669,9 @@ namespace ProteowizardWrapperUnitTests
 #pragma warning disable 618
                 Assert.AreEqual(spectrum.NativeId, expectedNativeId, "NativeId is not in the expected format for scan {0}", scanNumber);
 #pragma warning restore 618
+
+                var nativeId = reader.GetSpectrumId(spectrumIndex);
+                Assert.AreEqual(nativeId, expectedNativeId, "NativeId returned by GetSpectrumId() is not in the expected format for scan {0}", scanNumber);
             }
 
             Console.WriteLine("scanCountMS1={0}", scanCountMS1);
