@@ -635,7 +635,7 @@ namespace ProteowizardWrapperUnitTests
                         "{0} {1} {2,5} {3:0.00} {4:0} {5,3:0} {6,4:0} {7:0.0E+0} {8,8:0.000} {9:0.0E+0} {10,8:0.00} {11,-8} {12} {13,-5} {14,6:0.00} {15}",
                         scanNumber, spectrum.Level,
                         numPeaks, retentionTime,
-                        cvParamUtilities.CheckNull(spectrum.DriftTimeMsec),
+                        cvParamUtilities.CheckNull(spectrum.IonMobility.Mobility),
                         lowMass, highMass,
                         totalIonCurrent,
                         basePeakMZ, basePeakIntensity, parentIonMZ,
