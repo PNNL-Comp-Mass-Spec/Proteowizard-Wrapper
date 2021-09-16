@@ -923,6 +923,8 @@ namespace pwiz.ProteowizardWrapper
                         }
 
                         _lockmassFunction = null;
+
+                        // ReSharper disable once MergeIntoPattern
                         if (_lockmassParameters != null && !_lockmassParameters.IsEmpty && _spectrumList != null)
                         {
                             // N.B. it's OK for lockmass wrapper to wrap centroiding wrapper, but not vice versa.
@@ -2100,6 +2102,7 @@ namespace pwiz.ProteowizardWrapper
 
         public IonMobilityValue GetIonMobility(int scanIndex) // for non-combined-mode IMS
         {
+            // ReSharper disable once MergeIntoPattern
             return GetMetaDataValue(scanIndex, GetIonMobility, v => v != null && v.HasValue, v => v, ref _detailIonMobility);
         }
 
