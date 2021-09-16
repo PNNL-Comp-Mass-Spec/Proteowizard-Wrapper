@@ -1123,6 +1123,7 @@ namespace pwiz.ProteowizardWrapper
 
                 var timeIntensityPairList = new TimeIntensityPairList();
                 chromatogram.getTimeIntensityPairs(ref timeIntensityPairList);
+
                 var times = new double[timeIntensityPairList.Count];
 
                 for (var i = 0; i < times.Length; i++)
@@ -1239,7 +1240,7 @@ namespace pwiz.ProteowizardWrapper
         /// cannot be used.
         /// </summary>
         /// <remarks>See also the overloaded version that accepts a CancellationToken</remarks>
-        /// <param name="times">Output: scan times (in minutes)</param>
+        /// <param name="times">Output: scan times (in seconds)</param>
         /// <param name="msLevels">Output: MS Levels (1 for MS1, 2 for MS/MS, etc.)</param>
         /// <param name="progressDelegate">
         /// Delegate method for reporting progress while iterating over the spectra;
@@ -1261,7 +1262,7 @@ namespace pwiz.ProteowizardWrapper
         /// cannot be used.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <param name="times">Output: scan times (in minutes)</param>
+        /// <param name="times">Output: scan times (in seconds)</param>
         /// <param name="msLevels">Output: MS Levels (1 for MS1, 2 for MS/MS, etc.)</param>
         /// <param name="progressDelegate">
         /// Delegate method for reporting progress while iterating over the spectra;

@@ -416,7 +416,7 @@ namespace pwiz.ProteowizardWrapper
         /// cannot be used.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <param name="times">Output: scan times (in minutes for Thermo files, seconds for Bruker .D directories)</param>
+        /// <param name="times">Output: scan times (in seconds)</param>
         /// <param name="msLevels">Output: MS Levels (1 for MS1, 2 for MS/MS, etc.)</param>
         /// <param name="progressDelegate">
         /// Delegate method for reporting progress while iterating over the spectra;
