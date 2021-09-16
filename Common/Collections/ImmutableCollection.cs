@@ -32,10 +32,6 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
             Collection = collection;
         }
 
-        protected ImmutableCollection()
-        {
-        }
-
         protected ICollection<T> Collection
         {
             get => _collection;

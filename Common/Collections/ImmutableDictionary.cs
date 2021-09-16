@@ -29,10 +29,6 @@ namespace pwiz.ProteowizardWrapper.Common.Collections
         {
         }
 
-        protected ImmutableDictionary()
-        {
-        }
-
         protected IDictionary<TKey, TValue> Dictionary
         {
             get => (IDictionary<TKey, TValue>)Collection;
