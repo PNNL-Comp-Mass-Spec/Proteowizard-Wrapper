@@ -54,7 +54,7 @@ namespace ProteowizardWrapperUnitTests
 
                     try
                     {
-                        var spectrum = reader.GetSpectrum(spectrumIndex, true);
+                        var spectrum = reader.GetSpectrum(spectrumIndex);
 
                         var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
 
@@ -221,7 +221,7 @@ namespace ProteowizardWrapperUnitTests
                 var scanNumber = scan.Key;
                 var spectrumIndex = scan.Value;
 
-                var spectrum = reader.GetSpectrum(spectrumIndex, true);
+                var spectrum = reader.GetSpectrum(spectrumIndex);
                 var spectrumParams = reader.GetSpectrumCVParamData(spectrumIndex);
                 var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
 
@@ -344,7 +344,7 @@ namespace ProteowizardWrapperUnitTests
                 var scanNumber = scan.Key;
                 var spectrumIndex = scan.Value;
 
-                var spectrum = reader.GetSpectrum(spectrumIndex, true);
+                var spectrum = reader.GetSpectrum(spectrumIndex);
 
                 var dataPointsRead = spectrum.Mzs.Length;
 
