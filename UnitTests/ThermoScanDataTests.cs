@@ -840,6 +840,5 @@ namespace ProteowizardWrapperUnitTests
             Assert.Fail("File not found: " + rawFileName);
             return null;
         }
-
     }
 }
