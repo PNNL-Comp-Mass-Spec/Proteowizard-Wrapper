@@ -952,6 +952,9 @@ namespace pwiz.ProteowizardWrapper
                                 {
                                     if (GetMsLevel(spectrum) == 1)
                                     {
+                                        // id.abbreviate() converts "function=1 process=0 scan=1" to "1.0.1"
+                                        // id.abbreviate() converts "merged=1 function=1 block=1" to "1.1.1"
+
                                         var function =
                                             MsDataSpectrum.WatersFunctionNumberFromId(id.abbreviate(spectrum.id),
                                             HasCombinedIonMobilitySpectra && spectrum.id.Contains(MERGED_TAG));
@@ -1614,6 +1617,14 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get SpectrumIDs for all spectra in the run
         /// </summary>
+        /// <remarks>
+        /// Example NativeIDs:
+        /// Thermo .Raw file:      controllerType=0 controllerNumber=1 scan=1
+        /// Bruker .d directory:   scan=1
+        /// Waters .raw directory: function=1 process=0 scan=1
+        /// Waters .raw IMS:       merged=1 function=1 block=1
+        /// UIMF file:             frame=1 scan=0 frameType=1
+        /// </remarks>
         /// <returns>List of NativeIds</returns>
         public List<string> GetSpectrumIdList()
         {
@@ -1702,8 +1713,8 @@ namespace pwiz.ProteowizardWrapper
                 // controllerType=0 controllerNumber=1 scan=15
                 new(@"controllerType=(?<ControllerType>\d+) controllerNumber=(?<ControllerNumber>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
-                // Waters .raw directories
-                // function=5 process=2 scan=15
+                // Waters .raw directories (non-IMS)
+                // function=1 process=0 scan=1
                 new(@"function=(?<Function>\d+) process=(?<Process>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
                 // Bruker/Agilent YEP; Bruker BAF; Bruker U2; scan number only nativeID format
@@ -2475,7 +2486,7 @@ namespace pwiz.ProteowizardWrapper
         public int SampleIndex { get; }
 
         /// <summary>
-        /// Returns true if MsDataFileImpl's reader list can read the file path.
+        /// Returns true if the file can be successfully opened
         /// </summary>
         public static bool IsValidFile(string filepath)
         {
