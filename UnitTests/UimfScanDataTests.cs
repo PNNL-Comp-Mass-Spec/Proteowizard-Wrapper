@@ -306,9 +306,9 @@ namespace ProteowizardWrapperUnitTests
 
                 Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for frame {0}, scan {1} ", frameNumber, scanNumber);
 
-                var totalIonCurrent = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_TIC);
-                var basePeakMZ = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_m_z);
-                var basePeakIntensity = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_intensity);
+                var totalIonCurrent = CVParamUtilities.GetCvParamValueDbl(spectrumParams, CVParamUtilities.CVIDs.MS_TIC);
+                var basePeakMZ = CVParamUtilities.GetCvParamValueDbl(spectrumParams, CVParamUtilities.CVIDs.MS_base_peak_m_z);
+                var basePeakIntensity = CVParamUtilities.GetCvParamValueDbl(spectrumParams, CVParamUtilities.CVIDs.MS_base_peak_intensity);
 
                 double isolationMZ = 0;
                 double parentIonMZ = 0;
@@ -327,7 +327,7 @@ namespace ProteowizardWrapperUnitTests
 
                 GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionMobilityDriftTime, out var lowMass, out var highMass);
 
-                var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
+                var retentionTime = CVParamUtilities.CheckNull(spectrum.RetentionTime);
 
                 var numPeaks = spectrum.Mzs.Length;
                 var ionMode = spectrum.NegativeCharge ? "negative" : "positive";
@@ -338,9 +338,9 @@ namespace ProteowizardWrapperUnitTests
                         frameNumber, scanNumber, spectrum.Level,
                         numPeaks, retentionTime, scanStartTime,
 #pragma warning disable 618
-                        cvParamUtilities.CheckNull(spectrum.DriftTimeMsec),
+                        CVParamUtilities.CheckNull(spectrum.DriftTimeMsec),
 #pragma warning restore 618
-                        cvParamUtilities.CheckNull(spectrum.IonMobility.Mobility),
+                        CVParamUtilities.CheckNull(spectrum.IonMobility.Mobility),
                         ionMobilityDriftTime,
                         lowMass, highMass,
                         totalIonCurrent, basePeakMZ, basePeakIntensity, parentIonMZ,
@@ -530,11 +530,11 @@ namespace ProteowizardWrapperUnitTests
             // (cvScanInfo.Scans is a list, but .uimf files typically have a single scan for each spectrum)
             foreach (var scanEntry in cvScanInfo.Scans)
             {
-                scanStartTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_scan_start_time);
-                ionMobilityDriftTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_ion_mobility_drift_time);
+                scanStartTime = CVParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_scan_start_time);
+                ionMobilityDriftTime = CVParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_ion_mobility_drift_time);
 
-                lowMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_lower_limit);
-                highMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_upper_limit);
+                lowMass = CVParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, CVParamUtilities.CVIDs.MS_scan_window_lower_limit);
+                highMass = CVParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, CVParamUtilities.CVIDs.MS_scan_window_upper_limit);
 
                 break;
             }

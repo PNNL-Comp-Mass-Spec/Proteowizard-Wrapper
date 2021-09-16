@@ -606,9 +606,9 @@ namespace ProteowizardWrapperUnitTests
 
                 Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan {0}", scanNumber);
 
-                var totalIonCurrent = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_TIC);
-                var basePeakMZ = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_m_z);
-                var basePeakIntensity = cvParamUtilities.GetCvParamValueDbl(spectrumParams, cvParamUtilities.CVIDs.MS_base_peak_intensity);
+                var totalIonCurrent = CVParamUtilities.GetCvParamValueDbl(spectrumParams, CVParamUtilities.CVIDs.MS_TIC);
+                var basePeakMZ = CVParamUtilities.GetCvParamValueDbl(spectrumParams, CVParamUtilities.CVIDs.MS_base_peak_m_z);
+                var basePeakIntensity = CVParamUtilities.GetCvParamValueDbl(spectrumParams, CVParamUtilities.CVIDs.MS_base_peak_intensity);
 
                 double parentIonMZ = 0;
                 var activationType = string.Empty;
@@ -624,7 +624,7 @@ namespace ProteowizardWrapperUnitTests
 
                 GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionInjectionTime, out var filterText, out var lowMass, out var highMass);
 
-                var retentionTime = cvParamUtilities.CheckNull(spectrum.RetentionTime);
+                var retentionTime = CVParamUtilities.CheckNull(spectrum.RetentionTime);
                 Assert.AreEqual(retentionTime, scanStartTime, 0.0001, "Mismatch between spectrum.RetentionTime and CVParam MS_scan_start_time");
 
                 var numPeaks = spectrum.Mzs.Length;
@@ -635,7 +635,7 @@ namespace ProteowizardWrapperUnitTests
                         "{0} {1} {2,5} {3:0.00} {4:0} {5,3:0} {6,4:0} {7:0.0E+0} {8,8:0.000} {9:0.0E+0} {10,8:0.00} {11,-8} {12} {13,-5} {14,6:0.00} {15}",
                         scanNumber, spectrum.Level,
                         numPeaks, retentionTime,
-                        cvParamUtilities.CheckNull(spectrum.IonMobility.Mobility),
+                        CVParamUtilities.CheckNull(spectrum.IonMobility.Mobility),
                         lowMass, highMass,
                         totalIonCurrent,
                         basePeakMZ, basePeakIntensity, parentIonMZ,
