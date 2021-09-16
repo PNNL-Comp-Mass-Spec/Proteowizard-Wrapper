@@ -194,8 +194,8 @@ namespace ProteowizardWrapperUnitTests
                     Assert.AreEqual(expectedSpectraInFile, reader.SpectrumCount, "Total spectrum count mismatch");
 
                     Assert.AreEqual(expectedSpectraLoaded, spectraLoaded, "Spectra loaded mismatch");
+                    Assert.AreEqual(expectedTotalDataPoints, totalPointsRead, "Data points read mismatch");
 
-                    Assert.AreEqual(expectedTotalDataPoints, totalPointsRead, "Spectra loaded mismatch");
                     var ticComparisonTolerance = expectedMedianTIC * 0.01;
                     var bpiComparisonTolerance = expectedMedianBPI * 0.01;
 
