@@ -1,0 +1,71 @@
+Parameters for D:\Fast LC .PRO\ACQUDB\Fast LC test.EXP
+ 
+Temperature Correction Is Disabled
+TDC Gain Control	0.0
+TDC Amp Edge Control	0.0
+Using 4 GHz TDC	YES
+ 
+Instrument Parameters - Function 1:
+Polarity	ES+
+Calibration	Dynamic 2
+Capillary	2.14	2.16
+Cone	35	61
+RF Lens1 Energy	15.1
+Aperture 1	0.0
+RF Lens2 Energy	0.0
+Source Temp (°C)	70	520
+Desolvation Temp (°C)	100	1020
+Cone Gas Flow (L/Hr)	50	MAX
+Desolvation Gas Flow (L/Hr)	500	MAX
+LM Resolution	5.0
+HM Resolution	5.0
+Collision Energy	10.0	9.4
+Ion Energy	1.5
+Steering	1.00	-2.65
+Entrance	65.0	-65.3
+Pre-filter	5.0	4.5
+Transport	7.0	-10.4
+Aperture3	4.0	-3.9
+Acceleration	200	-198
+Focus	0	0
+Tube Lens	95	-95
+Offset1	-0.8	-65.6
+Offset2	0.0	-66.2
+Pusher	980	901
+TOF (kV)	9.10	-9.25
+Reflectron	35.00	2.05
+Pusher Cycle Time (µs)	Auto
+Pusher Frequency (Hz)	16129.03
+Multiplier	550	-567
+MCP	2150	2117
+Centroid Threshold	5.0
+Min Points	3.0
+Np Multiplier	0.70
+Resolution	10000.0
+Lock Mass	0.0000
+Mass Window +/-	1.0000
+Lteff	1803.3100
+Veff	9100.0000
+	1.0000
+Pirani Pressure(mbar)	1.69e-1
+Penning Pressure(mbar)	OFF
+Tof Penning Pressure(mbar)	5.30e-7
+ 
+ 
+Function Parameters - Function 1 - TOF MS FUNCTION
+Start Mass				400.0
+End Mass				2000.0
+Start Time (mins)			0.0
+End Time (mins)				30.0
+Data Format				Continuum
+Ion Mode				ES Mode
+Polarity				Positive
+Instrument Parameter Filename		D:\Fast LC .PRO\ACQUDB\Fast LC.ipr
+Scans To Sum				16960
+Scan Time (sec)				1.9
+Interscan Time (sec)			0.1
+Use Tune Page Cone Voltage		YES
+Cone Voltage (V)			35.0
+Use Tune Page Probe Temperature		NO
+API Probe Temp				100.0
+ 

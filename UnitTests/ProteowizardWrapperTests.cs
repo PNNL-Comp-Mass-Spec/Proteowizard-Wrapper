@@ -27,6 +27,7 @@ namespace ProteowizardWrapperUnitTests
         [TestCase("Angiotensin_325-HCD.raw", false, 10, 10, 36158, 8.3286E+007, 2.2395E+006)]
         [TestCase("Angiotensin_AllScans.raw", false, 1775, 51, 26751, 1.0861E+009, 1.2757E+008)]
         [TestCase("PPS20190130US1-1_1030TRANCID35.raw", true, 58, 26, 117615, 28029.3077, 167.3461)]
+        [TestCase("FastLC_test_PCQS132x_03.raw", true, 878, 43, 144, 2.09302, 0.86046)]
         public void TestPWiz(
             string fileOrDirectoryName,
             bool isDirectory,

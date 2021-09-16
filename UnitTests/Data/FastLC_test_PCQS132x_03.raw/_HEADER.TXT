@@ -1,0 +1,35 @@
+$$ Version: 01.00
+$$ Acquired Name: Fast LC test_PCQS132x_03
+$$ Acquired Date: 14-Apr-2004
+$$ Acquired Time: 21:24:54
+$$ Job Code: Fast LC test
+$$ Task Code: 
+$$ User Name: 
+$$ Instrument: QTOF
+$$ Conditions: 
+$$ Laboratory Name: 
+$$ Sample Description: April14_04 column4
+$$ Solvent Delay: 0.0000
+$$ Submitter: 
+$$ SampleID: 
+$$ Bottle Number: 14
+$$ Plate Desc: 
+$$ Cal MS1 Static: 0.000000000000000e0,T0
+$$ Cal MS2 Static: 0.000000000000000e0,T0
+$$ Associated Datafile: 
+$$ Cal MS1 Static Params: 0,0,0.00,0.00,0.0,0.0,0.0,,
+$$ Cal MS1 Dynamic Params: 0,0,0.00,0.00,0.0,0.0,0.0,,
+$$ Cal MS1 Fast Params: 0,0,0.00,0.00,0.0,0.0,0.0,,
+$$ Cal MS2 Static Params: 0,0,0.00,0.00,0.0,0.0,0.0,,
+$$ Cal MS2 Dynamic Params: 0,0,0.00,0.00,0.0,0.0,0.0,,
+$$ Cal MS2 Fast Params: 0,0,0.00,0.00,0.0,0.0,0.0,,
+$$ Cal Time: 11:59
+$$ Cal Date: 02/24/04
+$$ Analog Channel 1 Offset: 0.000
+$$ Analog Channel 2 Offset: 0.000
+$$ Analog Channel 3 Offset: 0.000
+$$ Analog Channel 4 Offset: 0.000
+$$ Mux Stream: 0
+$$ Cal Temperature: 7312363137794761100000000.0000000
+$$ Cal Function 1: 1.569235824676456e-2,9.906625393119439e-1,7.656554440477085e-4,-2.639227209222769e-5,4.476364432244148e-7,-2.996791376871935e-9,T1
+$$ Cal StdDev Function 1: 0.000000000000000e0
