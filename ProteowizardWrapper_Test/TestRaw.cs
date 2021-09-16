@@ -55,8 +55,7 @@ namespace ProteowizardWrapper_Test
                     var spectrum = reader.GetSpectrum(targetIndex);
                     Console.WriteLine("Spectrum at index {0,-4} is scan {1,-45} with {2,4} points", targetIndex, spectrum.Id, spectrum.Mzs.Length);
 
-                    var precursors = reader.GetPrecursors(targetIndex);
-                    foreach (var item in precursors)
+                    foreach (var item in reader.GetPrecursors(targetIndex))
                     {
                         Console.WriteLine("  Precursor: {0:F2} m/z", item.IsolationMz);
                     }
