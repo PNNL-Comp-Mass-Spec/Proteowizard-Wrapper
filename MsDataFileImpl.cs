@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using pwiz.CLI.cv;
@@ -58,7 +57,8 @@ namespace pwiz.ProteowizardWrapper
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, idx, lockmass, mslevel, pre, pwiz, readonly, snr, structs, wiff
+        // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, idx, lockmass, mslevel
+        // Ignore Spelling: pre, pwiz, readonly, snr, structs, typeof, wiff
         // Ignore Spelling: Biotech, Bruker, Shimadzu
         // Ignore Spelling: cid, ecd, etd, ethcd, hcd, irmpd, mpd, pqd, sid
 
@@ -309,7 +309,7 @@ namespace pwiz.ProteowizardWrapper
         private int? _lockmassFunction;  // For Waters lockmass correction
 
         // PNNL Specific
-        private readonly MethodInfo _binaryDataArrayGetData;
+        // Deprecated: private readonly MethodInfo _binaryDataArrayGetData;
 
         private readonly bool _trimNativeID;
 
@@ -511,7 +511,7 @@ namespace pwiz.ProteowizardWrapper
             // Both versions implement IList<double>, so I can get the object via reflection and cast it to an IList<double> (or IEnumerable<double>).
 
             // Get the MethodInfo for BinaryDataArray.data property accessor
-            _binaryDataArrayGetData = typeof(BinaryDataArray).GetProperty("data", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetMethod;
+            // Deprecated: _binaryDataArrayGetData = typeof(BinaryDataArray).GetProperty("data", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetMethod;
         }
 
         /// <summary>
