@@ -1717,6 +1717,11 @@ namespace pwiz.ProteowizardWrapper
                 // function=1 process=0 scan=1
                 new(@"function=(?<Function>\d+) process=(?<Process>\d+) scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
 
+                // Waters .raw directories (IMS)
+                // merged=1 function=1 block=1
+                // Treat block number as scan number
+                new(@"merged=(?<Merged>\d+) function=(?<Function>\d+) block=(?<ScanNumber>\d+)", RegexOptions.Compiled),
+
                 // Bruker/Agilent YEP; Bruker BAF; Bruker U2; scan number only nativeID format
                 // scan=1
                 new(@"scan=(?<ScanNumber>\d+)", RegexOptions.Compiled),
