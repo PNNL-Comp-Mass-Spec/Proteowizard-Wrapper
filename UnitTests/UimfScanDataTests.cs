@@ -367,8 +367,14 @@ namespace ProteowizardWrapperUnitTests
                         "Scan summary mismatch, scan " + scanNumber);
                 }
 
+                var expectedId = string.Format("{0}.{1}.1", frameNumber, scanNumber);
                 var expectedNativeId = string.Format("frame={0} scan={1} frameType=1", frameNumber, scanNumber);
-                Assert.AreEqual(spectrum.Id, expectedNativeId, "NativeId is not in the expected format for frame {0}, scan {1} ", frameNumber, scanNumber);
+
+                Assert.AreEqual(spectrum.Id, expectedId, "NativeId is not in the expected format for frame {0}, scan {1} ", frameNumber, scanNumber);
+
+#pragma warning disable 618
+                Assert.AreEqual(spectrum.NativeId, expectedNativeId, "NativeId is not in the expected format for frame {0}, scan {1} ", frameNumber, scanNumber);
+#pragma warning restore 618
             }
 
             Console.WriteLine("scanCountMS1={0}", scanCountMS1);

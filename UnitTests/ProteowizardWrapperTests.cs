@@ -25,8 +25,8 @@ namespace ProteowizardWrapperUnitTests
         [TestCase("Angiotensin_325-ETD.raw", false, 10, 10, 31505, 1.4025E+008, 2.6627E+006)]
         [TestCase("Angiotensin_325-ETciD-15.raw", false, 10, 10, 30883, 1.6188E+008, 3.0563E+006)]
         [TestCase("Angiotensin_325-HCD.raw", false, 10, 10, 36158, 8.3286E+007, 2.2395E+006)]
-        [TestCase("Angiotensin_AllScans.raw", false, 1775, 51, 25782, 1.0861E+009, 1.2757E+008)]
-        [TestCase("PPS20190130US1-1_1030TRANCID35.raw", true, 11600, 71, 241, 37.085, 6.8873)]
+        [TestCase("Angiotensin_AllScans.raw", false, 1775, 51, 26751, 1.0861E+009, 1.2757E+008)]
+        [TestCase("PPS20190130US1-1_1030TRANCID35.raw", true, 58, 26, 117615, 28029.3077, 167.3461)]
         public void TestPWiz(
             string fileOrDirectoryName,
             bool isDirectory,
@@ -97,10 +97,13 @@ namespace ProteowizardWrapperUnitTests
                     spectraLoaded++;
 
                     Console.WriteLine();
-                    Console.WriteLine("ScanIndex {0}, NativeId {1}, Elution Time {2:F2} minutes, MS Level {3}",
+                    Console.WriteLine("ScanIndex {0}, Id {1}, Elution Time {2:F2} minutes, MS Level {3}",
                         spectrumIndex, spectrum.Id, spectrum.RetentionTime, spectrum.Level);
 
                     // Use the following to get the MZs and Intensities
+                    // Waters dataset PPS20190130US1-1_1030TRANCID35.raw has IMS spectra, and thus the data is returned in blocks
+                    // Each block has repeated m/z values, e.g. 49.97062, 1047.687, ..., 1374.709, 5001.016, 49.97062, 220.8666, etc.
+
                     var mzList = spectrum.Mzs.ToList();
                     var intensities = spectrum.Intensities.ToList();
 
