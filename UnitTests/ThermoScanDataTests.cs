@@ -251,7 +251,7 @@ namespace ProteowizardWrapperUnitTests
 
                         Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
-                        GetScanFilterText(cvScanInfo, out var filterText);
+                        var filterText= reader.GetScanFilterText(spectrumIndex);
 
                         Assert.IsFalse(string.IsNullOrEmpty(filterText), "FilterText is empty but should not be");
 
@@ -433,9 +433,9 @@ namespace ProteowizardWrapperUnitTests
 
                 Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
-                GetScanFilterText(cvScanInfo, out var filterText);
+                var filterText = reader.GetScanFilterText(spectrumIndex);
 
-                if (filterText == null)
+                if (string.IsNullOrWhiteSpace(filterText))
                 {
                     Console.WriteLine("No filter string for scan {0}", scanNumber);
 
@@ -602,7 +602,6 @@ namespace ProteowizardWrapperUnitTests
 
                 var spectrum = reader.GetSpectrum(spectrumIndex, getBinaryData: true);
                 var spectrumParams = reader.GetSpectrumCVParamData(spectrumIndex);
-                var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
 
                 Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for scan {0}", scanNumber);
 
@@ -622,7 +621,7 @@ namespace ProteowizardWrapperUnitTests
                         activationType = string.Join(", ", precursor.ActivationTypes);
                 }
 
-                GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionInjectionTime, out var filterText, out var lowMass, out var highMass);
+                reader.GetScanMetadata(spectrumIndex, out var scanStartTime, out var ionInjectionTime, out var filterText, out var lowMass, out var highMass);
 
                 var retentionTime = CVParamUtilities.CheckNull(spectrum.RetentionTime);
                 Assert.AreEqual(retentionTime, scanStartTime, 0.0001, "Mismatch between spectrum.RetentionTime and CVParam MS_scan_start_time");
@@ -777,7 +776,7 @@ namespace ProteowizardWrapperUnitTests
 
                     var midPoint = (int)(spectrum.Intensities.Length / 2f);
 
-                    GetScanFilterText(cvScanInfo, out var filterText);
+                    var filterText = reader.GetScanFilterText(spectrumIndex);
 
                     var scanSummary =
                         string.Format(
@@ -842,38 +841,5 @@ namespace ProteowizardWrapperUnitTests
             return null;
         }
 
-        private static void GetScanFilterText(SpectrumScanContainer cvScanInfo, out string filterText)
-        {
-            GetScanMetadata(cvScanInfo, out _, out _, out filterText, out _, out _);
-        }
-
-        private static void GetScanMetadata(
-            SpectrumScanContainer cvScanInfo,
-            out double scanStartTime,
-            out double ionInjectionTime,
-            out string filterText,
-            out double lowMass,
-            out double highMass)
-        {
-            scanStartTime = 0;
-            ionInjectionTime = 0;
-            filterText = string.Empty;
-            lowMass = 0;
-            highMass = 0;
-
-            // Lookup details on the scan associated with this spectrum
-            // (cvScanInfo.Scans is a list, but Thermo .raw files typically have a single scan for each spectrum)
-            foreach (var scanEntry in cvScanInfo.Scans)
-            {
-                scanStartTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_scan_start_time);
-                ionInjectionTime = cvParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_ion_injection_time);
-                filterText = cvParamUtilities.GetCvParamValue(scanEntry.CVParams, cvParamUtilities.CVIDs.MS_filter_string);
-
-                lowMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_lower_limit);
-                highMass = cvParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, cvParamUtilities.CVIDs.MS_scan_window_upper_limit);
-
-                break;
-            }
-        }
     }
 }
