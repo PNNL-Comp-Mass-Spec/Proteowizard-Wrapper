@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using pwiz.ProteowizardWrapper;
 
-namespace ProteowizardWrapperUnitTests
+namespace pwiz.ProteowizardWrapper
 {
-    internal static class cvParamUtilities
+    public static class CVParamUtilities
     {
         /// <summary>
         /// CVIDs used by the unit tests
