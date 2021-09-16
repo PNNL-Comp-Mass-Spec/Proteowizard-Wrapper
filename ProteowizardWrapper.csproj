@@ -61,6 +61,7 @@
     <Compile Include="Common\Collections\ImmutableDictionary.cs" />
     <Compile Include="Common\Collections\ImmutableList.cs" />
     <Compile Include="Common\Collections\Range.cs" />
+    <Compile Include="CVParamUtilities.cs" />
     <Compile Include="DependencyLoader.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MsDataFileImpl.cs" />
