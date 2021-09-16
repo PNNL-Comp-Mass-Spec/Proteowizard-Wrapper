@@ -303,7 +303,7 @@ namespace pwiz.ProteowizardWrapper
         private SpectrumList_IonMobility _ionMobilitySpectrumList; // For Agilent and Bruker (and others, eventually?) conversion from CCS to ion mobility
         private MsDataScanCache _scanCache;
 
-        // PNNL Disabled: private readonly IPerfUtil _perf; // for performance measurement, dummied by default
+        // PNNL Disabled: private readonly IPerfUtil _perf; // for performance measurement, disabled by default
 
         private readonly LockMassParameters _lockmassParameters; // For Waters lockmass correction
         private int? _lockmassFunction;  // For Waters lockmass correction
@@ -2830,7 +2830,12 @@ namespace pwiz.ProteowizardWrapper
         /// Spectrum Id
         /// </summary>
         /// <remarks>
-        /// For Thermo .raw files, the first spectrum has Id = 0.1.1 and Index = 0
+        /// Example IDs of the first spectrum in an instrument file (which has Index = 0)
+        /// Thermo .Raw file:      0.1.1
+        /// Bruker .d directory:   1
+        /// Waters .raw directory: 1.0.1
+        /// Waters .raw IMS:       1.1.1
+        /// UIMF file:             1.0.1
         /// </remarks>
         public string Id { get; set; }
 
@@ -2861,7 +2866,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Ion mobility drift time, in msec
         /// </summary>
-        [Obsolete("Deprecated")]
+        [Obsolete("Use the IonMobility property instead")]
         public double? DriftTimeMsec { get; set; }
 
         /// <summary>
