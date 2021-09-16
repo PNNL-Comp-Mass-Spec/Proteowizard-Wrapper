@@ -277,9 +277,9 @@ namespace pwiz.ProteowizardWrapper
 
         public static IEnumerable<KeyValuePair<string, IList<string>>> GetFileExtensionsByType()
         {
-            foreach (var typeExtsPair in FULL_READER_LIST.getFileExtensionsByType())
+            foreach (var typeExtensionPair in FULL_READER_LIST.getFileExtensionsByType())
             {
-                yield return typeExtsPair;
+                yield return typeExtensionPair;
             }
         }
 
