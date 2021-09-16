@@ -200,8 +200,8 @@ namespace pwiz.ProteowizardWrapper.Common.Chemistry
         {
             if (obj is null) return 1;
             if (ReferenceEquals(this, obj)) return 0;
-            if (!(obj is IonMobilityValue)) throw new ArgumentException("Object must be of type IonMobilityValue");
-            return CompareTo((IonMobilityValue) obj);
+            if (obj is not IonMobilityValue value) throw new ArgumentException("Object must be of type IonMobilityValue");
+            return CompareTo(value);
         }
     }
 }
