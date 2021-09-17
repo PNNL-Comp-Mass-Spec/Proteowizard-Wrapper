@@ -810,6 +810,70 @@ namespace ProteowizardWrapperUnitTests
             }
         }
 
+        [Test]
+        [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 862, 2454)]
+        [TestCase("Angiotensin_AllScans.raw", 87, 1688)]
+        public void TestGetScanTimesAndMsLevel(string rawFileName, int expectedMS1, int expectedMS2)
+        {
+            var dataFile = GetRawDataFile(rawFileName);
+
+            using var reader = new MSDataFileReader(dataFile.FullName);
+
+            Console.WriteLine("Examining data in " + dataFile.Name);
+
+            reader.GetScanTimesAndMsLevels(out var scanTimes, out var msLevels);
+
+            var nextPreviewIndex = 0;
+            var ms2Shown = false;
+
+            var actualCountsByLevel = new Dictionary<byte, int>();
+
+            for (var i = 0; i < scanTimes.Length; i++)
+            {
+                var msLevel = msLevels[i];
+
+                if (actualCountsByLevel.TryGetValue(msLevel, out var scanCount))
+                {
+                    actualCountsByLevel[msLevel] = scanCount + 1;
+                }
+                else
+                {
+                    actualCountsByLevel.Add(msLevel, 1);
+                }
+
+                if (i != nextPreviewIndex && ms2Shown)
+                {
+                    continue;
+                }
+
+                Console.WriteLine("Scan {0,-4} at {1,-8:F2} minutes, MSLevel {2}", i + 1, scanTimes[i], msLevel);
+
+                if (msLevel == 2)
+                    ms2Shown = true;
+
+                if (i != nextPreviewIndex)
+                {
+                    continue;
+                }
+
+                ms2Shown = msLevel > 1;
+
+                if (nextPreviewIndex < 10)
+                    nextPreviewIndex++;
+                else
+                    nextPreviewIndex *= 2;
+            }
+
+            Console.WriteLine();
+            foreach (var item in actualCountsByLevel)
+            {
+                Console.WriteLine("MS Level {0} has {1} spectra", item.Key, item.Value);
+            }
+
+            Assert.AreEqual(expectedMS1, actualCountsByLevel[1], "Mismatch in scan count for MS1 spectra");
+            Assert.AreEqual(expectedMS2, actualCountsByLevel[2], "Mismatch in scan count for MS2 spectra");
+        }
+
         private void AddExpectedTupleAndCount(
             IDictionary<string, Dictionary<Tuple<string, string>, int>> expectedData,
             string fileName,
