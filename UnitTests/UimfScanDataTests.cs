@@ -367,6 +367,9 @@ namespace ProteowizardWrapperUnitTests
                         "Scan summary mismatch, scan " + scanNumber);
                 }
 
+                var scanDescription = reader.GetScanDescription(spectrumIndex);
+                Assert.IsTrue(string.IsNullOrWhiteSpace(scanDescription), "Scan description is typically null for UIMF files");
+
                 var expectedId = string.Format("{0}.{1}.1", frameNumber, scanNumber);
                 var expectedNativeId = string.Format("frame={0} scan={1} frameType=1", frameNumber, scanNumber);
 

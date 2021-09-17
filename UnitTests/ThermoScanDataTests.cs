@@ -251,7 +251,7 @@ namespace ProteowizardWrapperUnitTests
 
                         Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
-                        var filterText= reader.GetScanFilterText(spectrumIndex);
+                        var filterText = reader.GetScanFilterText(spectrumIndex);
 
                         Assert.IsFalse(string.IsNullOrEmpty(filterText), "FilterText is empty but should not be");
 
@@ -659,6 +659,9 @@ namespace ProteowizardWrapperUnitTests
                     Assert.AreEqual(scanNumber + " " + expectedScanSummary, scanSummary,
                         "Scan summary mismatch, scan " + scanNumber);
                 }
+
+                var scanDescription = reader.GetScanDescription(spectrumIndex);
+                Assert.IsTrue(string.IsNullOrWhiteSpace(scanDescription), "Scan description is typically null for Thermo .raw files");
 
                 var expectedId = string.Format("0.1.{0}", scanNumber);
                 var expectedNativeId = string.Format("controllerType=0 controllerNumber=1 scan={0}", scanNumber);

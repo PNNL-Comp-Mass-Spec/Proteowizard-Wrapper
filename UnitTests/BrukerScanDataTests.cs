@@ -286,6 +286,9 @@ namespace ProteowizardWrapperUnitTests
                         "Scan summary mismatch, scan " + scanNumber);
                 }
 
+                var scanDescription = reader.GetScanDescription(spectrumIndex);
+                Assert.IsTrue(string.IsNullOrWhiteSpace(scanDescription), "Scan description is typically null for Bruker .d directories");
+
                 var expectedId = scanNumber.ToString();
                 var expectedNativeId = string.Format("scan={0}", scanNumber);
 
