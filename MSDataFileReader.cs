@@ -343,6 +343,14 @@ namespace pwiz.ProteowizardWrapper
             return mDataReader.GetPrecursors(spectrumIndex, 1);
         }
 
+        /// <summary>
+        /// Obtain a description of the specified spectrum
+        /// </summary>
+        /// <remarks>Comes from optional parameter "scan description", which is undefined for Thermo .raw files</remarks>
+        /// <param name="spectrumIndex"></param>
+        public string GetScanDescription(int spectrumIndex)
+        {
+            return mDataReader.GetScanDescription(spectrumIndex);
         }
 
         /// <summary>
