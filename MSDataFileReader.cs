@@ -298,23 +298,23 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Get the drift time (in msec) of the specified scan
+        /// Get the drift time (in msec) of the specified spectrum
         /// </summary>
-        /// <param name="scanIndex"></param>
+        /// <param name="spectrumIndex"></param>
         [Obsolete("Use GetIonMobility")]
-        public double? GetDriftTimeMsec(int scanIndex)
+        public double? GetDriftTimeMsec(int spectrumIndex)
         {
-            return mDataReader.GetDriftTimeMsec(scanIndex);
+            return mDataReader.GetDriftTimeMsec(spectrumIndex);
         }
 
         /// <summary>
-        /// Get the time and precursors for the specified scan
+        /// Get the time and precursors for the specified spectrum
         /// </summary>
-        /// <param name="scanIndex"></param>
+        /// <param name="spectrumIndex"></param>
         [Obsolete("Deprecated")]
-        public MsTimeAndPrecursors GetInstantTimeAndPrecursors(int scanIndex)
+        public MsTimeAndPrecursors GetInstantTimeAndPrecursors(int spectrumIndex)
         {
-            return mDataReader.GetInstantTimeAndPrecursors(scanIndex);
+            return mDataReader.GetInstantTimeAndPrecursors(spectrumIndex);
         }
 
         /// <summary>
@@ -326,21 +326,23 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Get the MS Level of the specified scan
+        /// Get the MS Level of the specified spectrum
         /// </summary>
-        /// <param name="scanIndex"></param>
-        public int GetMsLevel(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public int GetMsLevel(int spectrumIndex)
         {
-            return mDataReader.GetMsLevel(scanIndex);
+            return mDataReader.GetMsLevel(spectrumIndex);
         }
 
         /// <summary>
-        /// Get the precursors for the specified scan
+        /// Get the precursors for the specified spectrum
         /// </summary>
-        /// <param name="scanIndex"></param>
-        public IList<MsPrecursor> GetPrecursors(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public IList<MsPrecursor> GetPrecursors(int spectrumIndex)
         {
-            return mDataReader.GetPrecursors(scanIndex, 1);
+            return mDataReader.GetPrecursors(spectrumIndex, 1);
+        }
+
         }
 
         /// <summary>
@@ -516,11 +518,11 @@ namespace pwiz.ProteowizardWrapper
         /// Set "Copy Local" to false to avoid breaking the DLL resolver
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// </remarks>
-        /// <param name="scanIndex"></param>
+        /// <param name="spectrumIndex"></param>
         /// <returns>List of CVParamData structs</returns>
-        public List<CVParamData> GetSpectrumCVParamData(int scanIndex)
+        public List<CVParamData> GetSpectrumCVParamData(int spectrumIndex)
         {
-            return mDataReader.GetSpectrumCVParamData(scanIndex);
+            return mDataReader.GetSpectrumCVParamData(spectrumIndex);
         }
 
         /// <summary>
@@ -532,19 +534,19 @@ namespace pwiz.ProteowizardWrapper
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// Alternatively, use <see cref="GetSpectrumCVParamData"/>
         /// </remarks>
-        /// <param name="scanIndex"></param>
-        public CVParamList GetSpectrumCVParams(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public CVParamList GetSpectrumCVParams(int spectrumIndex)
         {
-            return mDataReader.GetSpectrumCVParams(scanIndex);
+            return mDataReader.GetSpectrumCVParams(spectrumIndex);
         }
 
         /// <summary>
-        /// Get the NativeID of the specified scan
+        /// Get the NativeID of the specified spectrum
         /// </summary>
-        /// <param name="scanIndex"></param>
-        public string GetSpectrumId(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public string GetSpectrumId(int spectrumIndex)
         {
-            return mDataReader.GetSpectrumId(scanIndex);
+            return mDataReader.GetSpectrumId(spectrumIndex);
         }
 
         /// <summary>
@@ -574,39 +576,39 @@ namespace pwiz.ProteowizardWrapper
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// Alternatively, use <see cref="GetSpectrumScanInfo"/> or the GetSpectrum method that returns an <see cref="MsDataSpectrum"/> object
         /// </remarks>
-        /// <param name="scanIndex"></param>
-        public Spectrum GetSpectrumObject(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public Spectrum GetSpectrumObject(int spectrumIndex)
         {
-            return mDataReader.GetSpectrumObject(scanIndex);
+            return mDataReader.GetSpectrumObject(spectrumIndex);
         }
 
         /// <summary>
         /// Get a container describing the scan (or scans) associated with the given spectrum
         /// </summary>
         /// <remarks>Useful for obtaining the filter string, scan start time, ion injection time, etc.</remarks>
-        /// <param name="scanIndex"></param>
+        /// <param name="spectrumIndex"></param>
         /// <returns>Scan info container</returns>
-        public SpectrumScanContainer GetSpectrumScanInfo(int scanIndex)
+        public SpectrumScanContainer GetSpectrumScanInfo(int spectrumIndex)
         {
-            return mDataReader.GetSpectrumScanInfo(scanIndex);
+            return mDataReader.GetSpectrumScanInfo(spectrumIndex);
         }
 
         /// <summary>
         /// Get the specified SRM spectrum. Returns null if the specified spectrum is not SRM
         /// </summary>
-        /// <param name="scanIndex"></param>
-        public MsDataSpectrum GetSrmSpectrum(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public MsDataSpectrum GetSrmSpectrum(int spectrumIndex)
         {
-            return mDataReader.GetSrmSpectrum(scanIndex);
+            return mDataReader.GetSrmSpectrum(spectrumIndex);
         }
 
         /// <summary>
-        /// Get the start time of the specified scan
+        /// Get the start time of the specified spectrum
         /// </summary>
-        /// <param name="scanIndex"></param>
-        public double? GetStartTime(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public double? GetStartTime(int spectrumIndex)
         {
-            return mDataReader.GetStartTime(scanIndex);
+            return mDataReader.GetStartTime(spectrumIndex);
         }
 
         /// <summary>
@@ -636,12 +638,12 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Check is the specified scan is centroided
+        /// Check is the specified spectrum is centroided
         /// </summary>
-        /// <param name="scanIndex"></param>
-        public bool IsCentroided(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public bool IsCentroided(int spectrumIndex)
         {
-            return mDataReader.IsCentroided(scanIndex);
+            return mDataReader.IsCentroided(spectrumIndex);
         }
 
         /// <summary>
@@ -672,12 +674,12 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Check if the specified scan is SRM
+        /// Check if the specified spectrum is SRM
         /// </summary>
-        /// <param name="scanIndex"></param>
-        public bool IsSrmSpectrum(int scanIndex)
+        /// <param name="spectrumIndex"></param>
+        public bool IsSrmSpectrum(int spectrumIndex)
         {
-            return mDataReader.IsSrmSpectrum(scanIndex);
+            return mDataReader.IsSrmSpectrum(spectrumIndex);
         }
 
         /// <summary>
