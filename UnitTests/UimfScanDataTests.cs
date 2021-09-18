@@ -302,7 +302,6 @@ namespace ProteowizardWrapperUnitTests
 
                 var spectrum = reader.GetSpectrum(spectrumIndex);
                 var spectrumParams = reader.GetSpectrumCVParamData(spectrumIndex);
-                var cvScanInfo = reader.GetSpectrumScanInfo(spectrumIndex);
 
                 Assert.IsTrue(spectrum != null, "GetSpectrum returned a null object for frame {0}, scan {1} ", frameNumber, scanNumber);
 
@@ -325,7 +324,7 @@ namespace ProteowizardWrapperUnitTests
                         activationType = string.Join(", ", precursor.ActivationTypes);
                 }
 
-                GetScanMetadata(cvScanInfo, out var scanStartTime, out var ionMobilityDriftTime, out var lowMass, out var highMass);
+                reader.GetScanMetadata(spectrumIndex, out var scanStartTime, out _, out _, out var lowMass, out var highMass);
 
                 var retentionTime = CVParamUtilities.CheckNull(spectrum.RetentionTime);
 
@@ -515,32 +514,6 @@ namespace ProteowizardWrapperUnitTests
 
             Assert.Fail("File not found: " + uimfFileName);
             return null;
-        }
-
-        private static void GetScanMetadata(
-            SpectrumScanContainer cvScanInfo,
-            out double scanStartTime,
-            out double ionMobilityDriftTime,
-            out double lowMass,
-            out double highMass)
-        {
-            scanStartTime = 0;
-            ionMobilityDriftTime = 0;
-            lowMass = 0;
-            highMass = 0;
-
-            // Lookup details on the scan associated with this spectrum
-            // (cvScanInfo.Scans is a list, but .uimf files typically have a single scan for each spectrum)
-            foreach (var scanEntry in cvScanInfo.Scans)
-            {
-                scanStartTime = CVParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_scan_start_time);
-                ionMobilityDriftTime = CVParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_ion_mobility_drift_time);
-
-                lowMass = CVParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, CVParamUtilities.CVIDs.MS_scan_window_lower_limit);
-                highMass = CVParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, CVParamUtilities.CVIDs.MS_scan_window_upper_limit);
-
-                break;
-            }
         }
     }
 }
