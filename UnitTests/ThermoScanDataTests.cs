@@ -12,7 +12,12 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class ThermoScanDataTests
     {
+        // ReSharper disable CommentTypo
+
         // Ignore Spelling: cid, etd, hcd, sa
+        // Ignore Spelling: Bruker, Daltonics, Lumos, Orbitrap, solarix
+
+        // ReSharper restore CommentTypo
 
         [Test]
         [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW")]
@@ -293,6 +298,90 @@ namespace ProteowizardWrapperUnitTests
                     Assert.Fail(msg);
                 }
             }
+        }
+
+        [Test]
+        [TestCase("2016_04_12_Background_000001.d", true, "Bruker Daltonics solarix series", "000000.00000", "4/12/2016 2:10:30 AM")]
+        [TestCase("Angiotensin_AllScans.raw", false, "Orbitrap Fusion Lumos", "FSN20129", "9/26/2018 9:06:07 AM")]
+        [TestCase("blank_MeOH-3_18May16_Rainier_Thermo_10344958.raw", false, "LTQ Orbitrap Elite", "SN03066B", "5/19/2016 6:57:13 AM")]
+        [TestCase("Blank-2_05May16_Leopard_Infuse_1_01_7976.d", true, "Bruker Daltonics solarix series", "000000.00000", "5/5/2016 10:59:32 AM")]
+        [TestCase("blk_1_01_651.d", true, "Bruker Daltonics solarix series", "000000.00000", "11/27/2013 9:47:06 AM")]
+        [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", false, "Orbitrap Fusion Lumos", "FSN20129", "1/11/2016 1:38:24 AM")]
+        [TestCase("Humira_100fmol_20121026_hi_res_9_01_716.d", true, "Bruker Daltonics solarix series", "-1.0", "10/26/2012 8:06:23 AM")]
+        [TestCase("lowdose_IMAC_iTRAQ1_PQDMSA.raw", false, "LTQ Orbitrap", "SN1006B", "7/28/2009 5:25:40 AM")]
+        [TestCase("MZ20150721blank2.raw", false, "LTQ Orbitrap Elite", "SN03066B", "7/22/2015 4:02:34 AM")]
+        [TestCase("MZ20160603PPS_edta_000004.d", true, "Bruker Daltonics solarix series", "000000.00000", "6/3/2016 4:07:01 AM")]
+        [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", false, "Thermo Electron instrument model", "LC000718", "10/15/2004 3:22:43 PM")]
+        public void TestGetInstrumentInfo(
+            string dataFileOrDirectoryName,
+            bool isBruker,
+            string expectedModel,
+            string expectedSerialNumber,
+            string expectedStartTime)
+        {
+            FileSystemInfo dataFileOrDirectory;
+
+            if (isBruker)
+            {
+                dataFileOrDirectory = BrukerScanDataTests.GetBrukerDataFolder(dataFileOrDirectoryName);
+            }
+            else
+            {
+                dataFileOrDirectory = GetRawDataFile(dataFileOrDirectoryName);
+            }
+
+            using var reader = new MSDataFileReader(dataFileOrDirectory.FullName);
+
+            var instrumentConfigInfo = reader.GetInstrumentConfigInfoList();
+            var serialNumber = reader.GetInstrumentSerialNumber();
+            var runStartTime = reader.RunStartTime;
+
+            var instrumentModel = string.Empty;
+
+            foreach (var item in instrumentConfigInfo)
+            {
+                Console.WriteLine("{0,-14}: {1}", "Model", item.Model);
+                Console.WriteLine("{0,-14}: {1}", "Analyzer", item.Analyzer);
+                Console.WriteLine("{0,-14}: {1}", "Detector", item.Detector);
+                Console.WriteLine("{0,-14}: {1}", "Ionization", item.Ionization);
+                Console.WriteLine();
+
+                if (string.IsNullOrWhiteSpace(instrumentModel))
+                    instrumentModel = item.Model;
+            }
+
+            Console.WriteLine("{0,-14}: {1}", "Serial Number", serialNumber);
+            Console.WriteLine("{0,-14}: {1}", "Start Time",  runStartTime);
+
+            if (runStartTime.HasValue && instrumentModel.StartsWith("Bruker"))
+            {
+                // The start time for Bruker datasets is not the local time
+                // Convert using .ToUniversalTime
+                var localTime = runStartTime.Value.ToUniversalTime();
+                Console.WriteLine("{0,-14}: {1}", "Local Time", localTime);
+            }
+
+            Console.WriteLine();
+
+            Assert.AreEqual(expectedModel, instrumentModel, "Instrument model mismatch");
+
+            Assert.AreEqual(expectedSerialNumber, serialNumber, "Serial number mismatch");
+
+            if (string.IsNullOrWhiteSpace(expectedStartTime))
+            {
+                return;
+            }
+
+            if (!runStartTime.HasValue)
+            {
+                Assert.Fail("RunStartTime does not have a value; it should be {0}", expectedStartTime);
+            }
+
+            var expectedTime = DateTime.Parse(expectedStartTime);
+
+            var timeDiff = Math.Abs(expectedTime.Subtract(runStartTime.Value).TotalSeconds);
+
+            Assert.IsTrue(timeDiff < 5, "Actual start time differs from the expected value: {0} vs. {1}", runStartTime.Value, expectedTime);
         }
 
         [Test]
