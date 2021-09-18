@@ -385,7 +385,7 @@ namespace pwiz.ProteowizardWrapper
         /// If a spectrum has more than one scan, only returns the metadata for the first one
         /// </remarks>
         /// <param name="spectrumIndex">Spectrum index</param>
-        /// <param name="scanStartTime">Output: acquisition time at scan start</param>
+        /// <param name="scanStartTime">Output: acquisition time at scan start (in minutes)</param>
         /// <param name="ionInjectionTime">Output: ion injection time</param>
         /// <param name="filterText">Output: filter text (most commonly used by Thermo .raw files, e.g. )</param>
         /// <param name="lowMass">Output: lowest m/z</param>
@@ -411,7 +411,12 @@ namespace pwiz.ProteowizardWrapper
             // (cvScanInfo.Scans is a list, but Thermo .raw files typically have a single scan for each spectrum)
             foreach (var scanEntry in cvScanInfo.Scans)
             {
-                scanStartTime = CVParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_scan_start_time);
+                // Prior to September 2021, we used this, which gives minutes for Thermo .raw files and seconds for Bruker .d directories
+                //scanStartTime = CVParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_scan_start_time);
+
+                // Instead, use method GetStartTime()
+                scanStartTime = mDataReader.GetStartTime(spectrumIndex).GetValueOrDefault();
+
                 ionInjectionTime = CVParamUtilities.GetCvParamValueDbl(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_ion_injection_time);
                 filterText = CVParamUtilities.GetCvParamValue(scanEntry.CVParams, CVParamUtilities.CVIDs.MS_filter_string);
 
