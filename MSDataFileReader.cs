@@ -318,11 +318,19 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Record any instrument info found in the file, along with any Waters lockmass info we have
+        /// Get any instrument info found in the file, along with any Waters lockmass info we have
         /// </summary>
         public IEnumerable<MsInstrumentConfigInfo> GetInstrumentConfigInfoList()
         {
             return mDataReader.GetInstrumentConfigInfoList();
+        }
+
+        /// <summary>
+        /// Get the instrument serial number
+        /// </summary>
+        public string GetInstrumentSerialNumber()
+        {
+            return mDataReader.GetInstrumentSerialNumber();
         }
 
         /// <summary>
