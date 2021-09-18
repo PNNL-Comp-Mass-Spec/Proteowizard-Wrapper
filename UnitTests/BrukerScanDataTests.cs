@@ -163,34 +163,34 @@ namespace ProteowizardWrapperUnitTests
             var file1Data = new Dictionary<int, string>
             {
                 // Scan MSLevel NumPeaks RetentionTime ScanStartTime DriftTimeMsec IonMobility LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ
-                {1, "1 1 7794096   0.59  35.34 0 0  92  1300 7.1E+9    0.000 5.5E+8     0.00          positive False   696.00"},
-                {2, "2 1 7794096   1.10  66.27 0 0  92  1300 7.2E+9    0.000 5.6E+8     0.00          positive False   696.00"},
-                {3, "3 1 7794096   1.62  97.18 0 0  92  1300 7.2E+9    0.000 5.5E+8     0.00          positive False   696.00"},
-                {4, "4 1 7794096   2.14 128.17 0 0  92  1300 7.1E+9    0.000 5.3E+8     0.00          positive False   696.00"},
-                {5, "5 1 7794096   2.65 159.12 0 0  92  1300 7.1E+9    0.000 5.4E+8     0.00          positive False   696.00"}
+                {1, "1 1 7794096   0.59   0.59 0 0  92  1300 7.1E+9    0.000 5.5E+8     0.00          positive False   696.00"},
+                {2, "2 1 7794096   1.10   1.10 0 0  92  1300 7.2E+9    0.000 5.6E+8     0.00          positive False   696.00"},
+                {3, "3 1 7794096   1.62   1.62 0 0  92  1300 7.2E+9    0.000 5.5E+8     0.00          positive False   696.00"},
+                {4, "4 1 7794096   2.14   2.14 0 0  92  1300 7.1E+9    0.000 5.3E+8     0.00          positive False   696.00"},
+                {5, "5 1 7794096   2.65   2.65 0 0  92  1300 7.1E+9    0.000 5.4E+8     0.00          positive False   696.00"}
             };
             expectedData.Add("2016_04_12_Background_000001", file1Data);
 
             var file2Data = new Dictionary<int, string>
             {
-                {1, "1 1 7615807   3.58 214.92 0 0 111  1200 3.6E+10    0.000 3.1E+9     0.00          negative False   655.50"}
+                {1, "1 1 7615807   3.58   3.58 0 0 111  1200 3.6E+10    0.000 3.1E+9     0.00          negative False   655.50"}
             };
             expectedData.Add("Blank-2_05May16_Leopard_Infuse_1_01_7976", file2Data);
 
             var file3Data = new Dictionary<int, string>
             {
-                {15, "15 1 39775   2.38 142.89 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
-                {16, "16 1 39775   2.53 152.06 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
-                {17, "17 1 39775   2.69 161.24 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
-                {18, "18 1 39775   2.84 170.41 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
-                {19, "19 1 39775   2.99 179.58 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
-                {20, "20 1 39775   3.15 188.76 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"}
+                {15, "15 1 39775   2.38   2.38 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
+                {16, "16 1 39775   2.53   2.53 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
+                {17, "17 1 39775   2.69   2.69 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
+                {18, "18 1 39775   2.84   2.84 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
+                {19, "19 1 39775   2.99   2.99 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"},
+                {20, "20 1 39775   3.15   3.15 0 0 983   984 0.0E+0    0.000 0.0E+0     0.00          positive False   983.50"}
             };
             expectedData.Add("Humira_100fmol_20121026_hi_res_9_01_716", file3Data);
 
             var file4Data = new Dictionary<int, string>
             {
-                {1, "1 2 8214787   2.20 131.89 0 0 207 10000 6.0E+8    0.000 1.3E+7  1600.00 cid      negative False  1600.00"}
+                {1, "1 2 8214787   2.20   2.20 0 0 207 10000 6.0E+8    0.000 1.3E+7  1600.00 cid      negative False  1600.00"}
             };
             expectedData.Add("MZ20160603PPS_edta_000004", file4Data);
 

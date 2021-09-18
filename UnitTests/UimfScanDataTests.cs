@@ -175,83 +175,83 @@ namespace ProteowizardWrapperUnitTests
             // Keys in this dictionary are the FrameNum, ScanNum whose metadata is being retrieved
             var file1Data = new Dictionary<KeyValuePair<int, int>, string>
             {
-                 // Scan MSLevel NumPeaks RetentionTime DriftTimeMsec IonMobility IonMobilityDriftTime LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ ActivationType IonMode IsCentroided ScanStartTime IonInjectionTime FilterText
-                 {new KeyValuePair<int, int>(1, 0),   "   1    0 1     3   0.01   0.01     0.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(1, 100), "   1  100 1  1317   0.01   0.01    24.68    24.68    24.68   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(1, 200), "   1  200 1     3   0.01   0.01    49.36    49.36    49.36   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(2, 0),   "   2    0 1    16   0.25   0.25     0.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(2, 1),   "   2    1 1     6   0.25   0.25     0.25     0.25     0.25   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(2, 100), "   2  100 1  3429   0.25   0.25    24.70    24.70    24.70   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(2, 200), "   2  200 1     9   0.25   0.25    49.39    49.39    49.39   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(3, 0),   "   3    0 1    21   0.50   0.50     0.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(3, 100), "   3  100 1  4216   0.50   0.50    24.65    24.65    24.65   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(3, 200), "   3  200 1     3   0.50   0.50    49.31    49.31    49.31   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(4, 0),   "   4    0 1     3   0.75   0.75     0.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(4, 1),   "   4    1 1     6   0.75   0.75     0.25     0.25     0.25   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(4, 100), "   4  100 1  5640   0.75   0.75    24.58    24.58    24.58   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(4, 200), "   4  200 1     6   0.75   0.75    49.16    49.16    49.16   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(5, 0),   "   5    0 1     9   1.00   1.00     0.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(5, 100), "   5  100 1  4605   1.00   1.00    24.70    24.70    24.70   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
-                 {new KeyValuePair<int, int>(5, 200), "   5  200 1     3   1.00   1.00    49.39    49.39    49.39   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"}
+                 // Scan MSLevel NumPeaks RetentionTime DriftTimeMsec IonMobility LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ ActivationType IonMode IsCentroided ScanStartTime IonInjectionTime FilterText
+                 {new KeyValuePair<int, int>(1, 0),   "   1    0 1     3   0.01   0.01     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(1, 100), "   1  100 1  1317   0.01   0.01    24.68    24.68   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(1, 200), "   1  200 1     3   0.01   0.01    49.36    49.36   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(2, 0),   "   2    0 1    16   0.25   0.25     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(2, 1),   "   2    1 1     6   0.25   0.25     0.25     0.25   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(2, 100), "   2  100 1  3429   0.25   0.25    24.70    24.70   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(2, 200), "   2  200 1     9   0.25   0.25    49.39    49.39   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(3, 0),   "   3    0 1    21   0.50   0.50     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(3, 100), "   3  100 1  4216   0.50   0.50    24.65    24.65   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(3, 200), "   3  200 1     3   0.50   0.50    49.31    49.31   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(4, 0),   "   4    0 1     3   0.75   0.75     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(4, 1),   "   4    1 1     6   0.75   0.75     0.25     0.25   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(4, 100), "   4  100 1  5640   0.75   0.75    24.58    24.58   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(4, 200), "   4  200 1     6   0.75   0.75    49.16    49.16   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(5, 0),   "   5    0 1     9   1.00   1.00     0.00     0.00   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(5, 100), "   5  100 1  4605   1.00   1.00    24.70    24.70   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"},
+                 {new KeyValuePair<int, int>(5, 200), "   5  200 1     3   1.00   1.00    49.39    49.39   0 14384 0.0E+0    0.000 0.0E+0     0.00          positive False  7192.23"}
             };
             expectedData.Add("9_Peptide_Mix_16Oct14_Cedar_Infuse", file1Data);
 
             var file2Data = new Dictionary<KeyValuePair<int, int>, string>
             {
-                 {new KeyValuePair<int, int>(1, 38),  "   1   38 1    15   0.01   0.01     6.11     6.11     6.11   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
-                 {new KeyValuePair<int, int>(1, 114), "   1  114 1  1215   0.01   0.01    18.34    18.34    18.34   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
-                 {new KeyValuePair<int, int>(1, 152), "   1  152 1   222   0.01   0.01    24.45    24.45    24.45   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
-                 {new KeyValuePair<int, int>(1, 228), "   1  228 1     3   0.01   0.01    36.67    36.67    36.67   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
-                 {new KeyValuePair<int, int>(1, 304), "   1  304 1     9   0.01   0.01    48.89    48.89    48.89   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"}
+                 {new KeyValuePair<int, int>(1, 38),  "   1   38 1    15   0.01   0.01     6.11     6.11   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
+                 {new KeyValuePair<int, int>(1, 114), "   1  114 1  1215   0.01   0.01    18.34    18.34   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
+                 {new KeyValuePair<int, int>(1, 152), "   1  152 1   222   0.01   0.01    24.45    24.45   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
+                 {new KeyValuePair<int, int>(1, 228), "   1  228 1     3   0.01   0.01    36.67    36.67   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"},
+                 {new KeyValuePair<int, int>(1, 304), "   1  304 1     9   0.01   0.01    48.89    48.89   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.76"}
             };
             expectedData.Add("9pep_mix_1uM_4bit_50_3Jun16", file2Data);
 
             var file3Data = new Dictionary<KeyValuePair<int, int>, string>
             {
-                 {new KeyValuePair<int, int>(1, 100), "   1  100 1   504   0.01   0.01    16.37    16.37    16.37   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(2, 100), "   2  100 1   494   0.06   0.06    16.42    16.42    16.42   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(3, 100), "   3  100 1  1109   0.11   0.11    16.43    16.43    16.43   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(4, 0),   "   4    0 1     3   0.17   0.17     0.00     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(4, 100), "   4  100 1  1061   0.17   0.17    16.41    16.41    16.41   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(5, 0),   "   5    0 1     3   0.22   0.22     0.00     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
-                 {new KeyValuePair<int, int>(5, 100), "   5  100 1  1087   0.22   0.22    16.44    16.44    16.44   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(1, 100), "   1  100 1   504   0.01   0.01    16.37    16.37   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(2, 100), "   2  100 1   494   0.06   0.06    16.42    16.42   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(3, 100), "   3  100 1  1109   0.11   0.11    16.43    16.43   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(4, 0),   "   4    0 1     3   0.17   0.17     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(4, 100), "   4  100 1  1061   0.17   0.17    16.41    16.41   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(5, 0),   "   5    0 1     3   0.22   0.22     0.00     0.00   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
+                 {new KeyValuePair<int, int>(5, 100), "   5  100 1  1087   0.22   0.22    16.44    16.44   0  2646 0.0E+0    0.000 0.0E+0     0.00          positive False  1322.79"},
             };
             expectedData.Add("QC_Shew_IMER_500ng_Run-1_4May16_Oak_15-01-16", file3Data);
 
             var file4Data = new Dictionary<KeyValuePair<int, int>, string>
             {
-                 {new KeyValuePair<int, int>(1, 1),   "   1    1 1   344   0.00   0.00     0.12     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(1, 100), "   1  100 1   345   0.00   0.00    12.10    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(1, 200), "   1  200 1   577   0.00   0.00    24.20    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(1, 300), "   1  300 1   996   0.00   0.00    36.30    36.30    36.30   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(1, 400), "   1  400 1   469   0.00   0.00    48.40    48.40    48.40   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(1, 500), "   1  500 1   336   0.00   0.00    60.50    60.50    60.50   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(1, 600), "   1  600 1   369   0.00   0.00    72.60    72.60    72.60   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(1, 700), "   1  700 1   423   0.00   0.00    84.70    84.70    84.70   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 1),   "   2    1 1   381   0.00   0.00     0.12     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 100), "   2  100 1   243   0.00   0.00    12.10    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 200), "   2  200 1   669   0.00   0.00    24.20    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 300), "   2  300 1   770   0.00   0.00    36.30    36.30    36.30   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 400), "   2  400 1   372   0.00   0.00    48.40    48.40    48.40   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 500), "   2  500 1   355   0.00   0.00    60.50    60.50    60.50   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 600), "   2  600 1   441   0.00   0.00    72.60    72.60    72.60   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(2, 700), "   2  700 1   328   0.00   0.00    84.70    84.70    84.70   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 1),   "   3    1 1   405   0.00   0.00     0.12     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 100), "   3  100 1   419   0.00   0.00    12.10    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 200), "   3  200 1   705   0.00   0.00    24.20    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 300), "   3  300 1  1080   0.00   0.00    36.30    36.30    36.30   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 400), "   3  400 1   387   0.00   0.00    48.40    48.40    48.40   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 500), "   3  500 1   423   0.00   0.00    60.50    60.50    60.50   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 600), "   3  600 1   402   0.00   0.00    72.60    72.60    72.60   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(3, 700), "   3  700 1   333   0.00   0.00    84.70    84.70    84.70   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 1),   "   4    1 1   348   0.00   0.00     0.12     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 100), "   4  100 1   343   0.00   0.00    12.10    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 200), "   4  200 1   625   0.00   0.00    24.20    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 300), "   4  300 1  1125   0.00   0.00    36.29    36.29    36.29   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 400), "   4  400 1   384   0.00   0.00    48.39    48.39    48.39   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 500), "   4  500 1   399   0.00   0.00    60.49    60.49    60.49   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 600), "   4  600 1   362   0.00   0.00    72.59    72.59    72.59   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
-                 {new KeyValuePair<int, int>(4, 700), "   4  700 1   360   0.00   0.00    84.69    84.69    84.69   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"}
+                 {new KeyValuePair<int, int>(1, 1),   "   1    1 1   344   0.00   0.00     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(1, 100), "   1  100 1   345   0.00   0.00    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(1, 200), "   1  200 1   577   0.00   0.00    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(1, 300), "   1  300 1   996   0.00   0.00    36.30    36.30   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(1, 400), "   1  400 1   469   0.00   0.00    48.40    48.40   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(1, 500), "   1  500 1   336   0.00   0.00    60.50    60.50   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(1, 600), "   1  600 1   369   0.00   0.00    72.60    72.60   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(1, 700), "   1  700 1   423   0.00   0.00    84.70    84.70   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 1),   "   2    1 1   381   0.00   0.00     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 100), "   2  100 1   243   0.00   0.00    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 200), "   2  200 1   669   0.00   0.00    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 300), "   2  300 1   770   0.00   0.00    36.30    36.30   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 400), "   2  400 1   372   0.00   0.00    48.40    48.40   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 500), "   2  500 1   355   0.00   0.00    60.50    60.50   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 600), "   2  600 1   441   0.00   0.00    72.60    72.60   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(2, 700), "   2  700 1   328   0.00   0.00    84.70    84.70   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 1),   "   3    1 1   405   0.00   0.00     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 100), "   3  100 1   419   0.00   0.00    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 200), "   3  200 1   705   0.00   0.00    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 300), "   3  300 1  1080   0.00   0.00    36.30    36.30   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 400), "   3  400 1   387   0.00   0.00    48.40    48.40   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 500), "   3  500 1   423   0.00   0.00    60.50    60.50   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 600), "   3  600 1   402   0.00   0.00    72.60    72.60   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(3, 700), "   3  700 1   333   0.00   0.00    84.70    84.70   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 1),   "   4    1 1   348   0.00   0.00     0.12     0.12   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 100), "   4  100 1   343   0.00   0.00    12.10    12.10   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 200), "   4  200 1   625   0.00   0.00    24.20    24.20   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 300), "   4  300 1  1125   0.00   0.00    36.29    36.29   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 400), "   4  400 1   384   0.00   0.00    48.39    48.39   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 500), "   4  500 1   399   0.00   0.00    60.49    60.49   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 600), "   4  600 1   362   0.00   0.00    72.59    72.59   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"},
+                 {new KeyValuePair<int, int>(4, 700), "   4  700 1   360   0.00   0.00    84.69    84.69   0  1700 0.0E+0    0.000 0.0E+0     0.00          positive False   849.87"}
             };
             expectedData.Add("20160524_TuneMix_1574V_neg_001", file4Data);
 
@@ -333,14 +333,13 @@ namespace ProteowizardWrapperUnitTests
 
                 var scanSummary =
                     string.Format(
-                        "{0,4} {1,4} {2} {3,5} {4,6:0.00} {5,6:0.00} {6,8:0.00} {7,8:0.00} {8,8:0.00} {9,3:0} {10,5:0} {11,6:0.0E+0} {12,8:0.000} {13,6:0.0E+0} {14,8:0.00} {15,-8} {16} {17,-5} {18,8:0.00}",
+                        "{0,4} {1,4} {2} {3,5} {4,6:0.00} {5,6:0.00} {6,8:0.00} {7,8:0.00} {8,3:0} {9,5:0} {10,6:0.0E+0} {11,8:0.000} {12,6:0.0E+0} {13,8:0.00} {14,-8} {15} {16,-5} {17,8:0.00}",
                         frameNumber, scanNumber, spectrum.Level,
                         numPeaks, retentionTime, scanStartTime,
 #pragma warning disable 618
                         CVParamUtilities.CheckNull(spectrum.DriftTimeMsec),
 #pragma warning restore 618
                         CVParamUtilities.CheckNull(spectrum.IonMobility.Mobility),
-                        ionMobilityDriftTime,
                         lowMass, highMass,
                         totalIonCurrent, basePeakMZ, basePeakIntensity, parentIonMZ,
                         activationType, ionMode,
