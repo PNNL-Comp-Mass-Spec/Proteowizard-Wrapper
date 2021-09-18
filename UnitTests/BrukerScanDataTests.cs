@@ -382,7 +382,7 @@ namespace ProteowizardWrapperUnitTests
         /// Get a DirectoryInfo object for the given .D directory
         /// </summary>
         /// <param name="dotDDirectoryName">.D directory name</param>
-        private DirectoryInfo GetBrukerDataFolder(string dotDDirectoryName)
+        public static DirectoryInfo GetBrukerDataFolder(string dotDDirectoryName)
         {
             if (InstrumentDataUtilities.FindInstrumentData(dotDDirectoryName, true, out var instrumentDataDirectory))
             {

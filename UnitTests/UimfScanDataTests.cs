@@ -505,7 +505,7 @@ namespace ProteowizardWrapperUnitTests
         /// Get a FileInfo object for the given .raw file
         /// </summary>
         /// <param name="uimfFileName">UIMF file name</param>
-        private FileInfo GetUimfDataFile(string uimfFileName)
+        private static FileInfo GetUimfDataFile(string uimfFileName)
         {
             if (InstrumentDataUtilities.FindInstrumentData(uimfFileName, false, out var instrumentDataFile))
             {

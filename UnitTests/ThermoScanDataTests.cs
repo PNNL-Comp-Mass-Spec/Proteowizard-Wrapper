@@ -894,7 +894,7 @@ namespace ProteowizardWrapperUnitTests
         /// Get a FileInfo object for the given .raw file
         /// </summary>
         /// <param name="rawFileName">Thermo raw file name</param>
-        private FileInfo GetRawDataFile(string rawFileName)
+        private static FileInfo GetRawDataFile(string rawFileName)
         {
             const string REMOTE_PATH = @"\\proto-2\UnitTest_Files\ThermoRawFileReader";
 
