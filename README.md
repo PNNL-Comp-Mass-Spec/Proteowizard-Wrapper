@@ -52,11 +52,11 @@ ProteoWizard's DLLs will be presumed to be present in that folder.
 ## ProteoWizard Info
 
 Proteowizard web pages:
-[ProteoWizard Features and Download](http://proteowizard.sourceforge.net/) on SourceForge
-[ProteoWizard Reviews and Download](http://sourceforge.net/projects/proteowizard)
+[ProteoWizard Features and Download](https://proteowizard.sourceforge.io/) on SourceForge
+[ProteoWizard Reviews and Download](https://sourceforge.net/projects/proteowizard/)
 
 Download a Windows installer from:
-[ProteoWizard Downloads Page](http://proteowizard.sourceforge.net/downloads.shtml)
+[ProteoWizard Downloads Page](https://proteowizard.sourceforge.io/download.html)
 
 Alternatively, to download a .tar.bz2 file with the latest .Exe files:
 1) Go to [labkey.org](http://teamcity.labkey.org:8080/project.html?projectId=ProteoWizard) and click "Login as Guest User"
@@ -76,7 +76,7 @@ To download the source code:
 Written by Matthew Monroe and Bryson Gibbons for the Department of Energy (PNNL, Richland, WA) \
 Copyright 2017, Battelle Memorial Institute.  All Rights Reserved. \
 E-mail: proteomics@pnnl.gov \
-Website: https://panomics.pnl.gov/ or https://omics.pnl.gov
+Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics
 
 ## License
 
