@@ -381,7 +381,9 @@ namespace ProteowizardWrapperUnitTests
 
             var timeDiff = Math.Abs(expectedTime.Subtract(runStartTime.Value).TotalSeconds);
 
-            Assert.IsTrue(timeDiff < 5, "Actual start time differs from the expected value: {0} vs. {1}", runStartTime.Value, expectedTime);
+            // The following includes timeDiff - 3600 to allow for daylight savings issues
+
+            Assert.IsTrue(timeDiff < 5 || Math.Abs(timeDiff - 3600) < 5, "Actual start time differs from the expected value: {0} vs. {1}", runStartTime.Value, expectedTime);
         }
 
         [Test]
