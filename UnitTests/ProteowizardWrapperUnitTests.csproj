@@ -42,13 +42,6 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="ThermoFisher.CommonCore.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1aef06afb5abd953, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\ThermoFisher.CommonCore.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="ThermoRawFileReader">
-      <HintPath>lib\ThermoRawFileReader.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -79,6 +72,9 @@
     </PackageReference>
     <PackageReference Include="PRISM-Library">
       <Version>2.6.43</Version>
+    </PackageReference>
+    <PackageReference Include="ThermoRawFileReader">
+      <Version>4.1.23</Version>
     </PackageReference>
   </ItemGroup>
   <Choose>
