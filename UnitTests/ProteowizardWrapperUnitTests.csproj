@@ -68,13 +68,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NUnit">
-      <Version>3.12.0</Version>
+      <Version>3.13.3</Version>
     </PackageReference>
     <PackageReference Include="PRISM-Library">
-      <Version>2.6.43</Version>
+      <Version>2.6.48</Version>
     </PackageReference>
     <PackageReference Include="ThermoRawFileReader">
-      <Version>4.1.23</Version>
+      <Version>4.1.36</Version>
     </PackageReference>
   </ItemGroup>
   <Choose>
