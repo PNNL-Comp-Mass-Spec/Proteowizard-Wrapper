@@ -1460,7 +1460,11 @@ namespace pwiz.ProteowizardWrapper
 
                         if (data == null)
                         {
-                            data = TryGetIonMobilityData(s, CVID.MS_mean_drift_time_array, ref _cvidIonMobility);
+                            // Enum CVID.MS_mean_ion_mobility_drift_time_array is 1002477
+                            // It was previously named CVID.MS_mean_drift_time_array, but still had a value of 1002477
+
+                            data = TryGetIonMobilityData(s, CVID.MS_mean_ion_mobility_drift_time_array, ref _cvidIonMobility);
+
                             if (data == null && HasCombinedIonMobilitySpectra && !s.id.Contains(MERGED_TAG))
                             {
                                 _cvidIonMobility = null; // We can't learn anything from a lockmass spectrum that has no IMS
