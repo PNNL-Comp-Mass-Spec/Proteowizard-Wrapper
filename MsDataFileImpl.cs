@@ -1080,14 +1080,14 @@ namespace pwiz.ProteowizardWrapper
                     }
                 };
 
-                timeUnitMultiple = 1 / timeUnitMultiple;
+                var timeUnitMultiplier = 1 / timeUnitMultiple;
 
                 if (!onlyMs1OrFunction1)
                 {
                     timeArray = new float[timeArrayData.Count];
                     for (var i = 0; i < timeArray.Length; ++i)
                     {
-                        timeArray[i] = (float)timeArrayData[i] * timeUnitMultiple;
+                        timeArray[i] = (float)timeArrayData[i] * timeUnitMultiplier;
                     }
 
                     // PNNL Update
@@ -1124,7 +1124,7 @@ namespace pwiz.ProteowizardWrapper
                         if (msLevelOrFunctionArrayData[i] != 1)
                             continue;
 
-                        timeList.Add((float)timeArrayData[i] * timeUnitMultiple);
+                        timeList.Add((float)timeArrayData[i] * timeUnitMultiplier);
                         intensityList.Add((float)intensityArrayData[i]);
                     }
 
