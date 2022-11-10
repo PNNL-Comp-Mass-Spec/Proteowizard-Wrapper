@@ -1043,6 +1043,22 @@ namespace pwiz.ProteowizardWrapper
                 // convert time to minutes
                 var timeArrayParam = chrom.getTimeArray().cvParamChild(CVID.MS_binary_data_array);
 
+                // Time unit enum values before July 2022
+                // 300000010, 300000028, 300000029, 300000031, 300000032, 300000150
+
+                // Enum values after July 2022
+                // 400000010, 400000028, 400000029, 400000031, 400000032, 400000150
+
+                var expectedValues = new SortedSet<string>
+                {
+                    ((int)CVID.UO_nanosecond).ToString(),
+                    ((int)CVID.UO_microsecond).ToString(),
+                    ((int)CVID.UO_millisecond).ToString(),
+                    ((int)CVID.UO_second).ToString(),
+                    ((int)CVID.UO_minute).ToString(),
+                    ((int)CVID.UO_hour).ToString()
+                };
+
                 var timeUnitMultiple = timeArrayParam.units switch
                 {
                     CVID.UO_nanosecond => 60 * 1e9f,
@@ -1051,7 +1067,17 @@ namespace pwiz.ProteowizardWrapper
                     CVID.UO_second => 60,
                     CVID.UO_minute => 1,
                     CVID.UO_hour => 1f / 60,
-                    _ => throw new InvalidDataException($"unsupported time unit in chromatogram: {timeArrayParam.unitsName}")
+                    _ => (int)timeArrayParam.units switch
+                    {
+                        300000150 => 60 * 1e9f,
+                        300000029 => 60 * 1e6f,
+                        300000028 => 60 * 1e3f,
+                        300000010 => 60,
+                        300000031 => 1,
+                        300000032 => 1f / 60,
+                        _ => throw new InvalidDataException(string.Format("unsupported time unit in chromatogram: {0} ({1}). Expected values: {2}",
+                            timeArrayParam.unitsName, (int)timeArrayParam.units, string.Join(", ", expectedValues)))
+                    }
                 };
 
                 timeUnitMultiple = 1 / timeUnitMultiple;
