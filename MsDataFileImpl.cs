@@ -1021,8 +1021,16 @@ namespace pwiz.ProteowizardWrapper
 
         private static readonly string[] msLevelOrFunctionArrayNames = { "ms level", "function" };
 
-        public void GetChromatogram(int chromIndex, out string id,
-            out float[] timeArray, out float[] intensityArray, bool onlyMs1OrFunction1 = false)
+        /// <summary>
+        /// Get the data for the specified chromatogram
+        /// </summary>
+        /// <param name="chromIndex">Chromatogram index (0-based)</param>
+        /// <param name="id">Output: chromatogram description</param>
+        /// <param name="timeArray">Output: time values (in minutes)</param>
+        /// <param name="intensityArray">Output: Intensity values</param>
+        /// <param name="onlyMs1OrFunction1"></param>
+        /// <exception cref="InvalidDataException"></exception>
+        public void GetChromatogram(int chromIndex, out string id, out float[] timeArray, out float[] intensityArray, bool onlyMs1OrFunction1 = false)
         {
             using (var chrom = ChromatogramList.chromatogram(chromIndex, true))
             {

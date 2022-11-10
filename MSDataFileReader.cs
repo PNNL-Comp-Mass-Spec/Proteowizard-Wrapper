@@ -249,12 +249,11 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Get the data for the specified chromatogram
         /// </summary>
-        /// <param name="chromIndex"></param>
-        /// <param name="id"></param>
-        /// <param name="timeArray"></param>
-        /// <param name="intensityArray"></param>
-        public void GetChromatogram(int chromIndex, out string id,
-            out float[] timeArray, out float[] intensityArray)
+        /// <param name="chromIndex">Chromatogram index (0-based)</param>
+        /// <param name="id">Output: chromatogram description</param>
+        /// <param name="timeArray">Output: time values (in minutes)</param>
+        /// <param name="intensityArray">Output: Intensity values</param>
+        public void GetChromatogram(int chromIndex, out string id, out float[] timeArray, out float[] intensityArray)
         {
             mDataReader.GetChromatogram(chromIndex, out id, out timeArray, out intensityArray);
         }
