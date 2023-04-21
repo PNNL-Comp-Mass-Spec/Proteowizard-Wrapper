@@ -28,7 +28,7 @@ namespace ProteowizardWrapperUnitTests
         [TestCase("MZ0210MnxEF889ETD.raw")]
         public void TestGetCollisionEnergy(string rawFileName)
         {
-            // Keys in this Dictionary are filename, values are Collision Energies by scan
+            // Keys in this dictionary are filename, values are Collision Energies by scan
             var expectedData = new Dictionary<string, Dictionary<int, List<double>>>();
 
             var ce30 = new List<double> { 30.00 };
@@ -394,6 +394,10 @@ namespace ProteowizardWrapperUnitTests
         [Test]
         [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 3316)]
         [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 71147)]
+        [TestCase("QC_mam_16_01_125ng_CPTACpt7-3s-a_02Nov17_Pippin_REP-17-10-01.raw", 126)]
+        [TestCase("Blank04_29Mar17_Smeagol.raw", 4330)]                                         // SRM data
+        [TestCase("calmix_Q3_10192022_03.raw", 20)]                                             // MRM data (Q3MS)
+        [TestCase("20181115_arginine_Gua13C_CIDcol25_158_HCDcol35.raw", 34)]                    // MS3 scans
         public void TestGetNumScans(string rawFileName, int expectedResult)
         {
             var dataFile = GetRawDataFile(rawFileName);
@@ -428,7 +432,7 @@ namespace ProteowizardWrapperUnitTests
             int expectedMS2,
             int expectedTotalScanCount)
         {
-            // Keys in this Dictionary are filename, values are ScanCounts by collision mode, where the key is a Tuple of ScanType and FilterString
+            // Keys in this dictionary are filename, values are ScanCounts by collision mode, where the key is a Tuple of ScanType and FilterString
             var expectedData = new Dictionary<string, Dictionary<Tuple<string, string>, int>>();
 
             // Keys in this dictionary are scan type, values are a Dictionary of FilterString and the number of scans with that filter string
@@ -604,7 +608,12 @@ namespace ProteowizardWrapperUnitTests
         [Test]
         [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521, 3, 6)]
         [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165, 3, 42)]
-        public void TestGetScanInfo(string rawFileName, int scanStart, int scanEnd, int expectedMS1, int expectedMS2)
+        [TestCase("QC_mam_16_01_125ng_CPTACpt7-3s-a_02Nov17_Pippin_REP-17-10-01.raw", 65, 80, 4, 12)]
+        [TestCase("MM_Strap_IMAC_FT_10xDilution_FAIMS_ID_01_FAIMS_Merry_03Feb23_REP-22-11-13.raw", 42000, 42050, 2, 49, true)] // DIA data
+        [TestCase("Blank04_29Mar17_Smeagol.raw", 1390, 1402, 0, 13)]                                                           // SRM data
+        [TestCase("calmix_Q3_10192022_03.raw", 5, 15, 11, 0)]                                                                  // MRM data (Q3MS)
+        [TestCase("20181115_arginine_Gua13C_CIDcol25_158_HCDcol35.raw", 10, 20, 0, 0)]                                         // MS3 scans
+        public void TestGetScanInfo(string rawFileName, int scanStart, int scanEnd, int expectedMS1, int expectedMS2, bool skipIfMissing = false)
         {
             var expectedData = new Dictionary<string, Dictionary<int, string>>();
 
@@ -674,7 +683,143 @@ namespace ProteowizardWrapperUnitTests
             };
             expectedData.Add("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53", file2Data);
 
-            var dataFile = GetRawDataFile(rawFileName);
+            var file3Data = new Dictionary<int, string>
+            {
+                 { 65, "1 10413 0.16 0 350 1800 5.2E+7  371.102 1.1E+7     0.00          positive False   9.70 FTMS + p NSI Full ms [350.0000-1800.0000]                            0.0"},
+                 { 66, "2    28 0.16 0 110 2000 3.3E+4  178.281 1.4E+4  1704.25 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1704.2509@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 67, "2    34 0.16 0 110 2000 3.3E+4  178.282 9.4E+3  1714.28 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1714.6105@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 68, "2    75 0.16 0 110 2000 1.6E+5  148.192 2.4E+4  1326.51 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1327.0189@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 69, "1 11589 0.17 0 350 1800 5.4E+7  371.101 1.1E+7     0.00          positive False   9.81 FTMS + p NSI Full ms [350.0000-1800.0000]                            0.0"},
+                 { 70, "2    27 0.17 0 110 2000 3.2E+4  178.278 1.2E+4  1628.65 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1628.6455@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 71, "2    31 0.17 0 110 2000 3.8E+4  178.280 1.6E+4  1579.63 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1579.6287@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 72, "2    38 0.17 0 110 2000 3.6E+4  178.282 8.2E+3  1700.86 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1701.8641@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 73, "2    30 0.17 0 110 2000 3.7E+4  128.953 7.5E+3  1311.66 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1311.6626@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 74, "2    76 0.18 0 110 2000 1.6E+5  148.196 2.2E+4  1319.71 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1319.7051@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 75, "1 12606 0.18 0 350 1800 5.5E+7  371.101 1.2E+7     0.00          positive False  12.96 FTMS + p NSI Full ms [350.0000-1800.0000]                            0.0"},
+                 { 76, "2    35 0.18 0 110 2000 3.8E+4  178.279 1.4E+4  1694.55 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1694.5530@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 77, "2    28 0.18 0 110 2000 3.3E+4  178.281 1.3E+4  1556.25 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1556.5758@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 78, "2    80 0.19 0 110 2000 1.7E+5  148.192 2.2E+4  1478.03 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1478.0348@hcd30.00 [110.0000-2000.0000]      0.7"},
+                 { 79, "1 14314 0.19 0 350 1800 5.5E+7  371.102 1.1E+7     0.00          positive False  17.20 FTMS + p NSI Full ms [350.0000-1800.0000]                            0.0"},
+                 { 80, "2    36 0.19 0 110 2000 3.8E+4  178.279 1.5E+4  1731.89 hcd      positive True  105.00 FTMS + c NSI d Full ms2 1732.2192@hcd30.00 [110.0000-2000.0000]      0.7"},
+            };
+            expectedData.Add("QC_mam_16_01_125ng_CPTACpt7-3s-a_02Nov17_Pippin_REP-17-10-01", file3Data);
+
+            // This is a DIA dataset
+            var file4Data = new Dictionary<int, string>
+            {
+                 { 42000, "2   178 54.51 -80 200 1600 3.7E+4 1271.590 3.9E+3  1423.50 hcd      positive False  54.00 FTMS + p NSI cv=-80.00 Full ms2 1423.5000@hcd32.00 [200.0000-1...  453.0"},
+                 { 42001, "1  3032 54.51 -40 350 1650 8.7E+9  379.715 4.0E+9     0.00          positive False   0.03 FTMS + p NSI cv=-40.00 Full ms [350.0000-1650.0000]                  0.0"},
+                 { 42002, "2  6798 54.51 -40 200 1600 1.7E+9  244.165 3.9E+8   377.00 hcd      positive False   1.24 FTMS + p NSI cv=-40.00 Full ms2 377.0000@hcd32.00 [200.0000-16...   54.0"},
+                 { 42003, "2 11160 54.51 -40 200 1600 1.7E+8  621.382 2.6E+7   419.00 hcd      positive False  12.63 FTMS + p NSI cv=-40.00 Full ms2 419.0000@hcd32.00 [200.0000-16...   32.0"},
+                 { 42004, "2 13193 54.51 -40 200 1600 4.2E+7  468.292 1.4E+6   448.00 hcd      positive False  27.04 FTMS + p NSI cv=-40.00 Full ms2 448.0000@hcd32.00 [200.0000-16...   28.0"},
+                 { 42005, "2 16075 54.51 -40 200 1600 2.5E+7  244.165 2.8E+6   473.50 hcd      positive False  53.97 FTMS + p NSI cv=-40.00 Full ms2 473.5000@hcd32.00 [200.0000-16...   25.0"},
+                 { 42006, "2 15512 54.52 -40 200 1600 2.4E+7  649.297 1.0E+6   497.50 hcd      positive False  54.00 FTMS + p NSI cv=-40.00 Full ms2 497.5000@hcd32.00 [200.0000-16...   25.0"},
+                 { 42007, "2 17828 54.52 -40 200 1600 3.8E+7  734.368 2.3E+6   520.50 hcd      positive False  54.00 FTMS + p NSI cv=-40.00 Full ms2 520.5000@hcd32.00 [200.0000-16...   23.0"},
+                 { 42008, "2 17401 54.52 -40 200 1600 2.5E+7  787.362 6.5E+5   542.50 hcd      positive False  54.00 FTMS + p NSI cv=-40.00 Full ms2 542.5000@hcd32.00 [200.0000-16...   23.0"},
+                 { 42009, "2 17087 54.52 -40 200 1600 5.1E+7  903.427 2.7E+6   564.50 hcd      positive False  33.22 FTMS + p NSI cv=-40.00 Full ms2 564.5000@hcd32.00 [200.0000-16...   23.0"},
+                 { 42010, "2 15516 54.52 -40 200 1600 5.0E+7  950.392 2.6E+6   587.00 hcd      positive False  31.78 FTMS + p NSI cv=-40.00 Full ms2 587.0000@hcd32.00 [200.0000-16...   24.0"},
+                 { 42011, "2 17001 54.52 -40 200 1600 8.7E+7 1030.550 2.8E+6   610.50 hcd      positive False  19.37 FTMS + p NSI cv=-40.00 Full ms2 610.5000@hcd32.00 [200.0000-16...   25.0"},
+                 { 42012, "2 12565 54.52 -40 200 1600 8.0E+7  630.363 1.3E+7   635.00 hcd      positive False  16.09 FTMS + p NSI cv=-40.00 Full ms2 635.0000@hcd32.00 [200.0000-16...   26.0"},
+                 { 42013, "2 14453 54.52 -40 200 1600 5.7E+7  786.398 3.0E+6   660.00 hcd      positive False  20.19 FTMS + p NSI cv=-40.00 Full ms2 660.0000@hcd32.00 [200.0000-16...   26.0"},
+                 { 42014, "2 14412 54.52 -40 200 1600 4.6E+7  673.329 1.3E+6   685.50 hcd      positive False  21.17 FTMS + p NSI cv=-40.00 Full ms2 685.5000@hcd32.00 [200.0000-16...   27.0"},
+                 { 42015, "2 16190 54.53 -40 200 1600 3.2E+7  249.159 3.9E+5   712.50 hcd      positive False  29.42 FTMS + p NSI cv=-40.00 Full ms2 712.5000@hcd32.00 [200.0000-16...   29.0"},
+                 { 42016, "2 15386 54.53 -40 200 1600 4.4E+7  735.375 8.0E+5   741.00 hcd      positive False  20.43 FTMS + p NSI cv=-40.00 Full ms2 741.0000@hcd32.00 [200.0000-16...   30.0"},
+                 { 42017, "2 16712 54.53 -40 200 1600 6.3E+7  758.423 2.8E+6   771.00 hcd      positive False  27.87 FTMS + p NSI cv=-40.00 Full ms2 771.0000@hcd32.00 [200.0000-16...   32.0"},
+                 { 42018, "2 18091 54.53 -40 200 1600 3.1E+7  516.277 9.5E+5   803.50 hcd      positive False  41.25 FTMS + p NSI cv=-40.00 Full ms2 803.5000@hcd32.00 [200.0000-16...   35.0"},
+                 { 42019, "2 14584 54.53 -40 200 1600 2.4E+7  848.866 2.6E+6   838.50 hcd      positive False  50.64 FTMS + p NSI cv=-40.00 Full ms2 838.5000@hcd32.00 [200.0000-16...   37.0"},
+                 { 42020, "2 17626 54.53 -40 200 1600 2.5E+7 1049.444 6.4E+5   877.00 hcd      positive False  53.08 FTMS + p NSI cv=-40.00 Full ms2 877.0000@hcd32.00 [200.0000-16...   42.0"},
+                 { 42021, "2 11799 54.53 -40 200 1600 2.7E+8 1270.576 1.6E+7   921.00 hcd      positive False   6.04 FTMS + p NSI cv=-40.00 Full ms2 921.0000@hcd32.00 [200.0000-16...   48.0"},
+                 { 42022, "2  5945 54.53 -40 200 1600 4.5E+6  758.421 2.0E+5   972.00 hcd      positive False  46.88 FTMS + p NSI cv=-40.00 Full ms2 972.0000@hcd32.00 [200.0000-16...   52.0"},
+                 { 42023, "2  5074 54.53 -40 200 1600 3.7E+6  758.421 2.7E+5  1034.50 hcd      positive False  54.00 FTMS + p NSI cv=-40.00 Full ms2 1034.5000@hcd32.00 [200.0000-1...   71.0"},
+                 { 42024, "2  5717 54.54 -40 200 1600 5.9E+6  758.422 5.2E+5  1133.50 hcd      positive False  54.00 FTMS + p NSI cv=-40.00 Full ms2 1133.5000@hcd32.00 [200.0000-1...  129.0"},
+                 { 42025, "2 10629 54.54 -40 200 1600 2.5E+7  758.422 3.2E+6  1423.50 hcd      positive False  52.04 FTMS + p NSI cv=-40.00 Full ms2 1423.5000@hcd32.00 [200.0000-1...  453.0"},
+                 { 42026, "1 11849 54.54 -60 350 1650 4.7E+9  396.735 1.1E+9     0.00          positive False   0.30 FTMS + p NSI cv=-60.00 Full ms [350.0000-1650.0000]                  0.0"},
+                 { 42027, "2  7339 54.54 -60 200 1600 1.3E+9  546.325 2.5E+8   377.00 hcd      positive False   1.62 FTMS + p NSI cv=-60.00 Full ms2 377.0000@hcd32.00 [200.0000-16...   54.0"},
+                 { 42028, "2 11774 54.54 -60 200 1600 1.9E+8  564.276 7.0E+6   419.00 hcd      positive False   5.58 FTMS + p NSI cv=-60.00 Full ms2 419.0000@hcd32.00 [200.0000-16...   32.0"},
+                 { 42029, "2 14650 54.54 -60 200 1600 9.8E+7  524.744 1.9E+6   448.00 hcd      positive False  10.15 FTMS + p NSI cv=-60.00 Full ms2 448.0000@hcd32.00 [200.0000-16...   28.0"},
+                 { 42030, "2 16217 54.55 -60 200 1600 1.1E+8  716.392 1.0E+7   473.50 hcd      positive False  16.20 FTMS + p NSI cv=-60.00 Full ms2 473.5000@hcd32.00 [200.0000-16...   25.0"},
+                 { 42031, "2 14986 54.55 -60 200 1600 3.3E+8  745.372 3.9E+7   497.50 hcd      positive False   9.60 FTMS + p NSI cv=-60.00 Full ms2 497.5000@hcd32.00 [200.0000-16...   25.0"},
+                 { 42032, "2 16549 54.55 -60 200 1600 1.1E+8  774.435 6.4E+6   520.50 hcd      positive False  19.16 FTMS + p NSI cv=-60.00 Full ms2 520.5000@hcd32.00 [200.0000-16...   23.0"},
+                 { 42033, "2 11926 54.55 -60 200 1600 8.7E+7  546.323 1.4E+7   542.50 hcd      positive False  13.00 FTMS + p NSI cv=-60.00 Full ms2 542.5000@hcd32.00 [200.0000-16...   23.0"},
+                 { 42034, "2 15353 54.55 -60 200 1600 9.6E+7  902.438 4.5E+6   564.50 hcd      positive False  14.36 FTMS + p NSI cv=-60.00 Full ms2 564.5000@hcd32.00 [200.0000-16...   23.0"},
+                 { 42035, "2 14499 54.55 -60 200 1600 2.5E+7  730.334 5.8E+5   587.00 hcd      positive False  30.26 FTMS + p NSI cv=-60.00 Full ms2 587.0000@hcd32.00 [200.0000-16...   24.0"},
+                 { 42036, "2 14517 54.55 -60 200 1600 1.4E+7  846.396 3.6E+5   610.50 hcd      positive False  50.93 FTMS + p NSI cv=-60.00 Full ms2 610.5000@hcd32.00 [200.0000-16...   25.0"},
+                 { 42037, "2 13702 54.55 -60 200 1600 2.9E+7  645.392 4.3E+6   635.00 hcd      positive False  28.19 FTMS + p NSI cv=-60.00 Full ms2 635.0000@hcd32.00 [200.0000-16...   26.0"},
+                 { 42038, "2 11752 54.55 -60 200 1600 1.3E+7  660.382 5.7E+5   660.00 hcd      positive False  47.46 FTMS + p NSI cv=-60.00 Full ms2 660.0000@hcd32.00 [200.0000-16...   26.0"},
+                 { 42039, "2 11107 54.56 -60 200 1600 9.4E+6  694.316 4.1E+5   685.50 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 685.5000@hcd32.00 [200.0000-16...   27.0"},
+                 { 42040, "2 13523 54.56 -60 200 1600 1.2E+7  716.393 5.8E+5   712.50 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 712.5000@hcd32.00 [200.0000-16...   29.0"},
+                 { 42041, "2 10564 54.56 -60 200 1600 1.1E+7  745.371 1.7E+6   741.00 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 741.0000@hcd32.00 [200.0000-16...   30.0"},
+                 { 42042, "2 12864 54.56 -60 200 1600 1.1E+7  772.382 7.2E+5   771.00 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 771.0000@hcd32.00 [200.0000-16...   32.0"},
+                 { 42043, "2  8694 54.56 -60 200 1600 6.3E+6  792.460 3.9E+5   803.50 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 803.5000@hcd32.00 [200.0000-16...   35.0"},
+                 { 42044, "2  5473 54.56 -60 200 1600 2.8E+6  836.381 5.4E+4   838.50 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 838.5000@hcd32.00 [200.0000-16...   37.0"},
+                 { 42045, "2  3656 54.56 -60 200 1600 3.7E+6  858.454 9.7E+5   877.00 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 877.0000@hcd32.00 [200.0000-16...   42.0"},
+                 { 42046, "2  5090 54.56 -60 200 1600 4.8E+6 1026.061 3.4E+5   921.00 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 921.0000@hcd32.00 [200.0000-16...   48.0"},
+                 { 42047, "2   680 54.57 -60 200 1600 3.8E+5  971.537 6.4E+4   972.00 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 972.0000@hcd32.00 [200.0000-16...   52.0"},
+                 { 42048, "2   443 54.57 -60 200 1600 1.9E+5 1015.521 3.5E+4  1034.50 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 1034.5000@hcd32.00 [200.0000-1...   71.0"},
+                 { 42049, "2   212 54.57 -60 200 1600 5.5E+4 1099.535 5.8E+3  1133.50 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 1133.5000@hcd32.00 [200.0000-1...  129.0"},
+                 { 42050, "2   139 54.57 -60 200 1600 2.9E+4 1213.694 3.6E+3  1423.50 hcd      positive False  54.00 FTMS + p NSI cv=-60.00 Full ms2 1423.5000@hcd32.00 [200.0000-1...  453.0"},
+            };
+            expectedData.Add("MM_Strap_IMAC_FT_10xDilution_FAIMS_ID_01_FAIMS_Merry_03Feb23_REP-22-11-13", file4Data);
+
+            // This is a SRM dataset
+            var file5Data = new Dictionary<int, string>
+            {
+                 { 1390, "2     3 20.67 0 907  907 3.1E+0 1151.503 1.0E+0   833.37 cid      positive True    0.00 + c NSI SRM ms2 833.374 [907.432-907.434, 1022.459-1022.461, 1...    0.0"},
+                 { 1391, "2     3 20.68 0 637  637 5.4E+0  750.345 3.4E+0   526.26 cid      positive True    0.00 + c NSI SRM ms2 526.258 [637.260-637.262, 750.344-750.346, 938...    0.0"},
+                 { 1392, "2     3 20.68 0 645  645 5.2E+0  645.275 2.4E+0   530.27 cid      positive True    0.00 + c NSI SRM ms2 530.265 [645.274-645.276, 758.358-758.360, 946...    0.0"},
+                 { 1393, "2     3 20.68 0 602  602 5.7E+2  988.506 2.8E+2   647.33 cid      positive True    0.00 + c NSI SRM ms2 647.325 [602.325-602.327, 715.409-715.411, 988...    0.0"},
+                 { 1394, "2     3 20.68 0 610  610 4.2E+2  610.340 2.3E+2   651.33 cid      positive True    0.00 + c NSI SRM ms2 651.332 [610.339-610.341, 723.423-723.425, 996...    0.0"},
+                 { 1395, "2     3 20.69 0 897  897 3.6E+0  897.425 1.2E+0   828.37 cid      positive True    0.00 + c NSI SRM ms2 828.370 [897.424-897.426, 1012.451-1012.453, 1...    0.0"},
+                 { 1396, "2     3 20.69 0 907  907 3.7E+0 1151.503 1.3E+0   833.37 cid      positive True    0.00 + c NSI SRM ms2 833.374 [907.432-907.434, 1022.459-1022.461, 1...    0.0"},
+                 { 1397, "2     3 20.69 0 637  637 3.5E+0  750.345 1.2E+0   526.26 cid      positive True    0.00 + c NSI SRM ms2 526.258 [637.260-637.262, 750.344-750.346, 938...    0.0"},
+                 { 1398, "2     3 20.69 0 645  645 7.7E+1  946.439 7.0E+1   530.27 cid      positive True    0.00 + c NSI SRM ms2 530.265 [645.274-645.276, 758.358-758.360, 946...    0.0"},
+                 { 1399, "2     3 20.70 0 602  602 8.5E+2  988.506 3.3E+2   647.33 cid      positive True    0.00 + c NSI SRM ms2 647.325 [602.325-602.327, 715.409-715.411, 988...    0.0"},
+                 { 1400, "2     3 20.70 0 610  610 8.5E+2  996.520 3.3E+2   651.33 cid      positive True    0.00 + c NSI SRM ms2 651.332 [610.339-610.341, 723.423-723.425, 996...    0.0"},
+                 { 1401, "2     3 20.70 0 897  897 4.9E+0 1012.452 2.6E+0   828.37 cid      positive True    0.00 + c NSI SRM ms2 828.370 [897.424-897.426, 1012.451-1012.453, 1...    0.0"},
+                 { 1402, "2     3 20.71 0 907  907 4.9E+0 1151.503 2.7E+0   833.37 cid      positive True    0.00 + c NSI SRM ms2 833.374 [907.432-907.434, 1022.459-1022.461, 1...    0.0"},
+            };
+            expectedData.Add("Blank04_29Mar17_Smeagol", file5Data);
+
+            // This is a MRM dataset
+            var file6Data = new Dictionary<int, string>
+            {
+                 { 5, "1 12857 0.04 0 150 1050 1.8E+10  508.083 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 6, "1 12857 0.05 0 150 1050 1.8E+10  508.293 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 7, "1 12857 0.06 0 150 1050 2.0E+10  508.363 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 8, "1 12857 0.07 0 150 1050 1.8E+10  508.293 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 9, "1 12857 0.08 0 150 1050 1.8E+10  508.223 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 10, "1 12857 0.09 0 150 1050 1.9E+10  508.293 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 11, "1 12857 0.10 0 150 1050 2.1E+10  508.083 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 12, "1 12857 0.10 0 150 1050 1.9E+10  508.363 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 13, "1 12857 0.11 0 150 1050 1.8E+10  508.293 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 14, "1 12857 0.12 0 150 1050 2.0E+10  508.083 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+                 { 15, "1 12857 0.13 0 150 1050 1.9E+10  508.083 2.6E+8     0.00          positive False   0.00 + p NSI Q3MS [150.152-1050.082]                                      0.0"},
+            };
+            expectedData.Add("calmix_Q3_10192022_03", file6Data);
+
+            var file7Data = new Dictionary<int, string>
+            {
+                { 10, "3   274 0.08 0  50  500 1.8E+7  158.111 2.8E+6   157.50 cid      positive True    1.38 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 11, "3   225 0.09 0  50  500 1.5E+7  158.111 2.3E+6   157.50 cid      positive True    1.55 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 12, "3   227 0.10 0  50  500 1.7E+7  158.111 2.7E+6   157.50 cid      positive True    1.38 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 13, "3   226 0.11 0  50  500 1.5E+7  158.111 2.3E+6   157.50 cid      positive True    1.53 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 14, "3   192 0.12 0  50  500 1.3E+7  158.111 2.0E+6   157.50 cid      positive True    1.62 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 15, "3   272 0.12 0  50  500 1.6E+7  158.111 2.3E+6   157.50 cid      positive True    1.62 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 16, "3   206 0.13 0  50  500 1.4E+7  158.111 2.2E+6   157.50 cid      positive True    1.47 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 17, "3   210 0.14 0  50  500 1.4E+7  158.111 2.4E+6   157.50 cid      positive True    1.53 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 18, "3   258 0.15 0  50  500 1.6E+7  158.111 2.2E+6   157.50 cid      positive True    1.46 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 19, "3   272 0.16 0  50  500 1.5E+7  158.111 2.2E+6   157.50 cid      positive True    1.78 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+                { 20, "3   257 0.17 0  50  500 1.7E+7  158.111 2.8E+6   157.50 cid      positive True    1.52 FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-5...    1.0"},
+            };
+            expectedData.Add("20181115_arginine_Gua13C_CIDcol25_158_HCDcol35", file7Data);
+
+            var dataFile = GetRawDataFile(rawFileName, skipIfMissing);
+
+            if (dataFile == null)
+            {
+                Console.WriteLine("Skipping unit tests for " + rawFileName);
+                return;
+            }
 
             using var reader = new MSDataFileReader(dataFile.FullName);
 
@@ -690,6 +835,7 @@ namespace ProteowizardWrapperUnitTests
                 "IonMode", "IsCentroided",
                 "IonInjectionTime", "FilterText", "IsolationWindowWidth");
 
+            var validateVsExpected = expectedMS1 + expectedMS2 > 0;
 
             var scanCountMS1 = 0;
             var scanCountMS2 = 0;
@@ -759,7 +905,7 @@ namespace ProteowizardWrapperUnitTests
                     Assert.Fail("Dataset {0} not found in dictionary expectedData", datasetName);
                 }
 
-                if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedScanSummary))
+                if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedScanSummary) && validateVsExpected)
                 {
                     Assert.AreEqual(scanNumber + " " + expectedScanSummary, scanSummary,
                         "Scan summary mismatch, scan " + scanNumber);
@@ -784,13 +930,22 @@ namespace ProteowizardWrapperUnitTests
             Console.WriteLine("scanCountMS1={0}", scanCountMS1);
             Console.WriteLine("scanCountMS2={0}", scanCountMS2);
 
-            Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
-            Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
+            if (validateVsExpected)
+            {
+                Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
+                Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
+            }
         }
 
         [Test]
         [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521)]
         [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165)]
+        [TestCase("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20.RAW", 1513, 1521)]
+        [TestCase("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53.raw", 16121, 16165)]
+        [TestCase("QC_mam_16_01_125ng_CPTACpt7-3s-a_02Nov17_Pippin_REP-17-10-01.raw", 65, 80)]
+        [TestCase("Blank04_29Mar17_Smeagol.raw", 1390, 1402, 3)]                                    // SRM data
+        [TestCase("calmix_Q3_10192022_03.raw", 5, 15)]                                              // MRM data (Q3MS)
+        [TestCase("20181115_arginine_Gua13C_CIDcol25_158_HCDcol35.raw", 10, 20)]                    // MS3
         public void TestGetScanData(string rawFileName, int scanStart, int scanEnd, int expectedScanWindowCount = 1)
         {
             var expectedData = new Dictionary<string, Dictionary<int, Dictionary<string, string>>>();
@@ -848,7 +1003,180 @@ namespace ProteowizardWrapperUnitTests
 
             expectedData.Add("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53", file2Data);
 
+            var file3Data = new Dictionary<int, Dictionary<string, string>>
+            {
+                {65, new Dictionary<string, string>()},
+                {66, new Dictionary<string, string>()},
+                {67, new Dictionary<string, string>()},
+                {68, new Dictionary<string, string>()},
+                {69, new Dictionary<string, string>()},
+                {70, new Dictionary<string, string>()},
+                {71, new Dictionary<string, string>()},
+                {72, new Dictionary<string, string>()},
+                {73, new Dictionary<string, string>()},
+                {74, new Dictionary<string, string>()},
+                {75, new Dictionary<string, string>()},
+                {76, new Dictionary<string, string>()},
+                {77, new Dictionary<string, string>()},
+                {78, new Dictionary<string, string>()},
+                {79, new Dictionary<string, string>()},
+                {80, new Dictionary<string, string>()}
+            };
+
+            file3Data[65].Add("False", "10413    10413    346.520  0.0E+0   958.772  0.0E+0   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[66].Add("False", "28       28       111.163  4.7E+2   178.304  7.2E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1704.2509@hcd30.00 [110.0000-2000.0000]");
+            file3Data[67].Add("False", "34       34       113.093  4.7E+2   178.282  9.4E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1714.6105@hcd30.00 [110.0000-2000.0000]");
+            file3Data[68].Add("False", "75       75       114.498  4.4E+2   148.256  1.3E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1327.0189@hcd30.00 [110.0000-2000.0000]");
+            file3Data[69].Add("False", "11589    11589    346.520  0.0E+0   1016.351 0.0E+0   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[70].Add("False", "27       27       112.903  5.0E+2   188.835  7.6E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1628.6455@hcd30.00 [110.0000-2000.0000]");
+            file3Data[71].Add("False", "31       31       114.489  4.3E+2   202.329  6.3E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1579.6287@hcd30.00 [110.0000-2000.0000]");
+            file3Data[72].Add("False", "38       38       115.591  5.3E+2   178.282  8.2E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1701.8641@hcd30.00 [110.0000-2000.0000]");
+            file3Data[73].Add("False", "30       30       110.101  4.4E+2   178.283  4.1E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1311.6626@hcd30.00 [110.0000-2000.0000]");
+            file3Data[74].Add("False", "76       76       117.937  5.4E+2   148.239  1.4E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1319.7051@hcd30.00 [110.0000-2000.0000]");
+            file3Data[75].Add("False", "12606    12606    346.520  0.0E+0   822.732  0.0E+0   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[76].Add("False", "35       35       113.376  4.9E+2   290.110  7.0E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1694.5530@hcd30.00 [110.0000-2000.0000]");
+            file3Data[77].Add("False", "28       28       110.060  4.5E+2   254.098  6.9E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1556.5758@hcd30.00 [110.0000-2000.0000]");
+            file3Data[78].Add("False", "80       80       110.961  4.6E+2   148.257  1.2E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1478.0348@hcd30.00 [110.0000-2000.0000]");
+            file3Data[79].Add("False", "14314    14314    346.520  0.0E+0   805.777  0.0E+0   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[80].Add("False", "36       36       113.223  5.8E+2   178.279  1.5E+4   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1732.2192@hcd30.00 [110.0000-2000.0000]");
+
+            file3Data[65].Add("True", "749      749      352.239  6.9E+3   1022.095 1.3E+4   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[66].Add("True", "28       28       111.163  4.7E+2   178.304  7.2E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1704.2509@hcd30.00 [110.0000-2000.0000]");
+            file3Data[67].Add("True", "34       34       113.093  4.7E+2   178.282  9.4E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1714.6105@hcd30.00 [110.0000-2000.0000]");
+            file3Data[68].Add("True", "75       75       114.498  4.4E+2   148.256  1.3E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1327.0189@hcd30.00 [110.0000-2000.0000]");
+            file3Data[69].Add("True", "845      845      353.908  1.1E+4   1093.054 1.4E+4   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[70].Add("True", "27       27       112.903  5.0E+2   188.835  7.6E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1628.6455@hcd30.00 [110.0000-2000.0000]");
+            file3Data[71].Add("True", "31       31       114.489  4.3E+2   202.329  6.3E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1579.6287@hcd30.00 [110.0000-2000.0000]");
+            file3Data[72].Add("True", "38       38       115.591  5.3E+2   178.282  8.2E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1701.8641@hcd30.00 [110.0000-2000.0000]");
+            file3Data[73].Add("True", "30       30       110.101  4.4E+2   178.283  4.1E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1311.6626@hcd30.00 [110.0000-2000.0000]");
+            file3Data[74].Add("True", "76       76       117.937  5.4E+2   148.239  1.4E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1319.7051@hcd30.00 [110.0000-2000.0000]");
+            file3Data[75].Add("True", "913      913      353.909  2.4E+4   875.248  1.3E+4   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[76].Add("True", "35       35       113.376  4.9E+2   290.110  7.0E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1694.5530@hcd30.00 [110.0000-2000.0000]");
+            file3Data[77].Add("True", "28       28       110.060  4.5E+2   254.098  6.9E+2   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1556.5758@hcd30.00 [110.0000-2000.0000]");
+            file3Data[78].Add("True", "80       80       110.961  4.6E+2   148.257  1.2E+3   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1478.0348@hcd30.00 [110.0000-2000.0000]");
+            file3Data[79].Add("True", "1035     1035     353.909  1.9E+4   828.673  5.3E+4   [350.0 - 1800.0]    FTMS + p NSI Full ms [350.0000-1800.0000]");
+            file3Data[80].Add("True", "36       36       113.223  5.8E+2   178.279  1.5E+4   [110.0 - 2000.0]    FTMS + c NSI d Full ms2 1732.2192@hcd30.00 [110.0000-2000.0000]");
+
+            expectedData.Add("QC_mam_16_01_125ng_CPTACpt7-3s-a_02Nov17_Pippin_REP-17-10-01", file3Data);
+
+            var file4Data = new Dictionary<int, Dictionary<string, string>>
+            {
+                {1390, new Dictionary<string, string>()},
+                {1391, new Dictionary<string, string>()},
+                {1392, new Dictionary<string, string>()},
+                {1393, new Dictionary<string, string>()},
+                {1394, new Dictionary<string, string>()},
+                {1395, new Dictionary<string, string>()},
+                {1396, new Dictionary<string, string>()},
+                {1397, new Dictionary<string, string>()},
+                {1398, new Dictionary<string, string>()},
+                {1399, new Dictionary<string, string>()},
+                {1400, new Dictionary<string, string>()},
+                {1401, new Dictionary<string, string>()},
+                {1402, new Dictionary<string, string>()}
+            };
+
+            file4Data[1390].Add("False", "3        3        907.433  1.0E+0   1022.460 1.0E+0   [907.432 - 907.434, 1022.459 - 1022.461, 1151.5021 - 1151.504] + c NSI SRM ms2 833.374 [907.432-907.434, 1022.459-1022.461, 1151.502-1151.504]");
+            file4Data[1391].Add("False", "3        3        637.261  1.0E+0   750.345  3.4E+0   [637.26 - 637.262, 750.344 - 750.3459, 938.424 - 938.426] + c NSI SRM ms2 526.258 [637.260-637.262, 750.344-750.346, 938.424-938.426]");
+            file4Data[1392].Add("False", "3        3        645.275  2.4E+0   758.359  1.1E+0   [645.274 - 645.276, 758.358 - 758.36, 946.438 - 946.44] + c NSI SRM ms2 530.265 [645.274-645.276, 758.358-758.360, 946.438-946.440]");
+            file4Data[1393].Add("False", "3        3        602.326  2.0E+2   715.410  8.5E+1   [602.325 - 602.327, 715.409 - 715.4109, 988.505 - 988.507] + c NSI SRM ms2 647.325 [602.325-602.327, 715.409-715.411, 988.505-988.507]");
+            file4Data[1394].Add("False", "3        3        610.340  2.3E+2   723.424  1.3E+2   [610.3391 - 610.341, 723.423 - 723.425, 996.519 - 996.521] + c NSI SRM ms2 651.332 [610.339-610.341, 723.423-723.425, 996.519-996.521]");
+            file4Data[1395].Add("False", "3        3        897.425  1.2E+0   1012.452 1.2E+0   [897.424 - 897.426, 1012.451 - 1012.453, 1141.493 - 1141.495] + c NSI SRM ms2 828.370 [897.424-897.426, 1012.451-1012.453, 1141.493-1141.495]");
+            file4Data[1396].Add("False", "3        3        907.433  1.2E+0   1022.460 1.2E+0   [907.432 - 907.434, 1022.459 - 1022.461, 1151.5021 - 1151.504] + c NSI SRM ms2 833.374 [907.432-907.434, 1022.459-1022.461, 1151.502-1151.504]");
+            file4Data[1397].Add("False", "3        3        637.261  1.2E+0   750.345  1.2E+0   [637.26 - 637.262, 750.344 - 750.3459, 938.424 - 938.426] + c NSI SRM ms2 526.258 [637.260-637.262, 750.344-750.346, 938.424-938.426]");
+            file4Data[1398].Add("False", "3        3        645.275  1.2E+0   758.359  6.8E+0   [645.274 - 645.276, 758.358 - 758.36, 946.438 - 946.44] + c NSI SRM ms2 530.265 [645.274-645.276, 758.358-758.360, 946.438-946.440]");
+            file4Data[1399].Add("False", "3        3        602.326  2.2E+2   715.410  2.9E+2   [602.325 - 602.327, 715.409 - 715.4109, 988.505 - 988.507] + c NSI SRM ms2 647.325 [602.325-602.327, 715.409-715.411, 988.505-988.507]");
+            file4Data[1400].Add("False", "3        3        610.340  2.4E+2   723.424  2.8E+2   [610.3391 - 610.341, 723.423 - 723.425, 996.519 - 996.521] + c NSI SRM ms2 651.332 [610.339-610.341, 723.423-723.425, 996.519-996.521]");
+            file4Data[1401].Add("False", "3        3        897.425  1.1E+0   1012.452 2.6E+0   [897.424 - 897.426, 1012.451 - 1012.453, 1141.493 - 1141.495] + c NSI SRM ms2 828.370 [897.424-897.426, 1012.451-1012.453, 1141.493-1141.495]");
+            file4Data[1402].Add("False", "3        3        907.433  1.1E+0   1022.460 1.1E+0   [907.432 - 907.434, 1022.459 - 1022.461, 1151.5021 - 1151.504] + c NSI SRM ms2 833.374 [907.432-907.434, 1022.459-1022.461, 1151.502-1151.504]");
+
+            // Values are the same whether or not the data is centroided, so duplicate the "False" values
+            foreach (var scan in file4Data.Keys.ToList())
+            {
+                file4Data[scan].Add("True", file4Data[scan]["False"]);
+            }
+
+            expectedData.Add("Blank04_29Mar17_Smeagol", file4Data);
+
+            var file5Data = new Dictionary<int, Dictionary<string, string>>
+            {
+                {5, new Dictionary<string, string>()},
+                {6, new Dictionary<string, string>()},
+                {7, new Dictionary<string, string>()},
+                {8, new Dictionary<string, string>()},
+                {9, new Dictionary<string, string>()},
+                {10, new Dictionary<string, string>()},
+                {11, new Dictionary<string, string>()},
+                {12, new Dictionary<string, string>()},
+                {13, new Dictionary<string, string>()},
+                {14, new Dictionary<string, string>()},
+                {15, new Dictionary<string, string>()}
+            };
+
+            file5Data[5].Add("False", "12857    12857    150.152  1.6E+5   599.951  1.1E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[6].Add("False", "12857    12857    150.152  1.2E+5   599.951  1.6E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[7].Add("False", "12857    12857    150.152  1.6E+5   599.951  1.0E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[8].Add("False", "12857    12857    150.152  3.2E+5   599.951  1.1E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[9].Add("False", "12857    12857    150.152  2.7E+5   599.951  5.1E+4   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[10].Add("False", "12857    12857    150.152  1.7E+5   599.951  1.3E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[11].Add("False", "12857    12857    150.152  1.1E+5   599.951  2.0E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[12].Add("False", "12857    12857    150.152  2.7E+5   599.951  3.4E+3   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[13].Add("False", "12857    12857    150.152  2.5E+5   599.951  6.0E+4   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[14].Add("False", "12857    12857    150.152  1.8E+5   599.951  2.5E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[15].Add("False", "12857    12857    150.152  3.4E+5   599.951  9.6E+4   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+
+            file5Data[5].Add("True", "1122     1122     150.470  4.3E+6   595.959  1.8E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[6].Add("True", "1128     1128     150.439  3.3E+6   591.324  5.2E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[7].Add("True", "1122     1122     150.543  4.6E+6   596.642  1.8E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[8].Add("True", "1121     1121     150.382  3.5E+6   593.464  6.5E+5   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[9].Add("True", "1128     1128     150.389  2.9E+6   595.982  1.7E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[10].Add("True", "1136     1136     150.506  3.6E+6   596.356  2.0E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[11].Add("True", "1124     1124     150.419  3.9E+6   590.106  1.4E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[12].Add("True", "1133     1133     150.566  5.8E+6   594.073  1.3E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[13].Add("True", "1111     1111     150.416  3.7E+6   590.092  1.7E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[14].Add("True", "1139     1139     150.480  4.4E+6   594.775  1.8E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+            file5Data[15].Add("True", "1126     1126     150.427  3.6E+6   595.926  2.1E+6   [150.082 - 1050.082] + p NSI Q3MS [150.152-1050.082]");
+
+            expectedData.Add("calmix_Q3_10192022_03", file5Data);
+
+            var file6Data = new Dictionary<int, Dictionary<string, string>>
+            {
+                {10, new Dictionary<string, string>()},
+                {11, new Dictionary<string, string>()},
+                {12, new Dictionary<string, string>()},
+                {13, new Dictionary<string, string>()},
+                {14, new Dictionary<string, string>()},
+                {15, new Dictionary<string, string>()},
+                {16, new Dictionary<string, string>()},
+                {17, new Dictionary<string, string>()},
+                {18, new Dictionary<string, string>()},
+                {19, new Dictionary<string, string>()},
+                {20, new Dictionary<string, string>()}
+            };
+
+            file6Data[10].Add("False", "274      274      50.387   3.9E+4   103.980  4.0E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[11].Add("False", "225      225      50.018   3.2E+4   116.300  3.5E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[12].Add("False", "227      227      50.000   3.8E+4   133.961  3.9E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[13].Add("False", "226      226      50.122   3.9E+4   117.858  4.1E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[14].Add("False", "192      192      50.239   3.5E+4   132.193  3.7E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[15].Add("False", "272      272      50.186   3.3E+4   114.787  3.5E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[16].Add("False", "206      206      50.058   3.6E+4   127.758  4.0E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[17].Add("False", "210      210      50.225   3.5E+4   123.739  3.8E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[18].Add("False", "258      258      50.148   3.6E+4   132.958  1.0E+5   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[19].Add("False", "272      272      50.387   3.1E+4   116.912  4.1E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+            file6Data[20].Add("False", "257      257      51.003   4.3E+4   136.238  4.4E+4   [50.0 - 500.0]      FTMS + c NSI Full ms3 176.10@cid25.00 157.50@hcd35.00 [50.00-500.00]");
+
+            // Values are the same whether or not the data is centroided, so duplicate the "False" values
+            foreach (var scan in file6Data.Keys.ToList())
+            {
+                file6Data[scan].Add("True", file6Data[scan]["False"]);
+            }
+
+            expectedData.Add("20181115_arginine_Gua13C_CIDcol25_158_HCDcol35", file6Data);
+
             var dataFile = GetRawDataFile(rawFileName);
+
+            var scanInfoExtractor = new Regex(@"^\d+ +(True|False) +(?<Metadata>.+)", RegexOptions.Compiled);
 
             for (var iteration = 1; iteration <= 2; iteration++)
             {
@@ -953,11 +1281,21 @@ namespace ProteowizardWrapperUnitTests
                     if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedDataByType))
                     {
                         var keySpec = centroidData.ToString();
-                        if (expectedDataByType.TryGetValue(keySpec, out var expectedDataDetails))
-                        {
-                            Assert.AreEqual(expectedDataDetails, scanSummary.Substring(14),
-                                "Scan details mismatch, scan " + scanNumber + ", keySpec " + keySpec);
-                        }
+
+                        if (!expectedDataByType.TryGetValue(keySpec, out var expectedDataDetails))
+                            continue;
+
+                        // Extract the text after True or False in scanSummary
+
+                        var match = scanInfoExtractor.Match(scanSummary);
+
+                        if (!match.Success)
+                            Assert.Fail("Regex match failed for {0}", scanSummary);
+
+                        var actualDataDetails = match.Groups["Metadata"].Value;
+
+                        Assert.AreEqual(expectedDataDetails, actualDataDetails,
+                            "Scan details mismatch, scan " + scanNumber + ", keySpec " + keySpec);
                     }
                 }
             }
@@ -1018,6 +1356,7 @@ namespace ProteowizardWrapperUnitTests
             }
 
             Console.WriteLine();
+
             foreach (var item in actualCountsByLevel)
             {
                 Console.WriteLine("MS Level {0} has {1} spectra", item.Key, item.Value);
@@ -1047,14 +1386,21 @@ namespace ProteowizardWrapperUnitTests
         /// Get a FileInfo object for the given .raw file
         /// </summary>
         /// <param name="rawFileName">Thermo raw file name</param>
-        private static FileInfo GetRawDataFile(string rawFileName)
+        /// <param name="skipIfMissing">If true, return null if the file cannot be found</param>
+        private static FileInfo GetRawDataFile(string rawFileName, bool skipIfMissing = false)
         {
             const string REMOTE_PATH = @"\\proto-2\UnitTest_Files\ThermoRawFileReader";
 
-            if (InstrumentDataUtilities.FindInstrumentData(rawFileName, false, REMOTE_PATH, out var instrumentDataFile))
+            if (InstrumentDataUtilities.FindInstrumentData(rawFileName, false, REMOTE_PATH, out var instrumentDataFile) &&
+                instrumentDataFile is FileInfo rawFile)
             {
-                if (instrumentDataFile is FileInfo rawFile)
-                    return rawFile;
+                return rawFile;
+            }
+
+            if (skipIfMissing)
+            {
+                // FindInstrumentData should have already shown a warning message
+                return null;
             }
 
             Assert.Fail("File not found: " + rawFileName);
