@@ -95,9 +95,11 @@ namespace ProteowizardWrapperUnitTests
 
             var dataFile = GetRawDataFile(rawFileName);
 
-            if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var collisionEnergiesThisFile))
+            var datasetName = Path.GetFileNameWithoutExtension(dataFile.Name);
+
+            if (!expectedData.TryGetValue(datasetName, out var collisionEnergiesThisFile))
             {
-                Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                Assert.Fail("Dataset {0} not found in dictionary expectedData", datasetName);
             }
 
             // Keys are scan number, values are the list of collision energies
@@ -570,9 +572,11 @@ namespace ProteowizardWrapperUnitTests
             Assert.AreEqual(expectedMS1, scanCountMS1, "MS1 scan count mismatch");
             Assert.AreEqual(expectedMS2, scanCountMS2, "MS2 scan count mismatch");
 
-            if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedScanInfo))
+            var datasetName = Path.GetFileNameWithoutExtension(dataFile.Name);
+
+            if (!expectedData.TryGetValue(datasetName, out var expectedScanInfo))
             {
-                Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                Assert.Fail("Dataset {0} not found in dictionary expectedData", datasetName);
             }
 
             Console.WriteLine("{0,-5} {1,5} {2}", "Valid", "Count", "ScanType");
@@ -746,9 +750,11 @@ namespace ProteowizardWrapperUnitTests
                 else
                     scanCountMS1++;
 
-                if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
+                var datasetName = Path.GetFileNameWithoutExtension(dataFile.Name);
+
+                if (!expectedData.TryGetValue(datasetName, out var expectedDataThisFile))
                 {
-                    Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                    Assert.Fail("Dataset {0} not found in dictionary expectedData", datasetName);
                 }
 
                 if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedScanSummary))
@@ -889,9 +895,11 @@ namespace ProteowizardWrapperUnitTests
 
                     Console.WriteLine(scanSummary);
 
-                    if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFile.Name), out var expectedDataThisFile))
+                    var datasetName = Path.GetFileNameWithoutExtension(dataFile.Name);
+
+                    if (!expectedData.TryGetValue(datasetName, out var expectedDataThisFile))
                     {
-                        Assert.Fail("Dataset {0} not found in dictionary expectedData", dataFile.Name);
+                        Assert.Fail("Dataset {0} not found in dictionary expectedData", datasetName);
                     }
 
                     if (expectedDataThisFile.TryGetValue(scanNumber, out var expectedDataByType))
