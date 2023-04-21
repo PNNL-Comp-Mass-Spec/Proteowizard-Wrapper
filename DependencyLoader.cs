@@ -159,10 +159,12 @@ namespace pwiz.ProteowizardWrapper
                 Console.WriteLine("Invalid Assembly: \"" + assemblyFile.FullName + "\"");
                 Console.WriteLine("The assembly may be marked as \"Untrusted\" by Windows. Please unblock and try again.");
                 Console.WriteLine("Use the Streams tool (https://technet.microsoft.com/en-us/sysinternals/streams.aspx) to unblock, for example");
+
                 if (assemblyFile.DirectoryName == null)
                     Console.WriteLine("streams -d *");
                 else
                     Console.WriteLine("streams -d \"" + Path.Combine(assemblyFile.DirectoryName, "*") + "\"");
+
                 throw;
             }
             catch (SecurityException)
@@ -239,6 +241,7 @@ namespace pwiz.ProteowizardWrapper
 
             // Per-User ProteoWizard install detection
             var localAppDataDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Apps"));
+
             if (localAppDataDir.Exists)
             {
                 var bits = Environment.Is64BitProcess ? 64 : 32;
@@ -248,6 +251,7 @@ namespace pwiz.ProteowizardWrapper
             // NOTE: This call returns the 32-bit Program Files directory if the running process is 32-bit
             // or the 64-bit Program Files directory if the running process is 64-bit
             var programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
+
             if (string.IsNullOrWhiteSpace(programFiles))
             {
                 return null;
@@ -256,6 +260,7 @@ namespace pwiz.ProteowizardWrapper
             // Construct a path of the form "C:\Program Files\ProteoWizard" or "C:\Program Files (x86)\ProteoWizard"
             var programFilesPwiz = Path.Combine(programFiles, "ProteoWizard");
             var pwizDirectory = new DirectoryInfo(programFilesPwiz);
+
             if (pwizDirectory.Exists)
             {
                 if (pwizDirectory.GetFiles(TargetDllName).Length > 0)
@@ -267,6 +272,7 @@ namespace pwiz.ProteowizardWrapper
             {
                 // Update pwizDirectory to be "C:\Program Files" or "C:\Program Files (x86)"
                 pwizDirectory = new DirectoryInfo(programFiles);
+
                 if (!pwizDirectory.Exists)
                 {
                     return null;
@@ -283,6 +289,7 @@ namespace pwiz.ProteowizardWrapper
 
             // Try to sort by version, it properly handles the version rolling over powers of 10 (but string sorting does not)
             var byVersion = new List<Tuple<System.Version, DirectoryInfo>>();
+
             foreach (var directory in possibleInstallDirs)
             {
                 try
@@ -364,9 +371,11 @@ namespace pwiz.ProteowizardWrapper
 
             var allFiles = Directory.GetFiles(PwizPath, "*.dll", SearchOption.AllDirectories);
             PwizPathFiles = new List<string>(allFiles.Length);
+
             foreach (var file in allFiles)
             {
                 var fileNameBase = Path.GetFileNameWithoutExtension(file);
+
                 if (fileNameBase != null)
                 {
                     PwizPathFiles.Add(fileNameBase.ToLower());

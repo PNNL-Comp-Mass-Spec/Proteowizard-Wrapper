@@ -73,6 +73,7 @@ namespace ProteowizardWrapperUnitTests
                             scanCountMS1++;
 
                         var dataPointCount = spectrum.Mzs.Length;
+
                         if (dataPointCount > 0)
                             scansWithData++;
 

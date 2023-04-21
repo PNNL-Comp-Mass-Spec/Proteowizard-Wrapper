@@ -51,6 +51,7 @@ namespace ProteowizardWrapperUnitTests
                 while (true)
                 {
                     var matchingDirectories = directoryToCheck.GetDirectories("Data");
+
                     if (matchingDirectories.Length > 0)
                     {
                         if (FindInstrumentData(fileOrDirectoryToFind, isDirectory, matchingDirectories[0], out instrumentDataFileOrDirectory))
@@ -108,6 +109,7 @@ namespace ProteowizardWrapperUnitTests
             if (isDirectory)
             {
                 var matchingDatasetDirectories = directoryToCheck.GetDirectories(fileOrDirectoryToFind);
+
                 if (matchingDatasetDirectories.Length > 0)
                 {
                     instrumentDataFileOrDirectory = matchingDatasetDirectories[0];
@@ -117,6 +119,7 @@ namespace ProteowizardWrapperUnitTests
             else
             {
                 var matchingDatasetFiles = directoryToCheck.GetFiles(fileOrDirectoryToFind);
+
                 if (matchingDatasetFiles.Length > 0)
                 {
                     instrumentDataFileOrDirectory = matchingDatasetFiles[0];

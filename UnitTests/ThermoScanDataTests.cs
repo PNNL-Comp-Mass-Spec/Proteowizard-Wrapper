@@ -139,6 +139,7 @@ namespace ProteowizardWrapperUnitTests
                 msLevelsActual.Add(scanNumber, spectrum.Level);
 
                 var activationTypes = new List<string>();
+
                 foreach (var precursor in precursors)
                 {
                     if (precursor.ActivationTypes != null)

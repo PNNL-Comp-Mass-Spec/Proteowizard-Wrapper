@@ -92,6 +92,7 @@ namespace ProteowizardWrapperUnitTests
                 double bpiSumAllSpectra = 0;
 
                 var spectrumIndex = 0;
+
                 while (spectrumIndex < reader.SpectrumCount)
                 {
                     var spectrum = reader.GetSpectrum(spectrumIndex, getBinaryData: true);
@@ -116,9 +117,11 @@ namespace ProteowizardWrapperUnitTests
 
                         double tic = 0;
                         double bpi = 0;
+
                         for (var index = 0; index <= mzList.Count - 1; index++)
                         {
                             tic += intensities[index];
+
                             if (intensities[index] > bpi)
                                 bpi = intensities[index];
                         }
