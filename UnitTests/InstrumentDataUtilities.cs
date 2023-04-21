@@ -37,11 +37,7 @@ namespace ProteowizardWrapperUnitTests
             string remotePathToSearch,
             out FileSystemInfo instrumentDataFileOrDirectory)
         {
-            string datasetType;
-            if (isDirectory)
-                datasetType = "directory";
-            else
-                datasetType = "file";
+            var datasetType = isDirectory ? "directory" : "file";
 
             try
             {

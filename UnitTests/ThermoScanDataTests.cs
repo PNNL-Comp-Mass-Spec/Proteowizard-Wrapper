@@ -352,7 +352,7 @@ namespace ProteowizardWrapperUnitTests
             }
 
             Console.WriteLine("{0,-14}: {1}", "Serial Number", serialNumber);
-            Console.WriteLine("{0,-14}: {1}", "Start Time",  runStartTime);
+            Console.WriteLine("{0,-14}: {1}", "Start Time", runStartTime);
 
             if (runStartTime.HasValue && instrumentModel.StartsWith("Bruker"))
             {

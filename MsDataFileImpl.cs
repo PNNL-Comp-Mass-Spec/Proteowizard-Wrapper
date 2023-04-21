@@ -3190,7 +3190,7 @@ namespace pwiz.ProteowizardWrapper
         // PNNL Specific
         public void Add(int scanNum, Spectrum s)
         {
-            if (_scanNativeStack.Count() >= Capacity)
+            if (_scanNativeStack.Count >= Capacity)
             {
                 var index = _scanNativeStack.Dequeue();
                 // Cleanup - the spectrum holds unmanaged memory resources
