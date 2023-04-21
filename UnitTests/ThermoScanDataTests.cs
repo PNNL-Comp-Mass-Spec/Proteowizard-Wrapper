@@ -605,66 +605,66 @@ namespace ProteowizardWrapperUnitTests
             // Keys in this dictionary are the scan number whose metadata is being retrieved
             var file1Data = new Dictionary<int, string>
             {
-                // Scan MSLevel NumPeaks RetentionTime DriftTimeMsec LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ ActivationType IonMode IsCentroided ScanStartTime IonInjectionTime FilterText
-                {1513, "1   851 44.57 0 400 2000 6.3E+8 1089.978 1.2E+7     0.00          positive True    1.50 + c ESI Full..."},
-                {1514, "2   109 44.60 0 230 1780 5.0E+6  528.128 7.2E+5   884.41 cid      positive True   28.96 + c d Full m..."},
-                {1515, "2   290 44.63 0 305 2000 2.6E+7 1327.414 6.0E+6  1147.67 cid      positive True   14.13 + c d Full m..."},
-                {1516, "2   154 44.66 0 400 2000 7.6E+5 1251.554 3.7E+4  1492.90 cid      positive True  123.30 + c d Full m..."},
-                {1517, "1   887 44.69 0 400 2000 8.0E+8 1147.613 1.0E+7     0.00          positive True    1.41 + c ESI Full..."},
-                {1518, "2   190 44.71 0 380 2000 4.6E+6 1844.618 2.7E+5  1421.21 cid      positive True   40.91 + c d Full m..."},
-                {1519, "2   165 44.74 0 380 2000 6.0E+6 1842.547 6.9E+5  1419.24 cid      positive True   37.84 + c d Full m..."},
-                {1520, "2   210 44.77 0 265 2000 1.5E+6 1361.745 4.2E+4  1014.93 cid      positive True   96.14 + c d Full m..."},
-                {1521, "1   860 44.80 0 400 2000 6.9E+8 1126.627 2.9E+7     0.00          positive True    1.45 + c ESI Full..."}
+                // Scan MSLevel NumPeaks RetentionTime DriftTimeMsec LowMass HighMass TotalIonCurrent BasePeakMZ BasePeakIntensity ParentIonMZ ActivationType IonMode IsCentroided ScanStartTime IonInjectionTime FilterText IsolationWidth
+                { 1513, "1   851 44.57 0 400 2000 6.3E+8 1089.978 1.2E+7     0.00          positive True    1.50 + c ESI Full ms [400.00-2000.00]                                     0.0"},
+                { 1514, "2   109 44.60 0 230 1780 5.0E+6  528.128 7.2E+5   884.41 cid      positive True   28.96 + c d Full ms2 884.41@cid45.00 [230.00-1780.00]                      0.0"},
+                { 1515, "2   290 44.63 0 305 2000 2.6E+7 1327.414 6.0E+6  1147.67 cid      positive True   14.13 + c d Full ms2 1147.67@cid45.00 [305.00-2000.00]                     0.0"},
+                { 1516, "2   154 44.66 0 400 2000 7.6E+5 1251.554 3.7E+4  1492.90 cid      positive True  123.30 + c d Full ms2 1492.90@cid45.00 [400.00-2000.00]                     0.0"},
+                { 1517, "1   887 44.69 0 400 2000 8.0E+8 1147.613 1.0E+7     0.00          positive True    1.41 + c ESI Full ms [400.00-2000.00]                                     0.0"},
+                { 1518, "2   190 44.71 0 380 2000 4.6E+6 1844.618 2.7E+5  1421.21 cid      positive True   40.91 + c d Full ms2 1421.21@cid45.00 [380.00-2000.00]                     0.0"},
+                { 1519, "2   165 44.74 0 380 2000 6.0E+6 1842.547 6.9E+5  1419.24 cid      positive True   37.84 + c d Full ms2 1419.24@cid45.00 [380.00-2000.00]                     0.0"},
+                { 1520, "2   210 44.77 0 265 2000 1.5E+6 1361.745 4.2E+4  1014.93 cid      positive True   96.14 + c d Full ms2 1014.93@cid45.00 [265.00-2000.00]                     0.0"},
+                { 1521, "1   860 44.80 0 400 2000 6.9E+8 1126.627 2.9E+7     0.00          positive True    1.45 + c ESI Full ms [400.00-2000.00]                                     0.0"},
             };
             expectedData.Add("Shew_246a_LCQa_15Oct04_Andro_0904-2_4-20", file1Data);
 
             var file2Data = new Dictionary<int, string>
             {
-                {16121, "1 11888 47.68 0 350 1550 1.9E+9  503.565 3.4E+8     0.00          positive False   0.44 FTMS + p NSI..."},
-                {16122, "2   490 47.68 0 106  817 1.6E+6  550.309 2.1E+5   403.22 cid      positive True   11.82 ITMS + c NSI..."},
-                {16123, "2   785 47.68 0 143 1627 5.5E+5  506.272 4.9E+4   538.84 cid      positive True   26.07 ITMS + c NSI..."},
-                {16124, "2   996 47.68 0 208 2000 7.8E+5  737.530 7.0E+4   775.94 cid      positive True   24.65 ITMS + c NSI..."},
-                {16125, "2   703 47.68 0 120 1627 2.1E+5  808.486 2.2E+4   538.84 etd      positive True   42.48 ITMS + c NSI..."},
-                {16126, "2   753 47.68 0 120 1627 1.4E+5  536.209 9.0E+3   538.84 cid, etd positive True   58.96 ITMS + c NSI..."},
-                {16127, "2   872 47.68 0 120 1627 1.3E+5  808.487 1.4E+4   538.84 etd, hcd positive True   58.96 ITMS + c NSI..."},
-                {16128, "2   972 47.69 0 225 1682 4.4E+5  805.579 2.3E+4   835.88 cid      positive True   42.71 ITMS + c NSI..."},
-                {16129, "2   937 47.69 0 266 1986 3.4E+5  938.679 2.9E+4   987.40 cid      positive True   35.75 ITMS + c NSI..."},
-                {16130, "2   622 47.69 0 110  853 2.7E+5  411.977 1.2E+4   421.26 cid      positive True   50.98 ITMS + c NSI..."},
-                {16131, "2    29 47.69 0 120 1986 2.1E+4  984.504 9.5E+3   987.40 etd      positive True   26.55 ITMS + c NSI..."},
-                {16132, "2   239 47.69 0 120  853 1.2E+4  421.052 6.8E+2   421.26 etd      positive True  127.21 ITMS + c NSI..."},
-                {16133, "2   280 47.70 0 120  853 1.5E+4  421.232 1.2E+3   421.26 cid, etd positive True  110.21 ITMS + c NSI..."},
-                {16134, "2   343 47.70 0 120  853 1.4E+4  838.487 7.5E+2   421.26 etd, hcd positive True  110.21 ITMS + c NSI..."},
-                {16135, "2    38 47.70 0 120 1986 2.1E+4  984.498 9.2E+3   987.40 cid, etd positive True   31.82 ITMS + c NSI..."},
-                {16136, "2    93 47.71 0 120 1986 2.3E+4  984.491 9.4E+3   987.40 etd, hcd positive True   31.82 ITMS + c NSI..."},
-                {16137, "2  1172 47.71 0 336 2000 3.5E+5 1536.038 4.7E+3  1240.76 cid      positive True   30.70 ITMS + c NSI..."},
-                {16138, "2   925 47.72 0 235 1760 2.9E+5  826.095 2.5E+4   874.84 cid      positive True   40.56 ITMS + c NSI..."},
-                {16139, "2    96 47.72 0 120 1760 1.6E+4  875.506 2.1E+3   874.84 etd      positive True   45.88 ITMS + c NSI..."},
-                {16140, "2   174 47.72 0 120 1760 1.8E+4 1749.846 2.0E+3   874.84 cid, etd positive True   54.15 ITMS + c NSI..."},
-                {16141, "2   240 47.72 0 120 1760 1.6E+4  874.664 1.6E+3   874.84 etd, hcd positive True   54.15 ITMS + c NSI..."},
-                {16142, "1 13501 47.73 0 350 1550 1.3E+9  503.565 1.9E+8     0.00          positive False   0.79 FTMS + p NSI..."},
-                {16143, "2   651 47.73 0 128  981 6.5E+5  444.288 6.4E+4   485.28 cid      positive True   22.26 ITMS + c NSI..."},
-                {16144, "2   512 47.73 0 101 1561 5.0E+5  591.309 4.0E+4   387.41 cid      positive True   28.19 ITMS + c NSI..."},
-                {16145, "2   817 47.73 0 162 1830 4.0E+5  567.912 2.8E+4   606.29 cid      positive True   37.30 ITMS + c NSI..."},
-                {16146, "2   573 47.73 0  99  770 1.9E+5  532.308 3.4E+4   379.72 cid      positive True  100.00 ITMS + c NSI..."},
-                {16147, "2   813 47.74 0 120 1830 3.8E+5  603.095 3.1E+4   606.29 etd      positive True   25.47 ITMS + c NSI..."},
-                {16148, "2   882 47.74 0 120 1830 1.5E+5  603.076 1.3E+4   606.29 cid, etd positive True   61.48 ITMS + c NSI..."},
-                {16149, "2  1121 47.74 0 120 1830 1.6E+5  603.027 1.1E+4   606.29 etd, hcd positive True   61.48 ITMS + c NSI..."},
-                {16150, "2   625 47.74 0  95 1108 3.8E+5  418.536 1.2E+5   365.88 cid      positive True  134.71 ITMS + c NSI..."},
-                {16151, "2   679 47.75 0 146 1656 2.8E+5  501.523 4.3E+4   548.54 cid      positive True   30.59 ITMS + c NSI..."},
-                {16152, "2  1171 47.75 0 328 2000 1.8E+5  848.497 2.2E+3  1210.06 cid      positive True   38.05 ITMS + c NSI..."},
-                {16153, "2   600 47.75 0 120 1656 1.3E+5  548.396 1.3E+4   548.54 etd      positive True   50.35 ITMS + c NSI..."},
-                {16154, "2   566 47.75 0 120 1656 4.2E+4  548.450 4.2E+3   548.54 cid, etd positive True  122.26 ITMS + c NSI..."},
-                {16155, "2   753 47.76 0 120 1656 4.2E+4  550.402 3.6E+3   548.54 etd, hcd positive True  122.26 ITMS + c NSI..."},
-                {16156, "2  1120 47.76 0 324 2000 1.5E+5 1491.872 1.0E+4  1197.16 cid      positive True   63.61 ITMS + c NSI..."},
-                {16157, "2   714 47.76 0 124  950 2.2E+5  420.689 2.2E+4   469.71 cid      positive True  100.00 ITMS + c NSI..."},
-                {16158, "2   692 47.76 0 306 2000 1.3E+5 1100.042 3.5E+3  1132.02 cid      positive True   27.79 ITMS + c NSI..."},
-                {16159, "2   667 47.76 0 122  935 1.9E+5  445.117 2.7E+4   462.15 cid      positive True   69.09 ITMS + c NSI..."},
-                {16160, "2   694 47.77 0 145 1646 3.4E+5  539.065 6.0E+4   544.84 cid      positive True   28.97 ITMS + c NSI..."},
-                {16161, "2   737 47.77 0 157 1191 2.8E+5  541.462 6.0E+4   590.28 cid      positive True   37.92 ITMS + c NSI..."},
-                {16162, "2   288 47.77 0 120 1191 8.4E+4 1180.615 5.1E+3   590.28 etd      positive True   38.31 ITMS + c NSI..."},
-                {16163, "2   305 47.77 0 120 1191 1.8E+4 1184.614 9.0E+2   590.28 cid, etd positive True  109.20 ITMS + c NSI..."},
-                {16164, "2   372 47.77 0 120 1191 1.7E+4 1184.644 8.7E+2   590.28 etd, hcd positive True  109.20 ITMS + c NSI..."},
-                {16165, "1 13816 47.78 0 350 1550 1.2E+9  503.565 1.6E+8     0.00          positive False   0.76 FTMS + p NSI..."}
+                 { 16121, "1 11888 47.68 0 350 1550 1.9E+9  503.565 3.4E+8     0.00          positive False   0.44 FTMS + p NSI Full ms [350.0000-1550.0000]                            0.0"},
+                 { 16122, "2   490 47.68 0 106  817 1.6E+6  550.309 2.1E+5   403.22 cid      positive True   11.82 ITMS + c NSI r d Full ms2 403.2206@cid30.00 [106.0000-817.0000]      2.0"},
+                 { 16123, "2   785 47.68 0 143 1627 5.5E+5  506.272 4.9E+4   538.84 cid      positive True   26.07 ITMS + c NSI r d Full ms2 538.8400@cid30.00 [143.0000-1627.0000]     2.0"},
+                 { 16124, "2   996 47.68 0 208 2000 7.8E+5  737.530 7.0E+4   775.94 cid      positive True   24.65 ITMS + c NSI r d Full ms2 776.2740@cid30.00 [208.0000-2000.0000]     2.0"},
+                 { 16125, "2   703 47.68 0 120 1627 2.1E+5  808.486 2.2E+4   538.84 etd      positive True   42.48 ITMS + c NSI r d Full ms2 538.8400@etd53.58 [120.0000-1627.0000]     2.0"},
+                 { 16126, "2   753 47.68 0 120 1627 1.4E+5  536.209 9.0E+3   538.84 cid, etd positive True   58.96 ITMS + c NSI r d sa Full ms2 538.8400@etd53.58@cid20.00 [120.0...    2.0"},
+                 { 16127, "2   872 47.68 0 120 1627 1.3E+5  808.487 1.4E+4   538.84 etd, hcd positive True   58.96 ITMS + c NSI r d sa Full ms2 538.8400@etd53.58@hcd20.00 [120.0...    2.0"},
+                 { 16128, "2   972 47.69 0 225 1682 4.4E+5  805.579 2.3E+4   835.88 cid      positive True   42.71 ITMS + c NSI r d Full ms2 835.8777@cid30.00 [225.0000-1682.0000]     2.0"},
+                 { 16129, "2   937 47.69 0 266 1986 3.4E+5  938.679 2.9E+4   987.40 cid      positive True   35.75 ITMS + c NSI r d Full ms2 987.8934@cid30.00 [266.0000-1986.0000]     2.0"},
+                 { 16130, "2   622 47.69 0 110  853 2.7E+5  411.977 1.2E+4   421.26 cid      positive True   50.98 ITMS + c NSI r d Full ms2 421.2619@cid30.00 [110.0000-853.0000]      2.0"},
+                 { 16131, "2    29 47.69 0 120 1986 2.1E+4  984.504 9.5E+3   987.40 etd      positive True   26.55 ITMS + c NSI r d Full ms2 987.8934@etd120.55 [120.0000-1986.0000]    2.0"},
+                 { 16132, "2   239 47.69 0 120  853 1.2E+4  421.052 6.8E+2   421.26 etd      positive True  127.21 ITMS + c NSI r d Full ms2 421.2619@etd120.55 [120.0000-853.0000]     2.0"},
+                 { 16133, "2   280 47.70 0 120  853 1.5E+4  421.232 1.2E+3   421.26 cid, etd positive True  110.21 ITMS + c NSI r d sa Full ms2 421.2619@etd120.55@cid20.00 [120....    2.0"},
+                 { 16134, "2   343 47.70 0 120  853 1.4E+4  838.487 7.5E+2   421.26 etd, hcd positive True  110.21 ITMS + c NSI r d sa Full ms2 421.2619@etd120.55@hcd20.00 [120....    2.0"},
+                 { 16135, "2    38 47.70 0 120 1986 2.1E+4  984.498 9.2E+3   987.40 cid, etd positive True   31.82 ITMS + c NSI r d sa Full ms2 987.8934@etd120.55@cid20.00 [120....    2.0"},
+                 { 16136, "2    93 47.71 0 120 1986 2.3E+4  984.491 9.4E+3   987.40 etd, hcd positive True   31.82 ITMS + c NSI r d sa Full ms2 987.8934@etd120.55@hcd20.00 [120....    2.0"},
+                 { 16137, "2  1172 47.71 0 336 2000 3.5E+5 1536.038 4.7E+3  1240.76 cid      positive True   30.70 ITMS + c NSI r d Full ms2 1241.0092@cid30.00 [336.0000-2000.0000]    2.0"},
+                 { 16138, "2   925 47.72 0 235 1760 2.9E+5  826.095 2.5E+4   874.84 cid      positive True   40.56 ITMS + c NSI r d Full ms2 874.8397@cid30.00 [235.0000-1760.0000]     2.0"},
+                 { 16139, "2    96 47.72 0 120 1760 1.6E+4  875.506 2.1E+3   874.84 etd      positive True   45.88 ITMS + c NSI r d Full ms2 874.8397@etd120.55 [120.0000-1760.0000]    2.0"},
+                 { 16140, "2   174 47.72 0 120 1760 1.8E+4 1749.846 2.0E+3   874.84 cid, etd positive True   54.15 ITMS + c NSI r d sa Full ms2 874.8397@etd120.55@cid20.00 [120....    2.0"},
+                 { 16141, "2   240 47.72 0 120 1760 1.6E+4  874.664 1.6E+3   874.84 etd, hcd positive True   54.15 ITMS + c NSI r d sa Full ms2 874.8397@etd120.55@hcd20.00 [120....    2.0"},
+                 { 16142, "1 13501 47.73 0 350 1550 1.3E+9  503.565 1.9E+8     0.00          positive False   0.79 FTMS + p NSI Full ms [350.0000-1550.0000]                            0.0"},
+                 { 16143, "2   651 47.73 0 128  981 6.5E+5  444.288 6.4E+4   485.28 cid      positive True   22.26 ITMS + c NSI r d Full ms2 485.2789@cid30.00 [128.0000-981.0000]      2.0"},
+                 { 16144, "2   512 47.73 0 101 1561 5.0E+5  591.309 4.0E+4   387.41 cid      positive True   28.19 ITMS + c NSI r d Full ms2 387.6621@cid30.00 [101.0000-1561.0000]     2.0"},
+                 { 16145, "2   817 47.73 0 162 1830 4.0E+5  567.912 2.8E+4   606.29 cid      positive True   37.30 ITMS + c NSI r d Full ms2 606.6241@cid30.00 [162.0000-1830.0000]     2.0"},
+                 { 16146, "2   573 47.73 0  99  770 1.9E+5  532.308 3.4E+4   379.72 cid      positive True  100.00 ITMS + c NSI r d Full ms2 379.7246@cid30.00 [99.0000-770.0000]       2.0"},
+                 { 16147, "2   813 47.74 0 120 1830 3.8E+5  603.095 3.1E+4   606.29 etd      positive True   25.47 ITMS + c NSI r d Full ms2 606.6241@etd53.58 [120.0000-1830.0000]     2.0"},
+                 { 16148, "2   882 47.74 0 120 1830 1.5E+5  603.076 1.3E+4   606.29 cid, etd positive True   61.48 ITMS + c NSI r d sa Full ms2 606.6241@etd53.58@cid20.00 [120.0...    2.0"},
+                 { 16149, "2  1121 47.74 0 120 1830 1.6E+5  603.027 1.1E+4   606.29 etd, hcd positive True   61.48 ITMS + c NSI r d sa Full ms2 606.6241@etd53.58@hcd20.00 [120.0...    2.0"},
+                 { 16150, "2   625 47.74 0  95 1108 3.8E+5  418.536 1.2E+5   365.88 cid      positive True  134.71 ITMS + c NSI r d Full ms2 365.8827@cid30.00 [95.0000-1108.0000]      2.0"},
+                 { 16151, "2   679 47.75 0 146 1656 2.8E+5  501.523 4.3E+4   548.54 cid      positive True   30.59 ITMS + c NSI r d Full ms2 548.5366@cid30.00 [146.0000-1656.0000]     2.0"},
+                 { 16152, "2  1171 47.75 0 328 2000 1.8E+5  848.497 2.2E+3  1210.06 cid      positive True   38.05 ITMS + c NSI r d Full ms2 1210.2963@cid30.00 [328.0000-2000.0000]    2.0"},
+                 { 16153, "2   600 47.75 0 120 1656 1.3E+5  548.396 1.3E+4   548.54 etd      positive True   50.35 ITMS + c NSI r d Full ms2 548.5366@etd53.58 [120.0000-1656.0000]     2.0"},
+                 { 16154, "2   566 47.75 0 120 1656 4.2E+4  548.450 4.2E+3   548.54 cid, etd positive True  122.26 ITMS + c NSI r d sa Full ms2 548.5366@etd53.58@cid20.00 [120.0...    2.0"},
+                 { 16155, "2   753 47.76 0 120 1656 4.2E+4  550.402 3.6E+3   548.54 etd, hcd positive True  122.26 ITMS + c NSI r d sa Full ms2 548.5366@etd53.58@hcd20.00 [120.0...    2.0"},
+                 { 16156, "2  1120 47.76 0 324 2000 1.5E+5 1491.872 1.0E+4  1197.16 cid      positive True   63.61 ITMS + c NSI r d Full ms2 1197.5653@cid30.00 [324.0000-2000.0000]    2.0"},
+                 { 16157, "2   714 47.76 0 124  950 2.2E+5  420.689 2.2E+4   469.71 cid      positive True  100.00 ITMS + c NSI r d Full ms2 469.7129@cid30.00 [124.0000-950.0000]      2.0"},
+                 { 16158, "2   692 47.76 0 306 2000 1.3E+5 1100.042 3.5E+3  1132.02 cid      positive True   27.79 ITMS + c NSI r d Full ms2 1132.0164@cid30.00 [306.0000-2000.0000]    2.0"},
+                 { 16159, "2   667 47.76 0 122  935 1.9E+5  445.117 2.7E+4   462.15 cid      positive True   69.09 ITMS + c NSI r d Full ms2 462.1478@cid30.00 [122.0000-935.0000]      2.0"},
+                 { 16160, "2   694 47.77 0 145 1646 3.4E+5  539.065 6.0E+4   544.84 cid      positive True   28.97 ITMS + c NSI r d Full ms2 545.1750@cid30.00 [145.0000-1646.0000]     2.0"},
+                 { 16161, "2   737 47.77 0 157 1191 2.8E+5  541.462 6.0E+4   590.28 cid      positive True   37.92 ITMS + c NSI r d Full ms2 590.2814@cid30.00 [157.0000-1191.0000]     2.0"},
+                 { 16162, "2   288 47.77 0 120 1191 8.4E+4 1180.615 5.1E+3   590.28 etd      positive True   38.31 ITMS + c NSI r d Full ms2 590.2814@etd120.55 [120.0000-1191.0000]    2.0"},
+                 { 16163, "2   305 47.77 0 120 1191 1.8E+4 1184.614 9.0E+2   590.28 cid, etd positive True  109.20 ITMS + c NSI r d sa Full ms2 590.2814@etd120.55@cid20.00 [120....    2.0"},
+                 { 16164, "2   372 47.77 0 120 1191 1.7E+4 1184.644 8.7E+2   590.28 etd, hcd positive True  109.20 ITMS + c NSI r d sa Full ms2 590.2814@etd120.55@hcd20.00 [120....    2.0"},
+                 { 16165, "1 13816 47.78 0 350 1550 1.2E+9  503.565 1.6E+8     0.00          positive False   0.76 FTMS + p NSI Full ms [350.0000-1550.0000]                            0.0"},
             };
             expectedData.Add("HCC-38_ETciD_EThcD_4xdil_20uL_3hr_3_08Jan16_Pippin_15-08-53", file2Data);
 
@@ -675,14 +675,15 @@ namespace ProteowizardWrapperUnitTests
             var scanNumberToIndexMap = reader.GetScanToIndexMapping();
 
             Console.WriteLine("Scan info for {0}", dataFile.Name);
-            Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15}",
+            Console.WriteLine("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12} {13} {14} {15} {16}",
                 "Scan", "MSLevel",
                 "NumPeaks", "RetentionTime", "DriftTimeMsec",
                 "LowMass", "HighMass", "TotalIonCurrent",
                 "BasePeakMZ", "BasePeakIntensity",
                 "ParentIonMZ", "ActivationType",
                 "IonMode", "IsCentroided",
-                "IonInjectionTime", "FilterText");
+                "IonInjectionTime", "FilterText", "IsolationWindowWidth");
+
 
             var scanCountMS1 = 0;
             var scanCountMS2 = 0;
@@ -709,11 +710,14 @@ namespace ProteowizardWrapperUnitTests
                     var precursor = spectrum.Precursors[0];
 
                     parentIonMZ = precursor.PrecursorMz.GetValueOrDefault();
+
                     if (precursor.ActivationTypes != null)
                         activationType = string.Join(", ", precursor.ActivationTypes);
                 }
 
-                reader.GetScanMetadata(spectrumIndex, out var scanStartTime, out var ionInjectionTime, out var filterText, out var lowMass, out var highMass);
+                reader.GetScanMetadata(
+                    spectrumIndex, out var scanStartTime, out var ionInjectionTime, out var filterText,
+                    out var lowMass, out var highMass, out var isolationWindowWidth);
 
                 var retentionTime = CVParamUtilities.CheckNull(spectrum.RetentionTime);
                 Assert.AreEqual(retentionTime, scanStartTime, 0.0001, "Mismatch between spectrum.RetentionTime and CVParam MS_scan_start_time");
@@ -723,7 +727,7 @@ namespace ProteowizardWrapperUnitTests
 
                 var scanSummary =
                     string.Format(
-                        "{0} {1} {2,5} {3:0.00} {4:0} {5,3:0} {6,4:0} {7:0.0E+0} {8,8:0.000} {9:0.0E+0} {10,8:0.00} {11,-8} {12} {13,-5} {14,6:0.00} {15}",
+                        "{0} {1} {2,5} {3:0.00} {4:0} {5,3:0} {6,4:0} {7:0.0E+0} {8,8:0.000} {9:0.0E+0} {10,8:0.00} {11,-8} {12} {13,-5} {14,6:0.00} {15,-65} {16,6:0.0}",
                         scanNumber, spectrum.Level,
                         numPeaks, retentionTime,
                         CVParamUtilities.CheckNull(spectrum.IonMobility.Mobility),
@@ -732,7 +736,8 @@ namespace ProteowizardWrapperUnitTests
                         basePeakMZ, basePeakIntensity, parentIonMZ,
                         activationType,
                         ionMode, spectrum.Centroided, ionInjectionTime,
-                        filterText.Substring(0, 12) + "...");
+                        filterText.Length > 65 ? filterText.Substring(0, 62) + "..." : filterText,
+                        isolationWindowWidth);
 
                 Console.WriteLine(scanSummary);
 
