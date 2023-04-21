@@ -266,7 +266,6 @@ namespace ProteowizardWrapperUnitTests
                 "NumPeaks", "RetentionTime",
                 "ScanStartTime",
                 "DriftTimeMsec",
-                "IonMobility",
                 "IonMobilityDriftTime",
                 "LowMass", "HighMass", "TotalIonCurrent",
                 "BasePeakMZ", "BasePeakIntensity",
