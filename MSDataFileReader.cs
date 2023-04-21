@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using pwiz.CLI.data;
 using pwiz.CLI.msdata;
@@ -373,7 +374,7 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="spectrumIndex"></param>
         public string GetScanFilterText(int spectrumIndex)
         {
-            var success = GetScanMetadata(spectrumIndex, out _, out _, out var filterText, out _, out _);
+            var success = GetScanMetadata(spectrumIndex, out _, out _, out var filterText, out _, out _, out _);
             return success ? filterText : string.Empty;
         }
 
@@ -398,13 +399,49 @@ namespace pwiz.ProteowizardWrapper
             out double lowMass,
             out double highMass)
         {
-            var cvScanInfo = mDataReader.GetSpectrumScanInfo(spectrumIndex);
+            return GetScanMetadata(spectrumIndex, out scanStartTime, out ionInjectionTime, out filterText, out lowMass, out highMass, out _);
+        }
 
-            scanStartTime = 0;
-            ionInjectionTime = 0;
-            filterText = string.Empty;
-            lowMass = 0;
-            highMass = 0;
+        /// <summary>
+        /// Lookup various values tracked by CVParams for the given spectrum
+        /// </summary>
+        /// <remarks>
+        /// If a spectrum has more than one scan, only returns the metadata for the first one
+        /// </remarks>
+        /// <param name="spectrumIndex">Spectrum index</param>
+        /// <param name="scanStartTime">Output: acquisition time at scan start (in minutes)</param>
+        /// <param name="ionInjectionTime">Output: ion injection time</param>
+        /// <param name="filterText">Output: filter text (most commonly used by Thermo .raw files, e.g. FTMS + p NSI Full ms [300.00-1650.00])</param>
+        /// <param name="lowMass">Output: lowest m/z</param>
+        /// <param name="highMass">Output: highest m/z</param>
+        /// <param name="isolationWindowWidth">Output: isolation window width (typically MS2 isolation window); 0 if not applicable</param>
+        /// <returns>True if the spectrum was found and has at least one scan, otherwise false</returns>
+        public bool GetScanMetadata(
+            int spectrumIndex,
+            out double scanStartTime,
+            out double ionInjectionTime,
+            out string filterText,
+            out double lowMass,
+            out double highMass,
+            out double isolationWindowWidth)
+        {
+            var cvScanInfo = mDataReader.GetSpectrumScanInfo(spectrumIndex);
+            var precursors = GetPrecursors(spectrumIndex);
+
+            var isolationWidths = new SortedSet<double>();
+
+            foreach (var precursor in precursors)
+            {
+                if (precursor.IsolationWidth.HasValue)
+                {
+                    isolationWidths.Add(precursor.IsolationWidth.Value);
+                }
+            }
+
+            if (isolationWidths.Count > 1)
+            {
+                Console.WriteLine("Scan at spectrumIndex {0} has more than one precursor, and they have differing isolation widths; will use the isolation width of the first precursor", spectrumIndex);
+            }
 
             // Lookup details on the first scan associated with this spectrum
             // (cvScanInfo.Scans is a list, but Thermo .raw files typically have a single scan for each spectrum)
@@ -422,8 +459,19 @@ namespace pwiz.ProteowizardWrapper
                 lowMass = CVParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, CVParamUtilities.CVIDs.MS_scan_window_lower_limit);
                 highMass = CVParamUtilities.GetCvParamValueDbl(scanEntry.ScanWindowList, CVParamUtilities.CVIDs.MS_scan_window_upper_limit);
 
+                isolationWindowWidth = isolationWidths.Count > 0
+                    ? isolationWidths.First()
+                    : 0;
+
                 return true;
             }
+
+            scanStartTime = 0;
+            ionInjectionTime = 0;
+            filterText = string.Empty;
+            lowMass = 0;
+            highMass = 0;
+            isolationWindowWidth = 0;
 
             return false;
         }
