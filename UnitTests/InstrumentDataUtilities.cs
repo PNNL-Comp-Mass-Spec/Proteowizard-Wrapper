@@ -70,12 +70,10 @@ namespace ProteowizardWrapperUnitTests
 
                 // Look in the unit test share
                 var remoteShare = new DirectoryInfo(remotePathToSearch);
-                if (remoteShare.Exists)
+
+                if (remoteShare.Exists && FindInstrumentData(fileOrDirectoryToFind, isDirectory, remoteShare, out instrumentDataFileOrDirectory))
                 {
-                    if (FindInstrumentData(fileOrDirectoryToFind, isDirectory, remoteShare, out instrumentDataFileOrDirectory))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
                 ConsoleMsgUtils.ShowWarning("Could not find {0} {1} in a Data directory above {2}", datasetType, fileOrDirectoryToFind, startingDirectory.FullName);
