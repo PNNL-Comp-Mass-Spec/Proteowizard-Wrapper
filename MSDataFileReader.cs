@@ -343,8 +343,9 @@ namespace pwiz.ProteowizardWrapper
         }
 
         /// <summary>
-        /// Get the precursors for the specified spectrum
+        /// Get the precursor ion (or ions) for the spectrum at the given index
         /// </summary>
+        /// <remarks>MS1 spectra will always return an empty list</remarks>
         /// <param name="spectrumIndex"></param>
         public IList<MsPrecursor> GetPrecursors(int spectrumIndex)
         {
@@ -387,7 +388,7 @@ namespace pwiz.ProteowizardWrapper
         /// <param name="spectrumIndex">Spectrum index</param>
         /// <param name="scanStartTime">Output: acquisition time at scan start (in minutes)</param>
         /// <param name="ionInjectionTime">Output: ion injection time</param>
-        /// <param name="filterText">Output: filter text (most commonly used by Thermo .raw files, e.g. )</param>
+        /// <param name="filterText">Output: filter text (most commonly used by Thermo .raw files, e.g. FTMS + p NSI Full ms [300.00-1650.00])</param>
         /// <param name="lowMass">Output: lowest m/z</param>
         /// <param name="highMass">Output: highest m/z</param>
         /// <returns>True if the spectrum was found and has at least one scan, otherwise false</returns>
