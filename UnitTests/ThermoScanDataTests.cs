@@ -424,13 +424,15 @@ namespace ProteowizardWrapperUnitTests
         [TestCase("HCC-38_ETciD_EThcD_07Jan16_Pippin_15-08-53.raw", 25200, 25600, 20, 381, 39157)]
         [TestCase("MeOHBlank03POS_11May16_Legolas_HSS-T3_A925.raw", 5900, 6000, 8, 93, 7906)]
         [TestCase("IPA-blank-07_25Oct13_Gimli.raw", 1750, 1850, 101, 0, 3085)]
+        [TestCase("MM_Strap_IMAC_FT_10xDilution_FAIMS_ID_01_FAIMS_Merry_03Feb23_REP-22-11-13.raw", 42000, 42224, 9, 216, 92550, true)] // DIA data
         public void TestGetScanCountsByScanType(
             string rawFileName,
             int scanStart,
             int scanEnd,
             int expectedMS1,
             int expectedMS2,
-            int expectedTotalScanCount)
+            int expectedTotalScanCount,
+            bool skipIfMissing = false)
         {
             // Keys in this dictionary are filename, values are ScanCounts by collision mode, where the key is a Tuple of ScanType and FilterString
             var expectedData = new Dictionary<string, Dictionary<Tuple<string, string>, int>>();
@@ -503,7 +505,84 @@ namespace ProteowizardWrapperUnitTests
 
             AddExpectedTupleAndCount(expectedData, "IPA-blank-07_25Oct13_Gimli", "Zoom-MS", "ITMS + p NSI Z ms", 101);
 
-            var dataFile = GetRawDataFile(rawFileName);
+            const string file13 = "MM_Strap_IMAC_FT_10xDilution_FAIMS_ID_01_FAIMS_Merry_03Feb23_REP-22-11-13";
+            AddExpectedTupleAndCount(expectedData, file13, "HMS", "FTMS + p NSI cv=-40.00 Full ms", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "HMS", "FTMS + p NSI cv=-60.00 Full ms", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "HMS", "FTMS + p NSI cv=-80.00 Full ms", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 377.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 419.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 448.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 473.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 497.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 520.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 542.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 564.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 587.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 610.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 635.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 660.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 685.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 712.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 741.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 771.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 803.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 838.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 877.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 921.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 972.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 1034.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 1133.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-40.00 Full ms2 1423.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 377.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 419.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 448.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 473.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 497.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 520.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 542.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 564.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 587.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 610.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 635.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 660.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 685.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 712.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 741.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 771.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 803.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 838.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 877.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 921.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 972.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 1034.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 1133.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-60.00 Full ms2 1423.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 377.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 419.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 448.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 473.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 497.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 520.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 542.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 564.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 587.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 610.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 635.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 660.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 685.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 712.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 741.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 771.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 803.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 838.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 877.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 921.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 972.0@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 1034.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 1133.5@hcd32.00", 3);
+            AddExpectedTupleAndCount(expectedData, file13, "DIA-HCD-HMSn", "FTMS + p NSI cv=-80.00 Full ms2 1423.5@hcd32.00", 3);
+
+            var dataFile = GetRawDataFile(rawFileName, skipIfMissing);
             var errorCount = 0;
 
             using var reader = new MSDataFileReader(dataFile.FullName);
@@ -533,6 +612,8 @@ namespace ProteowizardWrapperUnitTests
 
                 Assert.IsTrue(cvScanInfo != null, "GetSpectrumScanInfo returned a null object for scan {0}", scanNumber);
 
+                reader.GetScanMetadata(spectrumIndex, out _, out _, out _, out _, out _, out var isolationWindowWidth);
+
                 var filterText = reader.GetScanFilterText(spectrumIndex);
 
                 if (string.IsNullOrWhiteSpace(filterText))
@@ -546,8 +627,11 @@ namespace ProteowizardWrapperUnitTests
                     continue;
                 }
 
-                var scanType = XRawFileIO.GetScanTypeNameFromThermoScanFilterText(filterText);
-                var genericScanFilter = XRawFileIO.MakeGenericThermoScanFilter(filterText);
+                var isDIA = isolationWindowWidth >= 6.5;
+                var includeParentMZ = isDIA;
+
+                var scanType = XRawFileIO.GetScanTypeNameFromThermoScanFilterText(filterText, isDIA);
+                var genericScanFilter = XRawFileIO.MakeGenericThermoScanFilter(filterText, includeParentMZ);
 
                 var scanTypeKey = new Tuple<string, string>(scanType, genericScanFilter);
 
@@ -599,6 +683,8 @@ namespace ProteowizardWrapperUnitTests
                 }
                 else
                 {
+                    Console.WriteLine("{0,-5} {1,5} {2}", "??", scanType.Value, scanType.Key);
+
                     Console.WriteLine("Unexpected scan type found: {0}", scanType.Key);
                     Assert.Fail("Unexpected scan type found: {0}", scanType.Key);
                 }
