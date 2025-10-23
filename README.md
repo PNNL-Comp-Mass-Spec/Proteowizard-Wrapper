@@ -76,7 +76,7 @@ To download the source code:
 Written by Matthew Monroe and Bryson Gibbons for the Department of Energy (PNNL, Richland, WA) \
 Copyright 2017, Battelle Memorial Institute.  All Rights Reserved. \
 E-mail: proteomics@pnnl.gov \
-Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics
+Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics
 
 ## License
 
