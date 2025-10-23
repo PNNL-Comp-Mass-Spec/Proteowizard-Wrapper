@@ -630,7 +630,7 @@ namespace ProteowizardWrapperUnitTests
                 var isDIA = spectrum.Level > 1 && isolationWindowWidth >= 6.5;
                 var includeParentMZ = isDIA;
 
-                var scanType = XRawFileIO.GetScanTypeNameFromThermoScanFilterText(filterText, isDIA);
+                var scanType = XRawFileIO.GetScanTypeNameFromThermoScanFilterText(filterText, isDIA, null);
                 var genericScanFilter = XRawFileIO.MakeGenericThermoScanFilter(filterText, includeParentMZ);
 
                 var scanTypeKey = new Tuple<string, string>(scanType, genericScanFilter);
