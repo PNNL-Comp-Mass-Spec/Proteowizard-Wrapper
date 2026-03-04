@@ -6,17 +6,17 @@ echo Copying the DLL
 @echo on
 
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\Lib\" /D /Y
-xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\" /D /Y
-xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\DLL\" /D /Y
-xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\DLL\Release\" /D /Y
-xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\Release\" /D /Y
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\" /D /Y
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\DLL\" /D /Y
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\DLL\Release\" /D /Y
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\Release\" /D /Y
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\UnitTests\bin\Debug\" /D /Y
 
 xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\Lib\" /D /Y
-xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\" /D /Y
-xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\DLL\" /D /Y
-xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\DLL\Release\" /D /Y
-xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\bin\Release\" /D /Y
+xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\" /D /Y
+xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\DLL\" /D /Y
+xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\DLL\Release\" /D /Y
+xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\Release\" /D /Y
 xcopy Release\ProteowizardWrapper.pdb "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\UnitTests\bin\Debug\" /D /Y
 
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\Gordon_Slysz\DeconTools_IQ\Library\" /D /Y
