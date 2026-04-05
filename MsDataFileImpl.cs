@@ -2534,15 +2534,16 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Returns true if the file can be successfully opened
         /// </summary>
-        public static bool IsValidFile(string filepath)
+        /// <param name="filePath">File path</param>
+        public static bool IsValidFile(string filePath)
         {
-            if (!File.Exists(filepath))
+            if (!File.Exists(filePath))
                 return false;
 
             try
             {
                 var msd = new MSData();
-                FULL_READER_LIST.read(filepath, msd);
+                FULL_READER_LIST.read(filePath, msd);
                 return true;
             }
             catch (Exception)
