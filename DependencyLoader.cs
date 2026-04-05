@@ -423,12 +423,11 @@ namespace pwiz.ProteowizardWrapper
         private static string CannotFindExceptionMessage()
         {
             var bits = Environment.Is64BitProcess ? "64" : "32";
-            var message = "Cannot load ProteoWizard DLLs. Please ensure that " + bits
+            return "Cannot load ProteoWizard DLLs. Please ensure that " + bits
                 + "-bit ProteoWizard is installed to its default install directory (\""
                 + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\")."
-                + "\nCurrently trying to load ProteoWizard DLLs from path \"" + PwizPath + "\".";
-
-            return message;
+                + "\nCurrently trying to load ProteoWizard DLLs from path \"" + PwizPath + "\"."
+                + "\nAlso assure that file pwiz_bindings_cli.dll does not exist in the directory with the calling program's executable, since that disables searching for the ProteoWizard installation";
         }
 
         static DependencyLoader()
