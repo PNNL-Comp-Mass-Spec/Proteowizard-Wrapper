@@ -11,7 +11,7 @@ namespace ProteowizardWrapperUnitTests
     [TestFixture]
     public class BrukerScanDataTests
     {
-        // Ignore Spelling: Bruker, cid
+        // Ignore Spelling: Bruker, centroided, cid, Proteowizard
 
         [Test]
         [TestCase("MZ20160603PPS_edta_000004.d", 1, 1, 0, 1)]
@@ -307,36 +307,66 @@ namespace ProteowizardWrapperUnitTests
         }
 
         [Test]
-        [TestCase("Humira_100fmol_20121026_hi_res_9_01_716.d", 5, 9)]
-        [TestCase("Blank-2_05May16_Leopard_Infuse_1_01_7976.d", 1, 1)]
-        public void TestGetScanData(string dotDFolderName, int scanStart, int scanEnd)
+        [TestCase("Humira_100fmol_20121026_hi_res_9_01_716.d", 5, 9, false, false)]
+        [TestCase("Humira_100fmol_20121026_hi_res_9_01_716.d", 5, 9, false, true)]
+        [TestCase("Blank-2_05May16_Leopard_Infuse_1_01_7976.d", 1, 1, true, false)]
+        [TestCase("Blank-2_05May16_Leopard_Infuse_1_01_7976.d", 1, 1, true, true)]
+        [TestCase("QC_SRFAII_25_01_D_WEOM_r2_54_1_31253.d", 1, 1, true, false)]
+        [TestCase("QC_SRFAII_25_01_D_WEOM_r2_54_1_31253.d", 1, 1, true, true)]
+        public void TestGetScanData(string dotDFolderName, int scanStart, int scanEnd, bool hasCentroidedData, bool getCentroidedData)
         {
             var expectedData = new Dictionary<string, Dictionary<int, string>>();
 
             // Keys in this dictionary are the scan number of data being retrieved
             var file1Data = new Dictionary<int, string>
             {
-                {5, "5 39775    39775    982.741  0.0E+0   1410.843 8.7E+4"},
-                {6, "6 39775    39775    982.741  0.0E+0   1410.843 9.1E+4"},
-                {7, "7 39775    39775    982.741  0.0E+0   1410.843 8.7E+4"},
-                {8, "8 39775    39775    982.741  0.0E+0   1410.843 4.5E+4"},
-                {9, "9 39775    39775    982.741  0.0E+0   1410.843 1.4E+5"}
+                {5, "5    39775    39775    982.741  0.0E+0   1410.843 8.7E+4"},
+                {6, "6    39775    39775    982.741  0.0E+0   1410.843 9.1E+4"},
+                {7, "7    39775    39775    982.741  0.0E+0   1410.843 8.7E+4"},
+                {8, "8    39775    39775    982.741  0.0E+0   1410.843 4.5E+4"},
+                {9, "9    39775    39775    982.741  0.0E+0   1410.843 1.4E+5"}
             };
-
-            expectedData.Add("Humira_100fmol_20121026_hi_res_9_01_716", file1Data);
 
             var file2Data = new Dictionary<int, string>
             {
-                {1, "1 7615807  7615807  110.561  3.8E+4   202.468  4.2E+5"}
+                {1, "1    7615807  7615807  110.561  3.8E+4   202.468  4.2E+5"}
             };
-            expectedData.Add("Blank-2_05May16_Leopard_Infuse_1_01_7976", file2Data);
+
+            var file3Data = new Dictionary<int, string>
+            {
+                {1, "1    15137762 15137762 107.502  9.4E+5   195.862  1.6E+5"}
+            };
+
+            var file1CentroidedData = new Dictionary<int, string>();
+            var file2CentroidedData = new Dictionary<int, string>
+            {
+                { 1, "1    1607     1607     112.814  8.1E+6   597.100  5.6E+6" }
+            };
+
+            var file3CentroidedData = new Dictionary<int, string>
+            {
+                { 1, "1    10000    10000    107.707  1.5E+7   460.016  2.2E+7" }
+            };
+
+            if (getCentroidedData)
+            {
+                expectedData.Add("Humira_100fmol_20121026_hi_res_9_01_716", file1CentroidedData);
+                expectedData.Add("Blank-2_05May16_Leopard_Infuse_1_01_7976", file2CentroidedData);
+                expectedData.Add("QC_SRFAII_25_01_D_WEOM_r2_54_1_31253", file3CentroidedData);
+            }
+            else
+            {
+                expectedData.Add("Humira_100fmol_20121026_hi_res_9_01_716", file1Data);
+                expectedData.Add("Blank-2_05May16_Leopard_Infuse_1_01_7976", file2Data);
+                expectedData.Add("QC_SRFAII_25_01_D_WEOM_r2_54_1_31253", file3Data);
+            }
 
             var dataFolder = GetBrukerDataFolder(dotDFolderName);
 
-            using var reader = new MSDataFileReader(dataFolder.FullName);
+            using var reader = new MSDataFileReader(dataFolder.FullName, requireVendorCentroidedMS1: getCentroidedData, requireVendorCentroidedMS2: getCentroidedData);
 
             Console.WriteLine("Scan data for {0}", dataFolder.Name);
-            Console.WriteLine("{0} {1,-8} {2,-8} {3,-8} {4,-8} {5,-8} {6}",
+            Console.WriteLine("{0,-4} {1,-8} {2,-8} {3,-8} {4,-8} {5,-8} {6}",
                 "Scan", "MzCount", "IntCount",
                 "FirstMz", "FirstInt", "MidMz", "MidInt");
 
@@ -351,19 +381,36 @@ namespace ProteowizardWrapperUnitTests
 
                 var dataPointsRead = spectrum.Mzs.Length;
 
-                Assert.IsTrue(dataPointsRead > 0, "GetScanData returned 0 for scan {0}", scanNumber);
+                if (!hasCentroidedData && getCentroidedData)
+                {
+                    Assert.IsTrue(dataPointsRead == 0, "GetScanData returned centroided data for scan {0}, which is unexpected", scanNumber);
+                }
+                else
+                {
+                    Assert.IsTrue(dataPointsRead > 0, "GetScanData returned 0 data pointsfor scan {0}", scanNumber);
+                }
 
-                var midPoint = (int)(spectrum.Intensities.Length / 2f);
+                // Console.WriteLine("{0} data points read for scan {1} in {2}", dataPointsRead, scanNumber, Path.GetFileNameWithoutExtension(dataFolder.Name));
 
-                var scanSummary =
-                    string.Format(
-                        "{0} {1,-8} {2,-8} {3,-8:0.000} {4,-8:0.0E+0} {5,-8:0.000} {6:0.0E+0}",
-                        scanNumber,
-                        spectrum.Mzs.Length, spectrum.Intensities.Length,
-                        spectrum.Mzs[0], spectrum.Intensities[0],
-                        spectrum.Mzs[midPoint], spectrum.Intensities[midPoint]);
+                string scanSummary;
+                if (dataPointsRead == 0)
+                {
+                    scanSummary = string.Empty;
+                }
+                else
+                {
+                    var midPoint = (int)(spectrum.Intensities.Length / 2f);
 
-                Console.WriteLine(scanSummary);
+                    scanSummary =
+                        string.Format(
+                            "{0,-4} {1,-8} {2,-8} {3,-8:0.000} {4,-8:0.0E+0} {5,-8:0.000} {6:0.0E+0}",
+                            scanNumber,
+                            spectrum.Mzs.Length, spectrum.Intensities.Length,
+                            spectrum.Mzs[0], spectrum.Intensities[0],
+                            spectrum.Mzs[midPoint], spectrum.Intensities[midPoint]);
+
+                    Console.WriteLine(scanSummary);
+                }
 
                 if (!expectedData.TryGetValue(Path.GetFileNameWithoutExtension(dataFolder.Name), out var expectedDataThisFile))
                 {

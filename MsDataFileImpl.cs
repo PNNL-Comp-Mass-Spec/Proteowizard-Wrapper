@@ -57,9 +57,9 @@ namespace pwiz.ProteowizardWrapper
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: accessor, bspratt, centroided, centroiding, deserialization, idx, lockmass, mslevel
-        // Ignore Spelling: pre, pwiz, readonly, snr, structs, typeof, wiff
-        // Ignore Spelling: Biotech, Bruker, Shimadzu
+        // Ignore Spelling: accessor, bpc, bspratt, ccs, centroided, centroiding, chrom, deserialization, idx, impl, lockmass, Microliters, mslevel
+        // Ignore Spelling: Nullable, pre, Proteowizard, pwiz, readonly, snr, srm, structs, typeof, UIMF, wiff
+        // Ignore Spelling: Biotech, Bruker, Shimadzu, Thermo
         // Ignore Spelling: cid, ecd, etd, ethcd, hcd, irmpd, mpd, pqd, sid
 
         // ReSharper restore CommentTypo

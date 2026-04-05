@@ -31,8 +31,8 @@ namespace pwiz.ProteowizardWrapper
     /// </summary>
     public class MSDataFileReader : IDisposable
     {
-        // Ignore Spelling: centroided, centroiding, lockmass, structs
-        // Ignore Spelling: Bruker, Sciex, Shimadzu
+        // Ignore Spelling: centroided, centroiding, chrom, cvid, lockmass, Nullable, srm, structs, UIMF, wiff
+        // Ignore Spelling: Bruker, Sciex, Shimadzu, Thermo
 
         /// <summary>
         /// This static constructor ensures that the Assembly Resolver is added prior to actually using this class.
