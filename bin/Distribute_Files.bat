@@ -5,6 +5,11 @@ pause
 echo Copying the DLL
 @echo on
 
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Common\" /D /Y
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\bin\" /D /Y
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Shared\bin\" /D /Y
+xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_NOM_Annotation_Plugin\bin\" /D /Y
+
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\Lib\" /D /Y
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\" /D /Y
 xcopy Release\ProteowizardWrapper.dll "F:\Documents\Projects\DataMining\MS_File_Info_Scanner\MSFileInfoScanner\bin\DLL\" /D /Y
