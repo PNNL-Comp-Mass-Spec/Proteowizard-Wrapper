@@ -626,7 +626,7 @@ namespace pwiz.ProteowizardWrapper
 
                 var contentTypes = contentTypeSet.ToArray();
                 Array.Sort(contentTypes);
-                var contentType = String.Join(", ", contentTypes);
+                var contentType = string.Join(", ", contentTypes);
 
                 return new MsDataConfigInfo
                 {
@@ -711,11 +711,11 @@ namespace pwiz.ProteowizardWrapper
                 }
             }
 
-            ionSource = String.Join("/", new List<string>(ionSources.Values).ToArray());
+            ionSource = string.Join("/", new List<string>(ionSources.Values).ToArray());
 
-            analyzer = String.Join("/", new List<string>(analyzers.Values).ToArray());
+            analyzer = string.Join("/", new List<string>(analyzers.Values).ToArray());
 
-            detector = String.Join("/", new List<string>(detectors.Values).ToArray());
+            detector = string.Join("/", new List<string>(detectors.Values).ToArray());
         }
 
         /// <summary>
@@ -1291,7 +1291,7 @@ namespace pwiz.ProteowizardWrapper
         /// </param>
         public void GetScanTimesAndMsLevels(out double[] times, out byte[] msLevels, Action<int, int> progressDelegate = null, bool useAlternateMethod = false)
         {
-            var cancellationToken = new CancellationToken();
+            var cancellationToken = CancellationToken.None;
             GetScanTimesAndMsLevels(cancellationToken, out times, out msLevels, progressDelegate, useAlternateMethod);
         }
 
@@ -2689,7 +2689,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Summary of CVParam - name and value
         /// </summary>
-        public override string ToString()
+        public readonly override string ToString()
         {
             return Name + ": " + Value;
         }
@@ -2812,13 +2812,13 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Returns IsolationWindowTargetMz if not null, otherwise PrecursorMz
         /// </summary>
-        public SignedMz? IsolationMz
+        public readonly SignedMz? IsolationMz
         {
             get
             {
                 var targetMz = IsolationWindowTargetMz ?? PrecursorMz;
 
-                // If the isolation window is not centered around the target m/z, return a
+                // If the isolation window is not centered around the target m/z, return an
                 // m/z value that is centered in the isolation window.
                 if (targetMz.HasValue && IsolationWindowUpper.HasValue && IsolationWindowLower.HasValue &&
                     Math.Abs(IsolationWindowUpper.Value - IsolationWindowLower.Value) > float.Epsilon)
@@ -2834,7 +2834,7 @@ namespace pwiz.ProteowizardWrapper
         /// Returns the isolation width if <see cref="IsolationWindowUpper"/> and <see cref="IsolationWindowLower"/> have values and are not equal
         /// Otherwise, returns null
         /// </summary>
-        public double? IsolationWidth
+        public readonly double? IsolationWidth
         {
             get
             {
@@ -3068,6 +3068,7 @@ namespace pwiz.ProteowizardWrapper
 
         public static readonly MsInstrumentConfigInfo EMPTY = new(null, null, null, null);
 
+        // ReSharper disable once ConvertToPrimaryConstructor
         public MsInstrumentConfigInfo(string model, string ionization,
                                       string analyzer, string detector)
         {
