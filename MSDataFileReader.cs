@@ -45,6 +45,8 @@ namespace pwiz.ProteowizardWrapper
 
         private readonly MsDataFileImpl mDataReader;
 
+        // ReSharper disable GrammarMistakeInComment
+
         /// <summary>
         /// Constant that corresponds to "SIM SIC "
         /// </summary>
@@ -60,6 +62,8 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         public static string PREFIX_TOTAL => MsDataFileImpl.PREFIX_TOTAL;
 
+        // ReSharper restore GrammarMistakeInComment
+
         /// <summary>
         /// Constant indicating to use the Continuous Wavelet Transform peak picker
         /// </summary>
@@ -70,7 +74,7 @@ namespace pwiz.ProteowizardWrapper
 
         /// <summary>
         /// Constant indicating to use the centroiding/peak picking algorithm that the vendor libraries provide, if available.
-        /// Otherwise uses a low-quality centroiding algorithm.
+        /// Otherwise, uses a low-quality centroiding algorithm.
         /// </summary>
         public string VendorCentroiding => MsDataFileImpl.VendorCentroiding;
 
@@ -264,7 +268,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
-        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// Set "Copy Local" to false (to avoid breaking the DLL resolver)
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// </remarks>
         /// <param name="chromIndex">Chromatogram index</param>
@@ -288,7 +292,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
-        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// Set "Copy Local" to false (to avoid breaking the DLL resolver)
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// </remarks>
         /// <param name="chromIndex">Chromatogram index</param>
@@ -584,7 +588,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
-        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// Set "Copy Local" to false (to avoid breaking the DLL resolver)
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// </remarks>
         /// <param name="spectrumIndex">Spectrum index</param>
@@ -599,7 +603,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
-        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// Set "Copy Local" to false (to avoid breaking the DLL resolver)
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// Alternatively, use <see cref="GetSpectrumCVParamData"/>
         /// </remarks>
@@ -641,7 +645,7 @@ namespace pwiz.ProteowizardWrapper
         /// </summary>
         /// <remarks>
         /// Use of this method requires the calling project to reference pwiz_bindings_cli.dll
-        /// Set "Copy Local" to false to avoid breaking the DLL resolver
+        /// Set "Copy Local" to false (to avoid breaking the DLL resolver)
         /// You must also call <see cref="pwiz.ProteowizardWrapper.DependencyLoader.AddAssemblyResolver()"/> in any function that calls a function that uses this function.
         /// Alternatively, use <see cref="GetSpectrumScanInfo"/> or the GetSpectrum method that returns an <see cref="MsDataSpectrum"/> object
         /// </remarks>
@@ -859,7 +863,7 @@ namespace pwiz.ProteowizardWrapper
         /// <summary>
         /// Cleanup the objects
         /// </summary>
-        /// <remarks>Chains to cleanup all held unmanaged objects</remarks>
+        /// <remarks>Chains to clean up all held unmanaged objects</remarks>
         public void Dispose()
         {
             mDataReader.Dispose();
