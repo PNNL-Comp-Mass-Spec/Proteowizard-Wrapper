@@ -427,7 +427,7 @@ namespace pwiz.ProteowizardWrapper
                 + "-bit ProteoWizard is installed to its default install directory (\""
                 + Environment.GetEnvironmentVariable("ProgramFiles") + "\\ProteoWizard\\ProteoWizard 3.0.[x]\")."
                 + "\nCurrently trying to load ProteoWizard DLLs from path \"" + PwizPath + "\"."
-                + "\nAlso assure that file pwiz_bindings_cli.dll does not exist in the directory with the calling program's executable, since that disables searching for the ProteoWizard installation";
+                + "\nAlso ensure that file pwiz_bindings_cli.dll does not exist in the directory with the calling program's executable, since that disables searching for the ProteoWizard installation.";
         }
 
         static DependencyLoader()

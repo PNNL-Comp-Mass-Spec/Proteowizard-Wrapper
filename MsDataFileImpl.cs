@@ -1318,7 +1318,7 @@ namespace pwiz.ProteowizardWrapper
             Action<int, int> progressDelegate = null,
             bool useAlternateMethod = false)
         {
-            // Assure that the progress delegate is not null
+            // Ensure that the progress delegate is not null
             progressDelegate ??= delegate { };
 
             var spectrumCount = SpectrumCount;
